@@ -1,0 +1,25 @@
+<?php
+
+return [
+	"i_Accept" => "আমি গ্রহণ করি",
+	"no_thanks" => "না ধন্যবাদ",
+	"Your_Privacy_Matter" => "আপনার গোপনীয়তা ব্যাপার",
+	"yes" => "হ্যাঁ",
+	"copied_successfully" => "কপি সফলভাবে",
+	"or_drag_and_drop" => "অথবা ড্র্যাগ এন্ড ড্রপ",
+	"Click_to_upload" => "আপলোড করতে ক্লিক করুন",
+	"status_update_failed" => "অবস্থা আপডেট ব্যর্থ",
+	"status_updated_successfully" => "অবস্থা আপডেট সফলভাবে",
+	"fields_marked_with_*_are_mandatory." => "ক্ষেত্র চিহ্নিত সাথে * আছে আধ্যাত্মিক।",
+	"please_complete_all_required_fields_before_proceeding." => "অনুগ্রহ করে সম্পূর্ণ সমস্ত প্রয়োজনীয় ক্ষেত্রগুলি আগে প্রক্রিয়া করার আগে।",
+	"Required_Field_Missing" => "প্রয়োজনীয় ক্ষেত্র অনুপস্থিত",
+	"home" => "বাড়ি",
+	"please_go_back_to_the_homepage" => "অনুগ্রহ করে হোমপেজে ফিরে যান",
+	"the_page_you_requested_could_not_be_found" => "the page you requested could not be found",
+	"no" => "না",
+	"page_Not_found" => "page not found",
+	"we_are_sorry" => "আমরা দুঃখিত",
+	"once_deleted_you_will_not_be_able_to_recover_this" => "একবার মুছে তুমি না হবে পুনরুদ্ধার করতে পারিবেনা",
+	"are_you_sure" => "আপনি নিশ্চিত",
+	"Chat_with_us_on_WhatsApp" => "আমাদের সাথে হোয়াটসঅ্যাপে চ্যাট করুন",
+];
