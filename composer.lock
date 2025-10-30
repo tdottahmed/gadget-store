@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5aef0a8c3ee1f38bdeeac984474170fa",
+    "content-hash": "7a48a123774b19d0ab5b8cea37768abc",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -7497,6 +7497,80 @@
             "time": "2025-08-05T09:57:14+00:00"
         },
         {
+            "name": "shahariar-ahmad/courier-fraud-checker-bd",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ShahariarAhmad/ShahariarAhmad-CourierFraudCheckerBD---packagist.org.git",
+                "reference": "2fecf06a2645263d6eeaf0a04b032d908dad7b61"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ShahariarAhmad/ShahariarAhmad-CourierFraudCheckerBD---packagist.org/zipball/2fecf06a2645263d6eeaf0a04b032d908dad7b61",
+                "reference": "2fecf06a2645263d6eeaf0a04b032d908dad7b61",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/http": "^10.0 || ^11.0 || ^12.0",
+                "illuminate/support": "^10.0 || ^11.0 || ^12.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "CourierFraudCheckerBd": "ShahariarAhmad\\CourierFraudCheckerBd\\Facade\\CourierFraudCheckerBdFacade"
+                    },
+                    "providers": [
+                        "ShahariarAhmad\\CourierFraudCheckerBd\\CourierFraudCheckerBdServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ShahariarAhmad\\CourierFraudCheckerBd\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Shahariar Ahmad",
+                    "email": "muhd.shahariar@gmail.com"
+                }
+            ],
+            "description": "A fraud detection tool for e-commerce platforms to analyze customer order behavior across Steadfast and Pathao couriers.",
+            "keywords": [
+                "Laravel fraud checker",
+                "Order Status",
+                "api integration",
+                "courier",
+                "customer behavior",
+                "delivery",
+                "delivery tracking",
+                "e-commerce",
+                "e-commerce fraud",
+                "fraud checker",
+                "fraud detection",
+                "fraud prevention",
+                "laravel package",
+                "order cancellation",
+                "order management",
+                "order tracking",
+                "order verification",
+                "pathao",
+                "shipping",
+                "steadfast courier"
+            ],
+            "support": {
+                "issues": "https://github.com/ShahariarAhmad/ShahariarAhmad-CourierFraudCheckerBD---packagist.org/issues",
+                "source": "https://github.com/ShahariarAhmad/ShahariarAhmad-CourierFraudCheckerBD---packagist.org/tree/v2.0.2"
+            },
+            "time": "2025-07-07T11:20:06+00:00"
+        },
+        {
             "name": "spatie/browsershot",
             "version": "5.0.11",
             "source": {
@@ -7941,6 +8015,80 @@
                 }
             ],
             "time": "2025-01-13T13:04:43+00:00"
+        },
+        {
+            "name": "steadfast-courier/steadfast-courier-laravel-package",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/steadfast-it/SteadFast-Courier-Laravel-Package.git",
+                "reference": "96fd4d4558c14e810704804a7ec58e9559a5b182"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/steadfast-it/SteadFast-Courier-Laravel-Package/zipball/96fd4d4558c14e810704804a7ec58e9559a5b182",
+                "reference": "96fd4d4558c14e810704804a7ec58e9559a5b182",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.2",
+                "illuminate/contracts": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "php": "^7.2|^8.0",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.1.1||^7.10.0",
+                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.34",
+                "pestphp/pest-plugin-arch": "^2.7",
+                "pestphp/pest-plugin-laravel": "^2.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "SteadFastCourier": "SteadFast\\SteadFastCourierLaravelPackage\\Facades\\SteadFastCourierLaravelPackage"
+                    },
+                    "providers": [
+                        "SteadFast\\SteadFastCourierLaravelPackage\\LaravelSteadfastCourierServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SteadFast\\SteadFastCourierLaravelPackage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "SteadFast",
+                    "email": "it@steadfast.com.bd",
+                    "role": "Owner"
+                }
+            ],
+            "description": "A complate Laravel package for SteadFast Courier Limited",
+            "homepage": "https://github.com/steadfast-it/steadfast-courier-laravel-package",
+            "keywords": [
+                "SteadFast",
+                "laravel",
+                "steadfast-courier-laravel-package"
+            ],
+            "support": {
+                "issues": "https://github.com/steadfast-it/SteadFast-Courier-Laravel-Package/issues",
+                "source": "https://github.com/steadfast-it/SteadFast-Courier-Laravel-Package/tree/1.1.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/AmadulHaque",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-08-13T13:05:31+00:00"
         },
         {
             "name": "stripe/stripe-php",
