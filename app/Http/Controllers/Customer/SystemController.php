@@ -87,21 +87,19 @@ class SystemController extends Controller
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping_address')
                 ], 403);
-            }
-            elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+            } elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
                 return response()->json([
                     'errors' => translate('Delivery_unavailable_in_this_country.')
                 ], 403);
-            }
-            elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
+            } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
                 return response()->json([
                     'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
                 ], 403);
             }
 
             $address_id = DB::table('shipping_addresses')->insertGetId([
-                'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id'):0)),
-                'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1:0),
+                'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id') : 0)),
+                'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
                 'contact_person_name' => $shipping['contact_person_name'],
                 'address_type' => $shipping['address_type'],
                 'address' => $shipping['address'],
@@ -116,29 +114,25 @@ class SystemController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
-        }
-        else if (isset($shipping['shipping_method_id']) && $shipping['shipping_method_id'] == 0) {
+        } else if (isset($shipping['shipping_method_id']) && $shipping['shipping_method_id'] == 0) {
 
             if ($shipping['contact_person_name'] == null || $shipping['address'] == null || $shipping['city'] == null || $shipping['zip'] == null || $shipping['country'] == null || ($is_guest && $shipping['email'] == null)) {
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping/billing_address')
                 ], 403);
-            }
-            elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+            } elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
                 return response()->json([
                     'errors' => translate('Delivery_unavailable_in_this_country')
                 ], 403);
-            }
-            elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
+            } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
                 return response()->json([
                     'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
                 ], 403);
             }
 
             $address_id = DB::table('shipping_addresses')->insertGetId([
-                'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id'):0)),
-                'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1:0),
+                'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id') : 0)),
+                'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
                 'contact_person_name' => $shipping['contact_person_name'],
                 'address_type' => $shipping['address_type'],
                 'address' => $shipping['address'],
@@ -153,27 +147,24 @@ class SystemController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        }
-        else {
+        } else {
             if (isset($shipping['shipping_method_id'])) {
                 $address = ShippingAddress::find($shipping['shipping_method_id']);
                 if (!$address->country || !$address->zip) {
                     return response()->json([
                         'errors' => translate('Please_update_country_and_zip_for_this_shipping_address')
                     ], 403);
-                }
-                elseif ($country_restrict_status && !self::delivery_country_exist_check($address->country)) {
+                } elseif ($country_restrict_status && !self::delivery_country_exist_check($address->country)) {
                     return response()->json([
                         'errors' => translate('Delivery_unavailable_in_this_country')
                     ], 403);
-                }
-                elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($address->zip)) {
+                } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($address->zip)) {
                     return response()->json([
                         'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
                     ], 403);
                 }
                 $address_id = $shipping['shipping_method_id'];
-            }else{
+            } else {
                 $address_id =  0;
             }
         }
@@ -181,25 +172,23 @@ class SystemController extends Controller
         if ($request->billing_addresss_same_shipping == 'false') {
             if (isset($billing['save_address_billing']) && $billing['save_address_billing'] == 'on') {
 
-                if ($billing['billing_contact_person_name'] == null || $billing['billing_address'] == null || $billing['billing_city'] == null|| $billing['billing_zip'] == null || $billing['billing_country'] == null || ($is_guest && $billing['billing_contact_email'] == null)) {
+                if ($billing['billing_contact_person_name'] == null || $billing['billing_address'] == null || $billing['billing_city'] == null || $billing['billing_zip'] == null || $billing['billing_country'] == null || ($is_guest && $billing['billing_contact_email'] == null)) {
                     return response()->json([
                         'errors' => translate('Billing_address_is_currently_disabled') . '. ' . translate('To_purchase_digital_products,_please_include_a_physical_product_in_your_order') . '.',
                     ], 403);
-                }
-                elseif ($country_restrict_status && !self::delivery_country_exist_check($billing['billing_country'])) {
+                } elseif ($country_restrict_status && !self::delivery_country_exist_check($billing['billing_country'])) {
                     return response()->json([
                         'errors' => translate('Delivery_unavailable_in_this_country')
                     ], 403);
-                }
-                elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($billing['billing_zip'])) {
+                } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($billing['billing_zip'])) {
                     return response()->json([
                         'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
                     ], 403);
                 }
 
                 $billing_address_id = DB::table('shipping_addresses')->insertGetId([
-                    'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id'):0)),
-                    'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1:0),
+                    'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id') : 0)),
+                    'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
                     'contact_person_name' => $billing['billing_contact_person_name'],
                     'address_type' => $billing['billing_address_type'],
                     'address' => $billing['billing_address'],
@@ -214,30 +203,25 @@ class SystemController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-
-
-            }
-            elseif ($billing['billing_method_id'] == 0) {
+            } elseif ($billing['billing_method_id'] == 0) {
 
                 if ($billing['billing_contact_person_name'] == null || $billing['billing_address'] == null || $billing['billing_city'] == null || $billing['billing_zip'] == null || $billing['billing_country'] == null || ($is_guest && $billing['billing_contact_email'] == null)) {
                     return response()->json([
                         'errors' => translate('Fill_all_required_fields_of_billing_address')
                     ], 403);
-                }
-                elseif ($country_restrict_status && !self::delivery_country_exist_check($billing['billing_country'])) {
+                } elseif ($country_restrict_status && !self::delivery_country_exist_check($billing['billing_country'])) {
                     return response()->json([
                         'errors' => translate('Delivery_unavailable_in_this_country')
                     ], 403);
-                }
-                elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($billing['billing_zip'])) {
+                } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($billing['billing_zip'])) {
                     return response()->json([
                         'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
                     ], 403);
                 }
 
                 $billing_address_id = DB::table('shipping_addresses')->insertGetId([
-                    'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id'):0)),
-                    'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1:0),
+                    'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id') : 0)),
+                    'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
                     'contact_person_name' => $billing['billing_contact_person_name'],
                     'address_type' => $billing['billing_address_type'],
                     'address' => $billing['billing_address'],
@@ -252,21 +236,18 @@ class SystemController extends Controller
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-            }
-            else {
+            } else {
                 $address = ShippingAddress::find($billing['billing_method_id']);
                 if ($physical_product == 'yes') {
                     if (!$address->country || !$address->zip) {
                         return response()->json([
                             'errors' => translate('Update_country_and_zip_for_this_billing_address')
                         ], 403);
-                    }
-                    elseif ($country_restrict_status && !self::delivery_country_exist_check($address->country)) {
+                    } elseif ($country_restrict_status && !self::delivery_country_exist_check($address->country)) {
                         return response()->json([
                             'errors' => translate('Delivery_unavailable_in_this_country')
                         ], 403);
-                    }
-                    elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($address->zip)) {
+                    } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($address->zip)) {
                         return response()->json([
                             'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
                         ], 403);
@@ -274,8 +255,7 @@ class SystemController extends Controller
                 }
                 $billing_address_id = $billing['billing_method_id'];
             }
-        }
-        else {
+        } else {
             $billing_address_id = $address_id;
         }
 
@@ -339,7 +319,7 @@ class SystemController extends Controller
 
         // Shipping start
         $addressId = $shipping['shipping_method_id'] ?? 0;
-
+        $shipping['country'] = 'Bangladesh';
         if (isset($shipping['shipping_method_id'])) {
             if ($shipping['contact_person_name'] == null || !isset($shipping['address_type']) || $shipping['address'] == null || $shipping['city'] == null || !isset($shipping['zip']) || $shipping['zip'] == null || !isset($shipping['country']) || $shipping['country'] == null || $shipping['phone'] == null || ($isGuestCustomer && $shipping['email'] == null)) {
                 return response()->json([
@@ -372,7 +352,6 @@ class SystemController extends Controller
                 'email' => auth('customer')->check() ? null : $shipping['email'],
                 'is_billing' => 0,
             ]);
-
         } elseif (isset($shipping['update_address']) && $shipping['update_address'] == 'on') {
             $getShipping = ShippingAddress::find($addressId);
             $getShipping->contact_person_name = $shipping['contact_person_name'];
@@ -385,7 +364,6 @@ class SystemController extends Controller
             $getShipping->latitude = $shipping['latitude'] ?? "";
             $getShipping->longitude = $shipping['longitude'] ?? "";
             $getShipping->save();
-
         } elseif (isset($shipping['shipping_method_id']) && !isset($shipping['update_address']) && !isset($shipping['save_address'])) {
             $addressId = ShippingAddress::insertGetId([
                 'customer_id' => auth('customer')->check() ? 0 : ((session()->has('guest_id') ? session('guest_id') : 0)),
@@ -404,7 +382,6 @@ class SystemController extends Controller
             ]);
         }
         // Shipping End
-
         // Billing Start
         $billingAddressId = $addressId ?? 0;
         if ($request['billing_addresss_same_shipping'] == 'false' && isset($billing['billing_method_id']) && $billingInputByCustomer) {
@@ -511,7 +488,7 @@ class SystemController extends Controller
 
             if (User::where(['email' => $newCustomerAddress['email']])->orWhere(['phone' => $newCustomerAddress['phone']])->first()) {
                 return response()->json(['errors' => translate('Already_registered')], 403);
-            }else{
+            } else {
                 $newCustomerRegister = self::getRegisterNewCustomer(request: $request, address: $newCustomerAddress);
                 session()->put('newCustomerRegister', $newCustomerRegister);
             }
@@ -544,5 +521,4 @@ class SystemController extends Controller
             'billing_id' => session('billing_address_id'),
         ];
     }
-
 }

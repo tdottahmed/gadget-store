@@ -3249,4 +3249,12 @@ return [
 	"want_to_turn_ON_paytabs_as_the_Digital_Payment_method" => "Want to turn ON paytabs as the Digital Payment method",
 	"please_check_your_codecanyon_purchase_code_before_proceeding_with_the_update." => "Please check your codecanyon purchase code before proceeding with the update.",
 	"make_sure_to_enter_the_name_correctly." => "Make sure to enter the name correctly.",
+	"please_add_product_to_cart_before_applying_coupon" => "Please add product to cart before applying coupon",
+	"please_add_product_to_cart_before_applying_discount" => "Please add product to cart before applying discount",
+	"no_sub_category_found" => "No sub category found",
+	"Main_Category_is_required" => "Main Category is required",
+	"category_updated_successfully" => "Category updated successfully",
+	"Coupon_not_aplicable" => "Coupon not aplicable",
+	"Walk-In-Customer" => "Walk-In-Customer",
+	"Try_after_sometime" => "Try after sometime",
 ];
