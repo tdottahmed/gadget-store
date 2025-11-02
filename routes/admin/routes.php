@@ -89,6 +89,7 @@ use App\Http\Controllers\Admin\Settings\DeliverymanSettingsController;
 use App\Http\Controllers\Admin\Settings\DeliveryRestrictionController;
 use App\Http\Controllers\Admin\Settings\EnvironmentSettingsController;
 use App\Http\Controllers\Admin\Settings\SocialMediaSettingsController;
+use App\Http\Controllers\Admin\ThirdParty\SteadfastCourierController;
 use App\Http\Controllers\Admin\SystemSetup\SystemLoginSetupController;
 use App\Http\Controllers\Admin\ThirdParty\SocialLoginSettingsController;
 use App\Http\Controllers\Admin\Deliveryman\DeliverymanWithdrawController;
@@ -235,6 +236,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::get('generate-invoice/{id}', 'generateInvoice')->name('generate-invoice')->withoutMiddleware(['module:order_management']);
             Route::get('details/{id}', 'getView')->name('details');
             Route::get('fraud-check/{order_id}', 'checkFraud')->name('fraud-check');
+            Route::get('steadFast-courier/{order}', 'steadfastCourier')->name('steadFast-courier');
             Route::post('address-update', 'updateAddress')->name('address-update'); // update address from order details
             Route::post('update-deliver-info', 'updateDeliverInfo')->name('update-deliver-info');
             Route::get('add-delivery-man/{order_id}/{d_man_id}', 'addDeliveryMan')->name('add-delivery-man');
@@ -377,7 +379,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::post('sales-commission-update/{id}', 'updateSalesCommission')->name('sales-commission-update');
             Route::get('order-details/{order_id}/{vendor_id}', 'getOrderDetailsView')->name('order-details');
             Route::get('view/{id}/{tab?}', 'getView')->name('view');
-            Route::post( 'update_setting/{id}', 'updateSetting')->name('update-setting');
+            Route::post('update_setting/{id}', 'updateSetting')->name('update-setting');
 
             Route::get('withdraw-list', 'getWithdrawListView')->name('withdraw_list');
             Route::get('withdraw-list-export-excel', 'exportWithdrawList')->name('withdraw-list-export-excel');
@@ -648,7 +650,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::get('order-history-log/{id}', 'getOrderHistoryList')->name('order-history-log');
             Route::get('order-history-log-export/{id}', 'getOrderHistoryListExport')->name('order-history-log-export');
             Route::get('rating/{id}', 'getRatingView')->name('rating');
-            Route::get( 'ajax-order-status-history/{order}', 'getOrderStatusHistory')->name('ajax-order-status-history');
+            Route::get('ajax-order-status-history/{order}', 'getOrderStatusHistory')->name('ajax-order-status-history');
         });
 
         Route::controller(DeliveryManCashCollectController::class)->group(function () {
@@ -661,15 +663,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::post('withdraw-list', 'getFiltered');
             Route::get('withdraw-list-export', 'exportList')->name('withdraw-list-export');
             Route::get('withdraw-view/{withdraw_id}', 'getView')->name('withdraw-view');
-            Route::post( 'withdraw-update-status/{id}', 'updateStatus')->name('withdraw-update-status');
+            Route::post('withdraw-update-status/{id}', 'updateStatus')->name('withdraw-update-status');
         });
 
         Route::group(['prefix' => 'emergency-contact', 'as' => 'emergency-contact.'], function () {
             Route::controller(EmergencyContactController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
                 Route::post('add', 'add')->name('add');
-                Route::get( 'update/{id}', 'getUpdateView')->name('update');
-                Route::post( 'update/{id}', 'update');
+                Route::get('update/{id}', 'getUpdateView')->name('update');
+                Route::post('update/{id}', 'update');
                 Route::post('ajax-status-change', 'updateStatus')->name('ajax-status-change');
                 Route::delete('destroy', 'delete')->name('destroy');
             });
@@ -807,7 +809,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
                     Route::get('index', 'index')->name('index');
                     Route::get('/' . '/{type}' . '/{tab}', 'getView')->name('view');
                     Route::post('update/{type}' . '/{tab}', 'update')->name('update');
-                    Route::post( 'update-status/{type}' . '/{tab}', 'updateStatus')->name('update-status');
+                    Route::post('update-status/{type}' . '/{tab}', 'updateStatus')->name('update-status');
                 });
             });
 
@@ -905,6 +907,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::controller(GoogleMapAPIController::class)->group(function () {
                 Route::get('map-api', 'index')->name('map-api');
                 Route::post('map-api', 'update');
+            });
+            Route::controller(SteadfastCourierController::class)->group(function () {
+                Route::get('steadfast-courier', 'index')->name('steadfast-courier.index');
+                Route::post('steadfast-courier', 'update')->name('steadfast-courier.update');
             });
         });
     });
@@ -1145,7 +1151,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::get('index', 'index')->name('list');
             Route::post('add-new', 'add')->name('add-new');
             Route::post('status/{id}', 'updateStatus')->name('status');
-            Route::get( 'update/{id}', 'getUpdateResponse')->name('update');
+            Route::get('update/{id}', 'getUpdateResponse')->name('update');
             Route::post('feature-status-update', 'updateFeatureStatus')->name('feature-status-update');
             Route::post('update' . '/{id}', 'update');
             Route::post('delete', 'delete')->name('delete');

@@ -614,10 +614,24 @@
                       </option>
                     </select>
                   </div>
-                  <a href="" class="btn btn-primary d-none mt-3 px-4 py-2" id="steadfast-courier-btn">
+                  <a href="{{ route('admin.orders.steadFast-courier', $order->id) }}"
+                     class="btn btn-primary d-none mt-3 px-4 py-2" id="steadfast-courier-btn">
                     <i class="fi fi-rr-rocket me-2"></i>
                     {{ translate('Steadfast Courier') }}
                   </a>
+                  @if ($orderShipment != null)
+                    <div class="d-flex align-items-center my-3 gap-4">
+                      <a href="https://steadfast.com.bd/t/{{ $orderShipment->tracking_code }}" class="btn btn-success"
+                         id="track-consignment" target="_blank" rel="noopener noreferrer">
+                        <i class="fi fi-rr-shipping-fast text-success"></i>
+                        {{ translate('Track Consignment') }}
+                      </a>
+                      <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#steadfastConsignmentModal">
+                        <i class="fi fi-rr-eye text-info"></i>
+                        {{ translate('View Consignment Details') }}
+                      </button>
+                    </div>
+                  @endif
                 </li>
 
                 <li class="choose_delivery_man form-group">
@@ -1486,6 +1500,89 @@
       </div>
     </div>
   </div>
+  <!-- Steadfast Consignment Details Modal -->
+  @if ($orderShipment)
+    <div class="modal fade" id="steadfastConsignmentModal" tabindex="-1" aria-labelledby="steadfastModalLabel"
+         aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-light border-bottom">
+            <h5 class="modal-title fw-semibold text-primary d-flex align-items-center gap-2">
+              <i class="fi fi-rr-shipping-fast fs-5"></i>
+              {{ translate('Steadfast Consignment Details') }}
+            </h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <!-- Basic Info -->
+              <div class="col-md-6">
+                <label class="fw-semibold text-muted">{{ translate('Invoice No') }}</label>
+                <div class="form-control-plaintext fw-medium">{{ $orderShipment->invoice_no ?? '—' }}</div>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-semibold text-muted">{{ translate('Consignment No') }}</label>
+                <div class="form-control-plaintext fw-medium">{{ $orderShipment->consignment_no ?? '—' }}</div>
+              </div>
+              <div class="col-md-4">
+                <label class="fw-semibold text-muted">{{ translate('Tracking Code') }}</label>
+                <div class="form-control-plaintext fw-medium">{{ $orderShipment->tracking_code ?? '—' }}</div>
+              </div>
+              <div class="col-md-4">
+                <label class="fw-semibold text-muted">{{ translate('Carrier') }}</label>
+                <div class="form-control-plaintext fw-medium text-capitalize">
+                  {{ $orderShipment->carrier ?? 'Steadfast' }}</div>
+              </div>
+              <!-- Status -->
+              <div class="col-md-2">
+                <label class="fw-semibold text-muted">{{ translate('Status') }}</label>
+                <div>
+                  <span class="badge bg-success text-bg-success fw-bold rounded-50 d-flex align-items-center px-2 py-1">
+                    {{ ucfirst(str_replace('_', ' ', $orderShipment->status ?? 'Unknown')) }}
+                  </span>
+                </div>
+              </div>
+              <!-- Recipient Info -->
+              <div class="col-12 mt-3">
+                <h6 class="fw-semibold border-bottom mb-2 pb-2">
+                  <i class="fi fi-rr-user text-secondary me-1"></i>
+                  {{ translate('Recipient Information') }}
+                </h6>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-semibold text-muted">{{ translate('Name') }}</label>
+                <div class="form-control-plaintext fw-medium">{{ $orderShipment->recipient_name ?? '—' }}</div>
+              </div>
+              <div class="col-md-6">
+                <label class="fw-semibold text-muted">{{ translate('Phone') }}</label>
+                <div class="form-control-plaintext fw-medium">{{ $orderShipment->recipient_phone ?? '—' }}</div>
+              </div>
+              <div class="col-12">
+                <label class="fw-semibold text-muted">{{ translate('Address') }}</label>
+                <div class="form-control-plaintext fw-medium">{{ $orderShipment->recipient_address ?? '—' }}</div>
+              </div>
+              <!-- Footer -->
+              <div class="col-12 mt-4 text-end">
+                <a href="https://steadfast.com.bd/t/{{ $orderShipment->tracking_code }}"
+                   class="btn btn-outline-primary rounded-pill px-4" target="_blank" rel="noopener noreferrer">
+                  <i class="fi fi-rr-map-marker text-success me-2"></i>
+                  {{ translate('Track Consignment') }}
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-top bg-light">
+            <small class="text-muted">
+              {{ translate('Last Updated:') }}
+              {{ $orderShipment->updated_at ? $orderShipment->updated_at->format('d M, Y h:i A') : '—' }}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endif
+
+
   <span id="message-status-title-text"
         data-text="{{ $order['payment_method'] != 'cash_on_delivery' && $order['order_status'] == 'delivered' ? translate('Order_is_already_delivered_and_transaction_amount_has_been_disbursed_changing_status_can_be_the_reason_of_miscalculation') : translate('are_you_sure_change_this') }}"></span>
   <span id="message-status-subtitle-text"
