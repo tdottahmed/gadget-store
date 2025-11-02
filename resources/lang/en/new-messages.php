@@ -3276,4 +3276,8 @@ return [
 	"Stead fast Courier" => "Stead fast Courier",
 	"Other Third Party Delivery" => "Other Third Party Delivery",
 	"Steadfast Courier" => "Steadfast Courier",
+	"Blog Add" => "Blog Add",
+	"Are_you_sure_to_turn_on_the_Store_Availability_status" => "Are you sure to turn on the Store Availability status",
+	"fraud check histories" => "Fraud check histories",
+	"digital_file_upload_successfully" => "Digital file upload successfully",
 ];

@@ -614,7 +614,8 @@
                       </option>
                     </select>
                   </div>
-                  <a href="" class="btn btn-primary d-none mt-3 px-4 py-2" id="steadfast-courier-btn">
+                  <a href="{{ route('admin.orders.steadFast-courier', $order->id) }}"
+                     class="btn btn-primary d-none mt-3 px-4 py-2" id="steadfast-courier-btn">
                     <i class="fi fi-rr-rocket me-2"></i>
                     {{ translate('Steadfast Courier') }}
                   </a>
