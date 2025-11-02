@@ -46,6 +46,9 @@ use App\Contracts\Repositories\DeliveryCountryCodeRepositoryInterface;
 use App\Contracts\Repositories\DeliveryManTransactionRepositoryInterface;
 use App\Contracts\Repositories\LoyaltyPointTransactionRepositoryInterface;
 use App\Contracts\Repositories\OrderExpectedDeliveryHistoryRepositoryInterface;
+use App\Models\FraudCheckHistory;
+use App\Models\Order as ModelsOrder;
+use ShahariarAhmad\CourierFraudCheckerBd\Facade\CourierFraudCheckerBd;
 
 class OrderController extends BaseController
 {
@@ -73,9 +76,7 @@ class OrderController extends BaseController
         private readonly OrderStatusHistoryRepositoryInterface           $orderStatusHistoryRepo,
         private readonly OrderTransactionRepository                      $orderTransactionRepo,
         private readonly LoyaltyPointTransactionRepositoryInterface      $loyaltyPointTransactionRepo,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @param Request|null $request
@@ -197,7 +198,6 @@ class OrderController extends BaseController
                 $order['total_discount'] += $details->discount;
                 $order['total_tax'] += $details->tax_model == 'exclude' ? $details->tax : 0;
             });
-
         });
         /** order status count  */
 
@@ -246,6 +246,7 @@ class OrderController extends BaseController
     {
         $countryRestrictStatus = getWebConfig(name: 'delivery_country_restriction');
         $zipRestrictStatus = getWebConfig(name: 'delivery_zip_code_area_restriction');
+        $fraudCheckHistory = FraudCheckHistory::where('order_id', $id)->first();
         $deliveryCountry = $this->deliveryCountryCodeRepo->getList(dataLimit: 'all');
         $countries = $countryRestrictStatus ? $service->getDeliveryCountryArray(deliveryCountryCodes: $deliveryCountry) : GlobalConstant::COUNTRIES;
         $zipCodes = $zipRestrictStatus ? $this->deliveryZipCodeRepo->getList(dataLimit: 'all') : 0;
@@ -286,9 +287,22 @@ class OrderController extends BaseController
             $isOrderOnlyDigital = $orderService->getCheckIsOrderOnlyDigital(order: $order);
             if ($order['order_type'] == 'default_type') {
                 $orderCount = $this->orderRepo->getListWhereCount(filters: ['customer_id' => $order['customer_id']]);
-                return view(Order::VIEW[VIEW], compact('order', 'linkedOrders',
-                    'deliveryMen', 'totalDelivered', 'companyName', 'companyWebLogo', 'physicalProduct',
-                    'countryRestrictStatus', 'zipRestrictStatus', 'countries', 'zipCodes', 'orderCount', 'isOrderOnlyDigital'));
+                return view(Order::VIEW[VIEW], compact(
+                    'order',
+                    'linkedOrders',
+                    'deliveryMen',
+                    'totalDelivered',
+                    'companyName',
+                    'companyWebLogo',
+                    'physicalProduct',
+                    'countryRestrictStatus',
+                    'zipRestrictStatus',
+                    'countries',
+                    'zipCodes',
+                    'orderCount',
+                    'isOrderOnlyDigital',
+                    'fraudCheckHistory'
+                ));
             } else {
                 $orderCount = $this->orderRepo->getListWhereCount(filters: ['customer_id' => $order['customer_id'], 'order_type' => 'POS']);
                 return view(Order::VIEW_POS[VIEW], compact('order', 'companyName', 'companyWebLogo', 'orderCount'));
@@ -308,7 +322,8 @@ class OrderController extends BaseController
         $order = $this->orderRepo->getFirstWhere(params: ['id' => $id], relations: ['seller', 'shipping', 'details']);
         $vendor = $this->vendorRepo->getFirstWhere(params: ['id' => $order['details']->first()->seller_id]);
         $invoiceSettings = getWebConfig(name: 'invoice_settings');
-        $mpdfView = PdfView::make('admin-views.order.invoice',
+        $mpdfView = PdfView::make(
+            'admin-views.order.invoice',
             compact('order', 'vendor', 'companyPhone', 'companyEmail', 'companyName', 'companyWebLogo', 'invoiceSettings')
         );
         $this->generatePdf(view: $mpdfView, filePrefix: 'order_invoice_', filePostfix: $order['id'], pdfType: 'invoice');
@@ -319,8 +334,7 @@ class OrderController extends BaseController
         DeliveryManTransactionService $deliveryManTransactionService,
         DeliveryManWalletService      $deliveryManWalletService,
         OrderStatusHistoryService     $orderStatusHistoryService,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $order = $this->orderRepo->getFirstWhere(params: ['id' => $request['id']], relations: ['customer', 'seller.shop', 'deliveryMan']);
 
         if (!$order['is_guest'] && !isset($order['customer'])) {
@@ -496,7 +510,6 @@ class OrderController extends BaseController
         if ($fieldName == 'expected_delivery_date') {
             OrderStatusEvent::dispatch('expected_delivery_date', 'delivery_man', $order);
             $message = translate("expected_delivery_date_added_successfully");
-
         } elseif ($fieldName == 'deliveryman_charge') {
             OrderStatusEvent::dispatch('delivery_man_charge', 'delivery_man', $order);
             $message = translate("deliveryman_charge_added_successfully");
@@ -548,4 +561,57 @@ class OrderController extends BaseController
         return back();
     }
 
+    public function checkFraud($order_id)
+    {
+        $order = ModelsOrder::find($order_id);
+
+        $customerPhone = $order->shipping_address_data->phone ?? null;
+        if (!$customerPhone) {
+            return back()->withErrors(['phone' => 'Customer phone not found in shipping address.']);
+        }
+
+        $customerPhone = ltrim(str_replace('+88', '', (string) $customerPhone));
+        $customerPhone = preg_replace('/\s+/', '', $customerPhone);
+
+        $result = CourierFraudCheckerBd::check($customerPhone);
+
+        $steadfast = $result['steadfast'] ?? ['success' => 0, 'cancel' => 0, 'total' => 0];
+        $pathao = $result['pathao'] ?? ['success' => 0, 'cancel' => 0, 'total' => 0];
+        $redx = $result['redx'] ?? ['success' => 0, 'cancel' => 0, 'total' => 0]; // maps to redex_* columns
+
+        $data = [
+            'order_id' => $order->id,
+            'user_id' => $order->user_id ?? 0,
+
+            // Pathao
+            'pathao_total_orders' => (int) ($pathao['total'] ?? 0),
+            'pathao_success_order' => (int) ($pathao['success'] ?? 0),
+            'pathao_cancelled_order' => (int) ($pathao['cancel'] ?? 0),
+
+            // Steadfast
+            'steadfast_total_orders' => (int) ($steadfast['total'] ?? 0),
+            'steadfast_success_order' => (int) ($steadfast['success'] ?? 0),
+            'steadfast_cancelled_order' => (int) ($steadfast['cancel'] ?? 0),
+
+            // Redex
+            'redex_total_orders' => (int) ($redx['total'] ?? 0),
+            'redex_success_order' => (int) ($redx['success'] ?? 0),
+            'redex_cancelled_order' => (int) ($redx['cancel'] ?? 0),
+        ];
+
+        // Totals and success rate
+        $data['total_orders'] = $data['pathao_total_orders'] + $data['steadfast_total_orders'] + $data['redex_total_orders'];
+        $data['success_orders'] = $data['pathao_success_order'] + $data['steadfast_success_order'] + $data['redex_success_order'];
+        $data['cancelled_orders'] = $data['pathao_cancelled_order'] + $data['steadfast_cancelled_order'] + $data['redex_cancelled_order'];
+        $data['success_rate'] = $data['total_orders'] > 0
+            ? (int) round(($data['success_orders'] / $data['total_orders']) * 100)
+            : 0;
+
+        FraudCheckHistory::updateOrCreate(
+            ['order_id' => $order->id],
+            $data
+        );
+
+        return back()->with('status', 'Fraud check saved successfully.');
+    }
 }
