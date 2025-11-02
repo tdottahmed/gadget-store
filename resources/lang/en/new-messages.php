@@ -3291,4 +3291,12 @@ return [
 	"Steadfast Base URL" => "Steadfast Base URL",
 	"Configure your Steadfast Courier API credentials to enable automatic order delivery management." => "Configure your Steadfast Courier API credentials to enable automatic order delivery management.",
 	"Steadfast Courier Integration" => "Steadfast Courier Integration",
+	"Track Consignment" => "Track Consignment",
+	"View Consignment Details" => "View Consignment Details",
+	"Recipient Phone" => "Recipient Phone",
+	"Recipient Address" => "Recipient Address",
+	"Recipient Name" => "Recipient Name",
+	"Last Updated:" => "Last Updated:",
+	"Recipient Information" => "Recipient Information",
+	"Carrier" => "Carrier",
 ];

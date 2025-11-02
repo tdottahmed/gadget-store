@@ -247,7 +247,7 @@ class Order extends Model
         return $this->hasMany(OrderDeliveryVerification::class, 'order_id');
     }
 
-    public function orderShipments(): HasOne
+    public function orderShipment(): HasOne
     {
         return $this->hasOHasOne(OrderShipment::class, 'order_id');
     }
