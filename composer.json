@@ -24,6 +24,7 @@
         "brian2694/laravel-toastr": "^5.56",
         "devrabiul/laravel-toaster-magic": "*",
         "doctrine/dbal": "^3.2",
+        "erag/laravel-pwa": "^1.9",
         "gregwar/captcha": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
