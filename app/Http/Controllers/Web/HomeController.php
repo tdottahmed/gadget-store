@@ -38,9 +38,7 @@ class HomeController extends Controller
         private readonly Review       $review,
         private readonly DealOfTheDay $dealOfTheDay,
         private readonly Banner       $banner,
-    )
-    {
-    }
+    ) {}
 
 
     public function index(): View
@@ -62,6 +60,8 @@ class HomeController extends Controller
         $bestSellProduct = $this->cacheBestSellProductList();
         $recommendedProduct = $this->cacheHomePageRandomSingleProductItem();
         $bannerTypeMainBanner = $this->cacheBannerForTypeMainBanner();
+        $bannerTypeMainSideBannerTop = $this->cacheMainSideBannerTop();
+        $bannerTypeMainSideBannerBottom = $this->cacheMainSideBannerBottom();
         $bannerTypeMainSectionBanner = $this->cacheBannerTable(bannerType: 'Main Section Banner');
         $topVendorsList = ProductManager::getPriorityWiseTopVendorQuery($this->cacheHomePageTopVendorsList());
         $bannerTypeFooterBanner = $this->cacheBannerTable(bannerType: 'Footer Banner', dataLimit: 10);
@@ -92,11 +92,28 @@ class HomeController extends Controller
             ->where('products.status', 1)
             ->where('deal_of_the_days.status', 1)
             ->first();
-        return view(VIEW_FILE_NAMES['home'],
+        return view(
+            VIEW_FILE_NAMES['home'],
             compact(
-                'flashDeal', 'featuredProductsList', 'topRatedProducts', 'bestSellProduct', 'latestProductsList', 'categories', 'brands',
-                'dealOfTheDay', 'topVendorsList', 'homeCategories', 'bannerTypeMainBanner', 'bannerTypeMainSectionBanner',
-                'current_date', 'recommendedProduct', 'bannerTypeFooterBanner', 'newArrivalProducts', 'clearanceSaleProducts'
+                'flashDeal',
+                'featuredProductsList',
+                'topRatedProducts',
+                'bestSellProduct',
+                'latestProductsList',
+                'categories',
+                'brands',
+                'dealOfTheDay',
+                'topVendorsList',
+                'homeCategories',
+                'bannerTypeMainBanner',
+                'bannerTypeMainSectionBanner',
+                'current_date',
+                'recommendedProduct',
+                'bannerTypeFooterBanner',
+                'newArrivalProducts',
+                'clearanceSaleProducts',
+                'bannerTypeMainSideBannerTop',
+                'bannerTypeMainSideBannerBottom'
             )
         );
     }
@@ -181,7 +198,9 @@ class HomeController extends Controller
         });
 
         $bestSellProduct = Product::active()->with([
-            'reviews', 'rating', 'seller.shop',
+            'reviews',
+            'rating',
+            'seller.shop',
             'flashDealProducts.flashDeal',
         ])->withCount(['reviews']);
 
@@ -234,7 +253,6 @@ class HomeController extends Controller
                         $order['id'] = $orderDetails[0]->id;
                         $order['category_id'] = $orderDetails[0]?->category_id ?? null;
                     } catch (\Throwable $th) {
-
                     }
 
                     return $order;
@@ -327,12 +345,34 @@ class HomeController extends Controller
             }
         }
 
-        return view(VIEW_FILE_NAMES['home'],
+        return view(
+            VIEW_FILE_NAMES['home'],
             compact(
-                'flashDeal', 'topRatedProducts', 'bestSellProduct', 'latestProductsList', 'featuredProductsList', 'dealOfTheDay', 'topVendorsList',
-                'homeCategories', 'bannerTypeMainBanner', 'bannerTypeFooterBanner', 'randomSingleProduct', 'decimal_point_settings', 'justForYouProducts', 'moreVendors',
-                'final_category', 'category_slider', 'order_again', 'bannerTypeSidebarBanner', 'bannerTypeMainSectionBanner', 'random_coupon', 'bannerTypeTopSideBanner',
-                'categories', 'topVendorsListSectionShowingStatus', 'clearanceSaleProducts', 'recommendedProduct'
+                'flashDeal',
+                'topRatedProducts',
+                'bestSellProduct',
+                'latestProductsList',
+                'featuredProductsList',
+                'dealOfTheDay',
+                'topVendorsList',
+                'homeCategories',
+                'bannerTypeMainBanner',
+                'bannerTypeFooterBanner',
+                'randomSingleProduct',
+                'decimal_point_settings',
+                'justForYouProducts',
+                'moreVendors',
+                'final_category',
+                'category_slider',
+                'order_again',
+                'bannerTypeSidebarBanner',
+                'bannerTypeMainSectionBanner',
+                'random_coupon',
+                'bannerTypeTopSideBanner',
+                'categories',
+                'topVendorsListSectionShowingStatus',
+                'clearanceSaleProducts',
+                'recommendedProduct'
             )
         );
     }
@@ -445,10 +485,39 @@ class HomeController extends Controller
         ];
 
         $data = [];
-        return view(VIEW_FILE_NAMES['home'],
+        return view(
+            VIEW_FILE_NAMES['home'],
             compact(
-                'activeBrands', 'latestProductsList', 'dealOfTheDay', 'topVendorsList', 'topRatedShops', 'bannerTypeMainBanner', 'mostVisitedCategories', 'randomSingleProduct', 'newSellers', 'bannerTypeSidebarBanner', 'bannerTypeTopSideBanner', 'recentOrderShopList',
-                'categories', 'allProductsColorList', 'allProductsGroupInfo', 'mostSearchingProducts', 'mostDemandedProducts', 'featuredProductsList', 'bannerTypePromoBannerLeft', 'bannerTypePromoBannerMiddleTop', 'bannerTypePromoBannerMiddleBottom', 'bannerTypePromoBannerRight', 'bannerTypePromoBannerBottom', 'currentDate', 'allProductsList', 'flashDeal', 'data', 'clearanceSaleProducts', 'singlePageProductCount', 'recommendedProduct'
+                'activeBrands',
+                'latestProductsList',
+                'dealOfTheDay',
+                'topVendorsList',
+                'topRatedShops',
+                'bannerTypeMainBanner',
+                'mostVisitedCategories',
+                'randomSingleProduct',
+                'newSellers',
+                'bannerTypeSidebarBanner',
+                'bannerTypeTopSideBanner',
+                'recentOrderShopList',
+                'categories',
+                'allProductsColorList',
+                'allProductsGroupInfo',
+                'mostSearchingProducts',
+                'mostDemandedProducts',
+                'featuredProductsList',
+                'bannerTypePromoBannerLeft',
+                'bannerTypePromoBannerMiddleTop',
+                'bannerTypePromoBannerMiddleBottom',
+                'bannerTypePromoBannerRight',
+                'bannerTypePromoBannerBottom',
+                'currentDate',
+                'allProductsList',
+                'flashDeal',
+                'data',
+                'clearanceSaleProducts',
+                'singlePageProductCount',
+                'recommendedProduct'
             )
         );
     }

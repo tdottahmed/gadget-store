@@ -32,9 +32,7 @@ class BannerController extends BaseController
         private readonly BrandRepositoryInterface         $brandRepo,
         private readonly ProductRepositoryInterface       $productRepo,
         private readonly BannerService       $bannerService,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @param Request|null $request
@@ -63,7 +61,7 @@ class BannerController extends BaseController
     public function add(BannerAddRequest $request): RedirectResponse
     {
         $data = $this->bannerService->getProcessedData(request: $request);
-        $this->bannerRepo->add(data:$data);
+        $this->bannerRepo->add(data: $data);
         ToastMagic::success(translate('banner_added_successfully'));
         return redirect()->route('admin.banner.list');
     }
@@ -71,19 +69,19 @@ class BannerController extends BaseController
     public function getUpdateView($id): View
     {
         $bannerTypes = $this->bannerService->getBannerTypes();
-        $banner = $this->bannerRepo->getFirstWhere(params: ['id'=>$id]);
-        $categories = $this->categoryRepo->getListWhere(filters: ['position'=>0], dataLimit: 'all');
-        $shops = $this->shopRepo->getListWithScope(scope:'active', dataLimit: 'all');
+        $banner = $this->bannerRepo->getFirstWhere(params: ['id' => $id]);
+        $categories = $this->categoryRepo->getListWhere(filters: ['position' => 0], dataLimit: 'all');
+        $shops = $this->shopRepo->getListWithScope(scope: 'active', dataLimit: 'all');
         $brands = $this->brandRepo->getListWhere(dataLimit: 'all');
-        $products = $this->productRepo->getListWithScope(scope:'active', dataLimit: 'all');
-        return view('admin-views.banner.edit', compact('banner', 'categories','shops', 'brands', 'products', 'bannerTypes'));
+        $products = $this->productRepo->getListWithScope(scope: 'active', dataLimit: 'all');
+        return view('admin-views.banner.edit', compact('banner', 'categories', 'shops', 'brands', 'products', 'bannerTypes'));
     }
 
     public function update(BannerUpdateRequest $request, $id): RedirectResponse
     {
-        $banner = $this->bannerRepo->getFirstWhere(params: ['id'=>$id]);
+        $banner = $this->bannerRepo->getFirstWhere(params: ['id' => $id]);
         $data = $this->bannerService->getProcessedData(request: $request, image: $banner['photo']);
-        $this->bannerRepo->update(id:$banner['id'], data:$data);
+        $this->bannerRepo->update(id: $banner['id'], data: $data);
         ToastMagic::success(translate('banner_updated_successfully'));
         return redirect()->route('admin.banner.list');
     }
@@ -91,7 +89,7 @@ class BannerController extends BaseController
     public function updateStatus(Request $request): JsonResponse
     {
         $status = $request->get('status', 0);
-        $this->bannerRepo->update(id:$request['id'], data:['published'=>$status]);
+        $this->bannerRepo->update(id: $request['id'], data: ['published' => $status]);
         return response()->json([
             'message' => $status == 1 ? translate("banner_published_successfully") : translate("banner_unpublished_successfully"),
         ]);
