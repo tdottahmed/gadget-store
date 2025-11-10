@@ -417,6 +417,29 @@ trait CacheManagerTrait
         });
     }
 
+    // main side banner for default theme
+    public function cacheMainSideBannerTop()
+    {
+        $themeName = theme_root_path() ?? 'default';
+        $cacheKey = 'cache_main_side_banner_' . ($themeName);
+        $this->cacheBannerAllTypeKeys(cacheKey: $cacheKey);
+
+        return Cache::remember($cacheKey, CACHE_FOR_3_HOURS, function () use ($themeName) {
+            return Banner::where(['banner_type' => 'Main Side Banner top', 'published' => 1, 'theme' => $themeName])->latest()->first();
+        });
+    }
+    // main side banner for default theme
+    public function cacheMainSideBannerBottom()
+    {
+        $themeName = theme_root_path() ?? 'default';
+        $cacheKey = 'cache_main_side_banner_bottom_' . ($themeName);
+        $this->cacheBannerAllTypeKeys(cacheKey: $cacheKey);
+        return Cache::remember($cacheKey, CACHE_FOR_3_HOURS, function () use ($themeName) {
+            return Banner::where(['banner_type' => 'Main Side Banner bottom', 'published' => 1, 'theme' => $themeName])->latest()->first();
+        });
+    }
+
+
     public function cacheBannerForTypeSidebarBanner()
     {
         $themeName = theme_root_path() ?? 'default';

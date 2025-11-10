@@ -11,9 +11,9 @@ class BannerService
     public function getProcessedData(object $request, string $image = null): array
     {
         if ($image) {
-            $imageName = $request->file('image') ? $this->update(dir:'banner/', oldImage:$image, format: 'webp', image: $request->file('image')) : $image;
-        }else {
-            $imageName = $this->upload(dir:'banner/', format: 'webp', image: $request->file('image'));
+            $imageName = $request->file('image') ? $this->update(dir: 'banner/', oldImage: $image, format: 'webp', image: $request->file('image')) : $image;
+        } else {
+            $imageName = $this->upload(dir: 'banner/', format: 'webp', image: $request->file('image'));
         }
 
         return [
@@ -38,10 +38,11 @@ class BannerService
                 "Main Banner" => translate('main_Banner'),
                 "Popup Banner" => translate('popup_Banner'),
                 "Footer Banner" => translate('footer_Banner'),
-                "Main Section Banner" => translate('main_Section_Banner')
+                "Main Section Banner" => translate('main_Section_Banner'),
+                "Main Side Banner top" => translate('main_Side_Banner_top'),
+                "Main Side Banner bottom" => translate('main_Side_Banner_bottom')
             ];
-
-        }elseif (theme_root_path() == 'theme_aster') {
+        } elseif (theme_root_path() == 'theme_aster') {
             $bannerTypes = [
                 "Main Banner" => translate('main_Banner'),
                 "Popup Banner" => translate('popup_Banner'),
@@ -51,7 +52,7 @@ class BannerService
                 "Sidebar Banner" => translate('sidebar_Banner'),
                 "Top Side Banner" => translate('top_Side_Banner'),
             ];
-        }elseif (theme_root_path() == 'theme_fashion') {
+        } elseif (theme_root_path() == 'theme_fashion') {
             $bannerTypes = [
                 "Main Banner" => translate('main_Banner'),
                 "Popup Banner" => translate('popup_Banner'),
@@ -65,5 +66,4 @@ class BannerService
 
         return $bannerTypes;
     }
-
 }
