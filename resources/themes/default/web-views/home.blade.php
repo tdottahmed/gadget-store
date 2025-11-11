@@ -36,7 +36,7 @@
     @if ($flashDeal['flashDeal'] && $flashDeal['flashDealProducts'] && count($flashDeal['flashDealProducts']) > 0)
       @include('web-views.partials._flash-deal', ['decimal_point_settings' => $decimalPointSettings])
     @endif
-    @if ($featuredProductsList->count() > 0)
+    {{-- @if ($featuredProductsList->count() > 0)
       <div class="rtl px-md-3 container px-0 pt-4">
         <div class="__inline-62 pt-3">
           <h2 class="feature-product-title web-text-primary letter-spacing-0 mb-0 mt-0">
@@ -74,7 +74,7 @@
           </div>
         </div>
       </div>
-    @endif
+    @endif --}}
 
     @if (getFeaturedDealsProductList() && count(getFeaturedDealsProductList()) > 0)
       <section class="featured_deal">
@@ -116,6 +116,42 @@
     @include('web-views.partials._deal-of-the-day', ['decimal_point_settings' => $decimalPointSettings])
     @include('web-views.partials._all-products', ['decimal_point_settings' => $decimalPointSettings])
     @php($businessMode = getWebConfig(name: 'business_mode'))
+
+    @if ($web_config['brand_setting'] && $brands->count() > 0)
+      <section class="rtl container pt-4">
+
+        <div class="section-header align-items-center mb-1">
+          <h2 class="__text-22px mb-0 font-bold text-black">
+            <span> {{ translate('brands') }}</span>
+          </h2>
+          <div class="__mr-2px">
+            <a class="text-capitalize view-all-text web-text-primary" href="{{ route('brands') }}">
+              {{ translate('view_all') }}
+              <i
+                 class="czi-arrow-{{ Session::get('direction') === 'rtl' ? 'left mr-1 ml-n1 mt-1 float-left' : 'right ml-1 mr-n1' }}"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-sm-3 brand-slider mb-3">
+          <div class="owl-carousel owl-theme brands-slider p-2">
+            @php($brandCount = 0)
+            @foreach ($brands as $brand)
+              @if ($brandCount < 15)
+                <div class="text-center">
+                  <a href="{{ route('products', ['brand_id' => $brand['id'], 'data_from' => 'brand', 'page' => 1]) }}"
+                     class="__brand-item">
+                    <img loading="lazy" alt="{{ $brand->image_alt_text }}"
+                         src="{{ getStorageImages(path: $brand->image_full_url, type: 'brand') }}">
+                  </a>
+                </div>
+              @endif
+              @php($brandCount++)
+            @endforeach
+          </div>
+        </div>
+      </section>
+    @endif
     @if ($businessMode == 'multi' && count($topVendorsList) > 0)
       @include('web-views.partials._top-sellers')
     @endif
@@ -190,42 +226,6 @@
           @endforeach
         </div>
       </div>
-    @endif
-
-    @if ($web_config['brand_setting'] && $brands->count() > 0)
-      <section class="rtl container pt-4">
-
-        <div class="section-header align-items-center mb-1">
-          <h2 class="__text-22px mb-0 font-bold text-black">
-            <span> {{ translate('brands') }}</span>
-          </h2>
-          <div class="__mr-2px">
-            <a class="text-capitalize view-all-text web-text-primary" href="{{ route('brands') }}">
-              {{ translate('view_all') }}
-              <i
-                 class="czi-arrow-{{ Session::get('direction') === 'rtl' ? 'left mr-1 ml-n1 mt-1 float-left' : 'right ml-1 mr-n1' }}"></i>
-            </a>
-          </div>
-        </div>
-
-        <div class="mt-sm-3 brand-slider mb-3">
-          <div class="owl-carousel owl-theme brands-slider p-2">
-            @php($brandCount = 0)
-            @foreach ($brands as $brand)
-              @if ($brandCount < 15)
-                <div class="text-center">
-                  <a href="{{ route('products', ['brand_id' => $brand['id'], 'data_from' => 'brand', 'page' => 1]) }}"
-                     class="__brand-item">
-                    <img loading="lazy" alt="{{ $brand->image_alt_text }}"
-                         src="{{ getStorageImages(path: $brand->image_full_url, type: 'brand') }}">
-                  </a>
-                </div>
-              @endif
-              @php($brandCount++)
-            @endforeach
-          </div>
-        </div>
-      </section>
     @endif
 
     {{-- @if ($homeCategories->count() > 0)
