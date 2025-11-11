@@ -53,7 +53,7 @@
 
     .side-banner-item img {
       width: 100%;
-      height: 100%;
+      height: 100vh !important;
       object-fit: cover;
     }
 
