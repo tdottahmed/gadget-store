@@ -23,7 +23,7 @@
   <script>
     $(function() {
       let skip = 0;
-      const limit = 12;
+      const limit = 28;
       const $container = $('#product-list');
       const $button = $('#load-more-btn');
       const $loader = $('#loading-indicator');

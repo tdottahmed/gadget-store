@@ -19,7 +19,7 @@
         </div> --}}
         <div class="d-none d-md-block mr-2 text-nowrap">
           <a class="topbar-link d-none d-md-inline-block direction-ltr" href="tel:{{ $web_config['phone'] }}">
-            <i class="fa fa-phone"></i> {{ $web_config['phone'] }}
+
           </a>
         </div>
       </div>
