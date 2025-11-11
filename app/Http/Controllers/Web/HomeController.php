@@ -23,6 +23,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -520,5 +521,37 @@ class HomeController extends Controller
                 'recommendedProduct'
             )
         );
+    }
+
+    public function fetchProducts(Request $request)
+    {
+        $skip = (int) $request->input('skip', 0);
+        $limit = (int) $request->input('limit', 12);
+        $decimal_point_settings = !empty(getWebConfig(name: 'decimal_point_settings')) ? getWebConfig(name: 'decimal_point_settings') : 0;
+
+        $products = Product::active()
+            ->with(['category', 'clearanceSale' => function ($query) {
+                return $query->active();
+            }])
+            ->withCount('reviews')
+            ->withSum('orderDetails', 'qty')
+            ->withSum('tags', 'visit_count')
+            ->inRandomOrder()
+            ->skip($skip)
+            ->take($limit)
+            ->get();
+
+        $html = '';
+        foreach ($products as $product) {
+            $html .= view('web-views.partials._product-card-3', [
+                'product' => $product,
+                'decimal_point_settings' => $decimal_point_settings,
+            ])->render();
+        }
+
+        return response()->json([
+            'html' => $html,
+            'hasMore' => $products->count() === $limit,
+        ]);
     }
 }

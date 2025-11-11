@@ -2,7 +2,7 @@
   <section class="bg-transparent py-3">
     <div class="position-relative container">
       <div class="row align-items-stretch">
-        <div class="col-12 col-lg-8 col-xl-8">
+        <div class="col-12 col-lg-9 col-xl-9">
           <div class="{{ Session::get('direction') === 'rtl' ? 'pe-xl-2' : 'ps-xl-2' }}">
             <div class="owl-carousel owl-theme hero-slider h-100"
                  data-loop="{{ count($bannerTypeMainBanner) > 1 ? 1 : 0 }}">
@@ -16,7 +16,7 @@
           </div>
         </div>
         @if ($bannerTypeMainSideBannerTop || $bannerTypeMainSideBannerBottom)
-          <div class="col-12 col-lg-4 col-xl-4 d-flex flex-column side-banner-wrapper">
+          <div class="col-12 col-lg-3 col-xl-3 d-flex flex-column side-banner-wrapper">
             @if ($bannerTypeMainSideBannerTop)
               <a href="{{ $bannerTypeMainSideBannerTop['url'] }}" target="_blank" class="d-block side-banner-item mb-3">
                 <img class="w-100 h-100 object-fit-cover rounded"

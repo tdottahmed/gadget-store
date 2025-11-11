@@ -85,6 +85,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
 
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
+        Route::get('fetch-products', 'fetchProducts')->name('products.fetch');
     });
 
     Route::controller(WebController::class)->group(function () {
