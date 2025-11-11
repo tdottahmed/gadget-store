@@ -3409,4 +3409,6 @@ return [
 	"loading..." => "Loading...",
 	"loading_products" => "Loading products",
 	"browse_randomly_selected_products" => "Browse randomly selected products",
+	"oR_SHARE" => "OR SHARE",
+	"your_personal_code" => "Your personal code",
 ];
