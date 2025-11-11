@@ -12,11 +12,11 @@
   <div class="topbar">
     <div class="container">
       <div>
-        <div class="topbar-text dropdown d-md-none ms-auto">
+        {{-- <div class="topbar-text dropdown d-md-none ms-auto">
           <a class="topbar-link direction-ltr" href="tel: {{ $web_config['phone'] }}">
             <i class="fa fa-phone"></i> {{ $web_config['phone'] }}
           </a>
-        </div>
+        </div> --}}
         <div class="d-none d-md-block mr-2 text-nowrap">
           <a class="topbar-link d-none d-md-inline-block direction-ltr" href="tel:{{ $web_config['phone'] }}">
             <i class="fa fa-phone"></i> {{ $web_config['phone'] }}
@@ -43,33 +43,47 @@
           </div>
         @endif
 
-        <div class="topbar-text dropdown disable-autohide __language-bar text-capitalize">
-          <a class="topbar-link dropdown-toggle" href="#" data-toggle="dropdown">
-            @foreach ($web_config['language'] as $data)
-              @if ($data['code'] == getDefaultLanguage())
-                <img class="mr-2" width="20"
-                     src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
-                     alt="{{ $data['name'] }}">
-                {{ $data['name'] }}
-              @endif
-            @endforeach
-          </a>
-          <ul
-              class="text-align-direction dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
-            @foreach ($web_config['language'] as $key => $data)
-              @if ($data['status'] == 1)
-                <li class="change-language" data-action="{{ route('change-language') }}"
-                    data-language-code="{{ $data['code'] }}">
-                  <a class="dropdown-item pb-1" href="javascript:">
-                    <img class="mr-2" width="20"
-                         src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
-                         alt="{{ $data['name'] }}" />
-                    <span class="text-capitalize">{{ $data['name'] }}</span>
-                  </a>
-                </li>
-              @endif
-            @endforeach
-          </ul>
+        <div
+             class="topbar-text dropdown disable-autohide __language-bar text-capitalize d-flex align-items-center gap-2">
+          <div>
+            <a href="{{ route('vendor.auth.registration.index') }}" class="topbar-link mr-2">
+              {{ __('Become Seller') }}
+            </a>
+          </div>
+          <div>
+            <a href="tel:{{ $web_config['phone'] }}" class="topbar-link mr-2">
+              <i class="fa fa-phone"></i>
+              Help & support
+            </a>
+          </div>
+          <div>
+            <a class="topbar-link dropdown-toggle" href="#" data-toggle="dropdown">
+              @foreach ($web_config['language'] as $data)
+                @if ($data['code'] == getDefaultLanguage())
+                  <img class="mr-2" width="20"
+                       src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
+                       alt="{{ $data['name'] }}">
+                  {{ $data['name'] }}
+                @endif
+              @endforeach
+            </a>
+            <ul
+                class="text-align-direction dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
+              @foreach ($web_config['language'] as $key => $data)
+                @if ($data['status'] == 1)
+                  <li class="change-language" data-action="{{ route('change-language') }}"
+                      data-language-code="{{ $data['code'] }}">
+                    <a class="dropdown-item pb-1" href="javascript:">
+                      <img class="mr-2" width="20"
+                           src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
+                           alt="{{ $data['name'] }}" />
+                      <span class="text-capitalize">{{ $data['name'] }}</span>
+                    </a>
+                  </li>
+                @endif
+              @endforeach
+            </ul>
+          </div>
         </div>
       </div>
     </div>
