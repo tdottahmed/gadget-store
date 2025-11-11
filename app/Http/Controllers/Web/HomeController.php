@@ -522,7 +522,7 @@ class HomeController extends Controller
             )
         );
     }
-
+    
     public function fetchProducts(Request $request)
     {
         $skip = (int) $request->input('skip', 0);

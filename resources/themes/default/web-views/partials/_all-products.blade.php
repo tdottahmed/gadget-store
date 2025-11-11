@@ -6,14 +6,12 @@
         <p class="text-muted small mb-0">{{ translate('browse_randomly_selected_products') }}</p>
       </div>
     </div>
-
     <div id="product-list" class="row g-3">
       <div id="loading-indicator" class="col-12 py-5 text-center">
         <div class="spinner-border text-primary" role="status"></div>
         <p class="text-secondary mb-0 mt-3">{{ translate('loading_products') }}...</p>
       </div>
     </div>
-
     <div class="mt-4 text-center">
       <button id="load-more-btn" class="btn btn-outline-primary d-none rounded-pill px-4 py-2 shadow-sm">
         {{ translate('load_more') }}
@@ -50,6 +48,10 @@
             $container.append(data.html);
             skip += limit;
 
+            if (typeof renderQuickViewFunction === 'function') {
+              renderQuickViewFunction();
+            }
+
             if (data.hasMore) {
               $button.removeClass('d-none').prop('disabled', false).text('{{ translate('load_more') }}');
             } else {
@@ -68,10 +70,8 @@
         });
       }
 
-      // Initial load
       fetchProducts(true);
 
-      // Load more click
       $button.on('click', function() {
         fetchProducts();
       });
