@@ -23,11 +23,19 @@
   <div class="__inline-61">
     @php($decimalPointSettings = !empty(getWebConfig(name: 'decimal_point_settings')) ? getWebConfig(name: 'decimal_point_settings') : 0)
 
-    @include('web-views.partials._home-top-slider',['bannerTypeMainBanner'=>$bannerTypeMainBanner])
+    @include('web-views.partials._home-top-slider', ['bannerTypeMainBanner' => $bannerTypeMainBanner])
+    @if (isset($bannerTypeMainSectionBanner))
+      <div class="rtl px-md-3 container px-0">
+        <a href="{{ $bannerTypeMainSectionBanner->url }}" target="_blank" class="d-block cursor-pointer">
+          <img loading="lazy" class="d-block footer_banner_img __inline-63" alt=""
+               src="{{ getStorageImages(path: $bannerTypeMainSectionBanner->photo_full_url, type: 'wide-banner') }}">
+        </a>
+      </div>
+    @endif
+    @include('web-views.partials._category-section-home')
     @if ($flashDeal['flashDeal'] && $flashDeal['flashDealProducts'] && count($flashDeal['flashDealProducts']) > 0)
       @include('web-views.partials._flash-deal', ['decimal_point_settings' => $decimalPointSettings])
     @endif
-
     @if ($featuredProductsList->count() > 0)
       <div class="rtl px-md-3 container px-0 pt-4">
         <div class="__inline-62 pt-3">
@@ -68,8 +76,6 @@
       </div>
     @endif
 
-    @include('web-views.partials._category-section-home')
-
     @if (getFeaturedDealsProductList() && count(getFeaturedDealsProductList()) > 0)
       <section class="featured_deal">
         <div class="container">
@@ -107,23 +113,15 @@
         'clearanceSaleProducts' => $clearanceSaleProducts,
     ])
 
-    @if (isset($bannerTypeMainSectionBanner))
-      <div class="rtl px-md-3 container px-0 pt-4">
-        <a href="{{ $bannerTypeMainSectionBanner->url }}" target="_blank" class="d-block cursor-pointer">
-          <img loading="lazy" class="d-block footer_banner_img __inline-63" alt=""
-               src="{{ getStorageImages(path: $bannerTypeMainSectionBanner->photo_full_url, type: 'wide-banner') }}">
-        </a>
-      </div>
-    @endif
-
+    @include('web-views.partials._deal-of-the-day', ['decimal_point_settings' => $decimalPointSettings])
+    @include('web-views.partials._all-products', ['decimal_point_settings' => $decimalPointSettings])
     @php($businessMode = getWebConfig(name: 'business_mode'))
     @if ($businessMode == 'multi' && count($topVendorsList) > 0)
       @include('web-views.partials._top-sellers')
     @endif
 
-    @include('web-views.partials._deal-of-the-day', ['decimal_point_settings' => $decimalPointSettings])
 
-    <section class="new-arrival-section">
+    {{-- <section class="new-arrival-section">
 
       @if ($newArrivalProducts->count() > 0)
         <div class="rtl container mt-4">
@@ -165,7 +163,7 @@
           @endif
         </div>
       </div>
-    </section>
+    </section> --}}
 
 
     @if (count($bannerTypeFooterBanner) > 1)
@@ -230,13 +228,13 @@
       </section>
     @endif
 
-    @if ($homeCategories->count() > 0)
+    {{-- @if ($homeCategories->count() > 0)
       @foreach ($homeCategories as $category)
         @include('web-views.partials._category-wise-product', [
             'decimal_point_settings' => $decimalPointSettings,
         ])
       @endforeach
-    @endif
+    @endif --}}
 
     @php($companyReliability = getWebConfig(name: 'company_reliability'))
     @if ($companyReliability != null)
