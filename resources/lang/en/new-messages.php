@@ -3411,4 +3411,7 @@ return [
 	"browse_randomly_selected_products" => "Browse randomly selected products",
 	"oR_SHARE" => "OR SHARE",
 	"your_personal_code" => "Your personal code",
+	"Become_a_Vendor" => "Become a Vendor",
+	"Seller Zone" => "Seller Zone",
+	"Special Offers" => "Special Offers",
 ];
