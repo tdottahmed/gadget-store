@@ -45,11 +45,18 @@
 
         <div
              class="topbar-text dropdown disable-autohide __language-bar text-capitalize d-flex align-items-center gap-2">
-          <div>
-            <a href="{{ route('vendor.auth.registration.index') }}" class="topbar-link mr-2">
-              {{ __('Become Seller') }}
-            </a>
-          </div>
+          @if ($businessMode == 'multi' && getWebConfig(name: 'seller_registration'))
+            <div>
+              <a href="{{ route('vendor.auth.login') }}" class="topbar-link mr-2">
+                {{ __('Seller Login') }}
+              </a>
+            </div>
+            <div>
+              <a href="{{ route('vendor.auth.registration.index') }}" class="topbar-link mr-2">
+                {{ __('Become Seller') }}
+              </a>
+            </div>
+          @endif
           <div>
             <a href="tel:{{ $web_config['phone'] }}" class="topbar-link mr-2">
               <i class="fa fa-phone"></i>
@@ -539,30 +546,6 @@
                   <i class="fa fa-user-circle mr-2"></i>{{ translate('sign_up') }}
                 </a>
               </li>
-            @endif
-            @if ($businessMode == 'multi')
-              @if (getWebConfig(name: 'seller_registration'))
-                <li class="nav-item">
-                  <div class="dropdown">
-                    <button class="btn dropdown-toggle text-max-md-dark text-capitalize ps-2 text-white"
-                            type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                      {{ translate('vendor_zone') }}
-                    </button>
-                    <div class="dropdown-menu __dropdown-menu-3 __min-w-165px text-align-direction"
-                         aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item text-capitalize text-nowrap"
-                         href="{{ route('vendor.auth.registration.index') }}">
-                        {{ translate('become_a_vendor') }}
-                      </a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item text-nowrap" href="{{ route('vendor.auth.login') }}">
-                        {{ translate('vendor_login') }}
-                      </a>
-                    </div>
-                  </div>
-                </li>
-              @endif
             @endif
           </ul>
           @if (auth('customer')->check())
