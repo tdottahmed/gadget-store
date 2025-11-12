@@ -45,18 +45,16 @@
 
         <div
              class="topbar-text dropdown disable-autohide __language-bar text-capitalize d-flex align-items-center gap-2">
-          @if ($businessMode == 'multi' && getWebConfig(name: 'seller_registration'))
-            <div>
-              <a href="{{ route('vendor.auth.login') }}" class="topbar-link mr-2">
-                {{ __('Seller Login') }}
-              </a>
-            </div>
-            <div>
-              <a href="{{ route('vendor.auth.registration.index') }}" class="topbar-link mr-2">
-                {{ __('Become Seller') }}
-              </a>
-            </div>
-          @endif
+          <div>
+            <a href="{{ route('vendor.auth.login') }}" class="topbar-link mr-2">
+              {{ __('Seller Login') }}
+            </a>
+          </div>
+          <div>
+            <a href="{{ route('vendor.auth.registration.index') }}" class="topbar-link mr-2">
+              {{ __('Become Seller') }}
+            </a>
+          </div>
           <div>
             <a href="tel:{{ $web_config['phone'] }}" class="topbar-link mr-2">
               <i class="fa fa-phone"></i>
