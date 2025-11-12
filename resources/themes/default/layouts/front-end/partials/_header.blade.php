@@ -45,31 +45,13 @@
 
         <div
              class="topbar-text dropdown disable-autohide __language-bar text-capitalize d-flex align-items-center gap-2">
-          <div>
+          <div class="px-2">
             <a href="{{ route('flash-deals', [$web_config['flash_deals'] ? $web_config['flash_deals']['id'] : 0]) }}"
                class="topbar-link">
               {{ translate('Special Offers') }}
             </a>
           </div>
-          <li class="nav-item dropdown d-none d-md-block">
-            <div class="dropdown">
-              <button class="btn dropdown-toggle text-max-md-dark text-capitalize" type="button"
-                      id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ translate('Seller Zone') }}
-              </button>
-              <div class="dropdown-menu __dropdown-menu-3 __min-w-165px text-align-direction"
-                   aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item text-capitalize text-nowrap"
-                   href="{{ route('vendor.auth.registration.index') }}">
-                  {{ translate('Become_a_Vendor') }}
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-nowrap" href="{{ route('vendor.auth.login') }}">
-                  {{ translate('vendor_login') }}
-                </a>
-              </div>
-            </div>
-          </li>
+
           <div>
             <a href="tel:{{ $web_config['phone'] }}" class="topbar-link mr-2">
               <i class="fa fa-phone"></i>
@@ -560,6 +542,25 @@
                 </a>
               </li>
             @endif
+            <li class="nav-item dropdown">
+              <div class="dropdown">
+                <button class="btn dropdown-toggle text-max-md-dark text-capitalize text-white" type="button"
+                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ translate('Seller Zone') }}
+                </button>
+                <div class="dropdown-menu __dropdown-menu-3 __min-w-165px text-align-direction"
+                     aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item text-capitalize text-nowrap"
+                     href="{{ route('vendor.auth.registration.index') }}">
+                    {{ translate('Become_a_Vendor') }}
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item text-nowrap" href="{{ route('vendor.auth.login') }}">
+                    {{ translate('vendor_login') }}
+                  </a>
+                </div>
+              </div>
+            </li>
           </ul>
           @if (auth('customer')->check())
             <div class="logout-btn d-md-none mt-auto">
