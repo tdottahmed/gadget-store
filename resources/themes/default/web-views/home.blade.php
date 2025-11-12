@@ -25,7 +25,7 @@
 
     @include('web-views.partials._home-top-slider', ['bannerTypeMainBanner' => $bannerTypeMainBanner])
     @if (isset($bannerTypeMainSectionBanner))
-      <div class="rtl px-md-3 container px-0">
+      <div class="rtl container px-0 px-3">
         <a href="{{ $bannerTypeMainSectionBanner->url }}" target="_blank" class="d-block cursor-pointer">
           <img loading="lazy" class="d-block footer_banner_img __inline-63" alt=""
                src="{{ getStorageImages(path: $bannerTypeMainSectionBanner->photo_full_url, type: 'wide-banner') }}">
