@@ -3432,4 +3432,10 @@ return [
 	"Withdrawal Method" => "Withdrawal Method",
 	"Affiliate Withdrawal Account Setup" => "Affiliate Withdrawal Account Setup",
 	"you_have_not_added_product_to_wishlist_yet" => "You have not added product to wishlist yet",
+	"Request for Withdrawal" => "Request for Withdrawal",
+	"Please fill the amount to be withdrawn" => "Please fill the amount to be withdrawn",
+	"Funds withdrawal" => "Funds withdrawal",
+	"You can withdraw up to" => "You can withdraw up to",
+	"Withdraw Amount" => "Withdraw Amount",
+	"withdrawal" => "Withdrawal",
 ];

@@ -14,11 +14,13 @@ class WalletTransaction extends Model
         'user_id' => 'integer',
         'credit' => 'float',
         'debit' => 'float',
-        'admin_bonus'=>'float',
-        'balance'=>'float',
-        'reference'=>'string',
-        'created_at'=>'string'
+        'admin_bonus' => 'float',
+        'balance' => 'float',
+        'reference' => 'string',
+        'created_at' => 'string'
     ];
+
+    protected $guarded = [];
 
     public function user()
     {
