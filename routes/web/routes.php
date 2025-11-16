@@ -235,6 +235,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
         Route::get('wallet', 'index')->name('wallet')->middleware('customer');
         Route::get('affiliate-account-setup', 'accountSetup')->name('affiliate.account-setup')->middleware('customer');
         Route::post('affiliate-account-setup', 'updateAffiliateAccountSetup')->name('affiliate.account-setup.update');
+        Route::post('withdrawal', 'withdraw')->name('affiliate.withdraw');
     });
 
     Route::controller(UserLoyaltyController::class)->group(function () {

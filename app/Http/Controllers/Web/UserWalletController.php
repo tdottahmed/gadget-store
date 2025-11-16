@@ -10,8 +10,11 @@ use App\Models\WalletTransaction;
 use App\Utils\Helpers;
 use App\Models\AddFundBonusCategories;
 use App\Models\AffiliateWithdrawAccount;
+use App\Models\AffiliateWithdrawRequest;
+use App\Models\User;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 use function App\Utils\payment_gateways;
 
@@ -156,7 +159,6 @@ class UserWalletController extends Controller
             'withdraw_method' => 'required|string',
             'full_name' => 'required|string|max:255',
             'phone' => 'required|string',
-
             'wallet_number' => 'nullable|string',
             'bank_name' => 'nullable|string',
             'bank_account_no' => 'nullable|string',
@@ -184,5 +186,57 @@ class UserWalletController extends Controller
         }
 
         return back()->with('success', 'Withdrawal account updated successfully');
+    }
+
+    public function withdraw(Request $request)
+    {
+        $request->validate([
+            'withdraw_amount' => 'required|numeric|min:1|max:' . $this->getWalletBalance(),
+        ]);
+
+        $user = auth('customer')->user();
+        $affiliateWithdrawAccount = AffiliateWithdrawAccount::where('user_id', $user->id)->first();
+
+        if (!$affiliateWithdrawAccount) {
+            return back()->with('error', 'Please set up your withdrawal account first.');
+        }
+
+        AffiliateWithdrawRequest::create([
+            'user_id' => $user->id,
+            'amount' => $request->withdraw_amount,
+            'method' => $affiliateWithdrawAccount->withdraw_method,
+            'account_details' => $affiliateWithdrawAccount->toArray(),
+            'status' => 'pending',
+        ]);
+
+        $this->updateWalletTransaction($user->id, $request->withdraw_amount, 'withdrawal');
+
+        return back()->with('success', 'Withdrawal request sent successfully');
+    }
+
+    private function updateWalletTransaction($userId, $amount, $transactionType)
+    {
+        $user = User::find($userId);
+        WalletTransaction::create([
+            'user_id' => $userId,
+            'debit' => $amount,
+            'transaction_id' => Str::uuid(),
+            'credit' => 0,
+            'transaction_type' => $transactionType,
+            'reference' => 'customer_withdrawal',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        $user->decrement('wallet_balance', $amount);
+    }
+
+    private function getWalletBalance()
+    {
+        $user = auth('customer')->user();
+        $walletBalance = $user->wallet_balance;
+        if ($walletBalance < 0) {
+            $walletBalance = 0;
+        }
+        return $walletBalance;
     }
 }
