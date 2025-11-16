@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdvancedSearchController;
+use App\Http\Controllers\Admin\AffiliateController;
 use App\Http\Controllers\Admin\BusinessSettings\WebsiteSetupController;
 use App\Http\Controllers\Admin\ExpenseTransactionReportController;
 use App\Http\Controllers\Admin\Promotion\ClearanceSaleController;
@@ -449,7 +450,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::get('vendor-earning-excel-export', 'exportVendorEarning')->name('vendor-earning-excel-export');
             Route::any('set-date', 'set_date')->name('set-date');
         });
-
         Route::controller(OrderReportController::class)->group(function () {
             Route::get('order', 'order_list')->name('order');
             Route::get('order-report-excel', 'orderReportExportExcel')->name('order-report-excel');
@@ -464,6 +464,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
         Route::controller(VendorProductSaleReportController::class)->group(function () {
             Route::get('vendor-report', 'vendorReport')->name('vendor-report');
             Route::get('vendor-report-export', 'exportVendorReport')->name('vendor-report-export');
+        });
+    });
+    // Affiliate Report
+    Route::group(['prefix' => 'report', 'as' => 'report.', 'middleware' => ['module:report']], function () {
+        Route::controller(AffiliateController::class)->group(function () {
+            Route::get('affiliate', 'index')->name('affiliate');
+            Route::get('affiliate/pending', 'pending')->name('affiliate.pending');
+            Route::get('affiliate/approved', 'approved')->name('affiliate.approved');
+            Route::get('affiliate/{id}/approve', 'approve')->name('affiliate.approve');
+            Route::get('affiliate/{id}/reject', 'reject')->name('affiliate.reject');
         });
     });
 

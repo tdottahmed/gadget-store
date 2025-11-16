@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\AffiliateWithdrawRequest;
+use App\Models\WithdrawalMethod;
+use Devrabiul\ToastMagic\Facades\ToastMagic;
+use Illuminate\Http\Request;
+
+class AffiliateController extends Controller
+{
+    public function index()
+    {
+        $withdrawals = AffiliateWithdrawRequest::with('user')->latest()->get();
+
+        return view('admin-views.affiliate.index', [
+            'withdrawals' => $withdrawals,
+            'stats' => $this->stats(),
+        ]);
+    }
+
+    public function pending()
+    {
+        $withdrawals = AffiliateWithdrawRequest::where('status', 'pending')->with('user')->latest()->get();
+
+        return view('admin-views.affiliate.index', [
+            'withdrawals' => $withdrawals,
+            'stats' => $this->stats(),
+        ]);
+    }
+
+    public function approved()
+    {
+        $withdrawals = AffiliateWithdrawRequest::where('status', 'approved')->with('user')->latest()->get();
+
+        return view('admin-views.affiliate.index', [
+            'withdrawals' => $withdrawals,
+            'stats' => $this->stats(),
+        ]);
+    }
+
+    private function stats()
+    {
+        return [
+            'total' => AffiliateWithdrawRequest::sum('amount'),
+            'pending' => AffiliateWithdrawRequest::where('status', 'pending')->count(),
+            'approved' => AffiliateWithdrawRequest::where('status', 'approved')->count(),
+        ];
+    }
+
+    public function approve($id)
+    {
+        $withdrawal = AffiliateWithdrawRequest::find($id);
+        $withdrawal->status = 'approved';
+        $withdrawal->save();
+
+        ToastMagic::success('Withdrawal request approved successfully');
+        return redirect()->route('admin.report.affiliate.pending');
+    }
+
+    public function reject($id)
+    {
+        $withdrawal = AffiliateWithdrawRequest::find($id);
+        $withdrawal->status = 'rejected';
+        $withdrawal->save();
+        ToastMagic::success('Withdrawal request rejected successfully');
+        return redirect()->route('admin.report.affiliate.pending');
+    }
+}

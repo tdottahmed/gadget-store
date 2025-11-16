@@ -3438,4 +3438,10 @@ return [
 	"You can withdraw up to" => "You can withdraw up to",
 	"Withdraw Amount" => "Withdraw Amount",
 	"withdrawal" => "Withdrawal",
+	"last_name_is_required" => "Last name is required",
+	"Affiliate_Report" => "Affiliate Report",
+	"affiliate_Report_Content" => "Affiliate Report Content",
+	"affiliate_Report" => "Affiliate Report",
+	"Affiliate Report Content Goes Here" => "Affiliate Report Content Goes Here",
+	"Pending_Transactions" => "Pending Transactions",
 ];
