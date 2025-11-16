@@ -709,13 +709,21 @@
             </span>
           </a>
         </li>
-
         <li>
           <a class="nav-link {{ Request::is('admin/report/order') ? 'active' : '' }}"
              href="{{ route('admin.report.order') }}" title="{{ translate('order_Report') }}">
             <i class="fi fi-sr-rectangle-list"></i>
             <span class="aside-mini-hidden-element text-truncate">
               {{ translate('order_Report') }}
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link {{ Request::is('admin/report/affiliate') || Request::is('admin/report/affiliate/pending') || Request::is('admin/report/affiliate/approved') ? 'active' : '' }}"
+             href="{{ route('admin.report.affiliate') }}" title="{{ translate('order_Report') }}">
+            <i class="fi fi-sr-rectangle-list"></i>
+            <span class="aside-mini-hidden-element text-truncate">
+              {{ translate('Affiliate_Report') }}
             </span>
           </a>
         </li>
