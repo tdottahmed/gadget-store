@@ -201,26 +201,29 @@
             </a>
           </div>
         </div>
-        <div>
-          <div class="widget-title">
-            <a class="{{ Request::is('affiliate-account-setup*') || Request::is('affiliate-account-setup*') ? 'active-menu' : '' }}"
-               href="{{ route('affiliate.account-setup') }}">
-              <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
-                  <g fill="none" stroke-linejoin="round">
-                    <path stroke="#a6da95" stroke-linecap="round" d="m8.25 11.9l2.5 3.6l4.5-6" />
-                    <path stroke="#91d7e3" stroke-linecap="round"
-                          d="M6.508 12.274L.75 10.71L3.539.5L13.75 3.245l-1.396 5.257" />
-                    <path stroke="#cad3f5" d="m8.45 4l-.7 2.8l2.8.7l.7-2.8z" />
-                  </g>
-                </svg>
-              </span>
-              <span class="aside-link">
-                {{ translate('Affiliate Account Setup') }}
-              </span>
-            </a>
+        @php($refEarningWithdrawalStatus = getWebConfig(name: 'affiliate_withdrawal_status'))
+        @if ($refEarningWithdrawalStatus)
+          <div>
+            <div class="widget-title">
+              <a class="{{ Request::is('affiliate-account-setup*') || Request::is('affiliate-account-setup*') ? 'active-menu' : '' }}"
+                 href="{{ route('affiliate.account-setup') }}">
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 16 16">
+                    <g fill="none" stroke-linejoin="round">
+                      <path stroke="#a6da95" stroke-linecap="round" d="m8.25 11.9l2.5 3.6l4.5-6" />
+                      <path stroke="#91d7e3" stroke-linecap="round"
+                            d="M6.508 12.274L.75 10.71L3.539.5L13.75 3.245l-1.396 5.257" />
+                      <path stroke="#cad3f5" d="m8.45 4l-.7 2.8l2.8.7l.7-2.8z" />
+                    </g>
+                  </svg>
+                </span>
+                <span class="aside-link">
+                  {{ translate('Affiliate Account Setup') }}
+                </span>
+              </a>
+            </div>
           </div>
-        </div>
+        @endif
       @endif
       <div>
         <div class="widget-title">

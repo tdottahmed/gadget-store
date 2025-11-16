@@ -3459,4 +3459,6 @@ return [
 	"want_to_Turn_OFF_Referral_And_Earning_withdrawal_option" => "Want to Turn OFF Referral And Earning withdrawal option",
 	"want_to_Turn_ON_Referral_And_Earning_withdrawal_option" => "Want to Turn ON Referral And Earning withdrawal option",
 	"The_affiliate_withdrawal_maximum_amount_must_be_a_number" => "The affiliate withdrawal maximum amount must be a number",
+	"The_affiliate_withdrawal_minimum_amount_must_be_at_least_0" => "The affiliate withdrawal minimum amount must be at least 0",
+	"The_affiliate_withdrawal_minimum_amount_must_be_a_number" => "The affiliate withdrawal minimum amount must be a number",
 ];
