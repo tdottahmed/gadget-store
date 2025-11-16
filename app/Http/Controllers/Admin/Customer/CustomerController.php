@@ -329,7 +329,7 @@ class CustomerController extends BaseController
             return back();
         }
 
-        $data = $this->referByEarnCustomerService->getEarnByReferralData(data:$request->all());
+        $data = $this->referByEarnCustomerService->getEarnByReferralData(data: $request->all());
         $this->businessSettingRepo->updateOrInsert(type: 'wallet_status', value: $request->get('customer_wallet', 0));
         $this->businessSettingRepo->updateOrInsert(type: 'loyalty_point_status', value: $request->get('customer_loyalty_point', 0));
         $this->businessSettingRepo->updateOrInsert(type: 'loyalty_point_for_each_order', value: $request->get('loyalty_point_for_each_order', 0));
@@ -339,7 +339,10 @@ class CustomerController extends BaseController
         $this->businessSettingRepo->updateOrInsert(type: 'ref_earning_status', value: $request->get('ref_earning_status', 0));
         $this->businessSettingRepo->updateOrInsert(type: 'ref_earning_exchange_rate', value: currencyConverter(amount: $request->get('ref_earning_exchange_rate', getWebConfig('ref_earning_exchange_rate'))));
         $this->businessSettingRepo->updateOrInsert(type: 'add_funds_to_wallet', value: $request->get('add_funds_to_wallet', 0));
-        $this->businessSettingRepo->updateOrInsert(type: 'ref_earning_customer', value:json_encode($data));
+        $this->businessSettingRepo->updateOrInsert(type: 'ref_earning_customer', value: json_encode($data));
+        $this->businessSettingRepo->updateOrInsert(type: 'affiliate_withdrawal_status', value: $request->get('affiliate_withdrawal_status', 0));
+        $this->businessSettingRepo->updateOrInsert(type: 'affiliate_withdrawal_minimum_amount', value: currencyConverter(amount: $request->get('affiliate_withdrawal_minimum_amount', getWebConfig('affiliate_withdrawal_minimum_amount'))));
+        $this->businessSettingRepo->updateOrInsert(type: 'affiliate_withdrawal_maximum_amount', value: currencyConverter(amount: $request->get('affiliate_withdrawal_maximum_amount', getWebConfig('affiliate_withdrawal_maximum_amount'))));
         if ($request->has('minimum_add_fund_amount') && $request->has('maximum_add_fund_amount')) {
             if ($request['maximum_add_fund_amount'] > $request['minimum_add_fund_amount']) {
                 $this->businessSettingRepo->updateOrInsert(type: 'minimum_add_fund_amount', value: currencyConverter(amount: $request->get('minimum_add_fund_amount', 1)));

@@ -64,6 +64,9 @@ class CustomerUpdateSettingsRequest extends FormRequest
             'minimum_add_fund_amount' => 'nullable|numeric|min:1',
             'item_purchase_point' => 'nullable|numeric|min:0',
             'minimum_transfer_point' => 'nullable|numeric|min:0',
+            'affiliate_withdrawal_status' => 'nullable|numeric|min:0',
+            'affiliate_withdrawal_minimum_amount' => 'nullable|numeric|min:0',
+            'affiliate_withdrawal_maximum_amount' => 'nullable|numeric|min:0',
         ];
 
         if ($this->request->get('ref_earning_discount_status') == 1) {
@@ -107,7 +110,12 @@ class CustomerUpdateSettingsRequest extends FormRequest
             'validity.min' => translate('The_validity_must_be_at_least_1'),
             'validity_type.required' => translate('The_validity_type_field_is_required_when_referral_earning_discount_is_enabled'),
             'validity_type.in' => translate('The_validity_type_must_be_day_week_or_month'),
+            'affiliate_withdrawal_status.numeric' => translate('The_affiliate_withdrawal_status_must_be_a_number'),
+            'affiliate_withdrawal_status.min' => translate('The_affiliate_withdrawal_status_must_be_at_least_0'),
+            'affiliate_withdrawal_minimum_amount.numeric' => translate('The_affiliate_withdrawal_minimum_amount_must_be_a_number'),
+            'affiliate_withdrawal_minimum_amount.min' => translate('The_affiliate_withdrawal_minimum_amount_must_be_at_least_0'),
+            'affiliate_withdrawal_maximum_amount.numeric' => translate('The_affiliate_withdrawal_maximum_amount_must_be_a_number'),
+            'affiliate_withdrawal_maximum_amount.min' => translate('The_affiliate_withdrawal_maximum_amount_must_be_at_least_0'),
         ];
     }
-
 }
