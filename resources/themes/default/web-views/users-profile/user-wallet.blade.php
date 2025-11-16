@@ -52,6 +52,7 @@
                                 </span>
                               @endif
                             </h2>
+                            @php($refEarningWithdrawalStatus = getWebConfig(name: 'affiliate_withdrawal_status'))
                             @if ($addFundsToWalletStatus)
                               <div class="d-flex mx-3 gap-2">
                                 <button class="btn btn-light align-items-center fs-14 font-semi-bold px-4 py-2"
@@ -59,11 +60,16 @@
                                   <span><i class="tio-add-circle text-accent"></i></span>
                                   <span class="text-primary">{{ translate('add_Fund') }}</span>
                                 </button>
-                                <button class="btn btn-light align-items-center fs-14 font-semi-bold px-4 py-2"
-                                        data-toggle="modal" data-target="#withdrawalModal">
-                                  <span><i class="tio-money-bill-wave text-accent"></i></span>
-                                  <span class="text-primary">{{ translate('Request for Withdrawal') }}</span>
-                                </button>
+                                @if (
+                                    $refEarningWithdrawalStatus &&
+                                        ($totalWalletBalance >= getWebConfig('affiliate_withdrawal_minimum_amount') &&
+                                            $totalWalletBalance <= getWebConfig('affiliate_withdrawal_maximum_amount')))
+                                  <button class="btn btn-light align-items-center fs-14 font-semi-bold px-4 py-2"
+                                          data-toggle="modal" data-target="#withdrawalModal">
+                                    <span><i class="tio-money-bill-wave text-accent"></i></span>
+                                    <span class="text-primary">{{ translate('Request for Withdrawal') }}</span>
+                                  </button>
+                                @endif
                               </div>
                             @endif
                           </div>
@@ -226,54 +232,60 @@
                   </div>
                 </div>
               @endif
-              <div class="modal fade" id="withdrawalModal" tabindex="-1" aria-labelledby="addFundToWalletModalLabel"
-                   aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md">
-                  <div class="modal-content">
-                    <div class="modal-header border-0">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body px-5">
-
-                      <form action="{{ route('affiliate.withdraw') }}" method="post">
-                        @csrf
-                        <div class="pb-4">
-                          <h4 class="text-center">{{ translate('Funds withdrawal') }}</h4>
-                          <p class="text-center">
-                            {{ translate('Please fill the amount to be withdrawn') }}
-                          </p>
-                          <div class="mb-3 text-center">
-                            <label for="withdraw-amount" class="d-block fs-18 font-semi-bold mb-2">
-                              {{ translate('Withdraw Amount') }}
-                            </label>
-
-                            <input type="number" id="withdraw-amount" name="withdraw_amount"
-                                   class="h-70 form-control text-24 fs-25-important rounded-10 light-placeholder text-center"
-                                   placeholder="{{ translate('ex') }}: {{ webCurrencyConverter(amount: 500) }}"
-                                   required min="1" max="{{ $totalWalletBalance }}">
-
-                            <div class="mt-2">
-                              <span class="fs-14 text-danger font-semi-bold">
-                                {{ translate('Note') }}:
-                                {{ translate('You can withdraw up to') }}
-                                {{ webCurrencyConverter(amount: $totalWalletBalance) }}
-                              </span>
-                            </div>
-                          </div>
-
-                          <input type="hidden" value="web" name="payment_platform" required>
-                          <input type="hidden" value="{{ request()->url() }}" name="external_redirect_link" required>
-                        </div>
-                        <button type="submit" class="btn btn--primary w-100">
-                          {{ translate('Withdraw') }}
+              @if (
+                  $refEarningWithdrawalStatus &&
+                      ($totalWalletBalance >= getWebConfig('affiliate_withdrawal_minimum_amount') &&
+                          $totalWalletBalance <= getWebConfig('affiliate_withdrawal_maximum_amount')))
+                <div class="modal fade" id="withdrawalModal" tabindex="-1"
+                     aria-labelledby="addFundToWalletModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-md">
+                    <div class="modal-content">
+                      <div class="modal-header border-0">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
                         </button>
-                      </form>
+                      </div>
+                      <div class="modal-body px-5">
+
+                        <form action="{{ route('affiliate.withdraw') }}" method="post">
+                          @csrf
+                          <div class="pb-4">
+                            <h4 class="text-center">{{ translate('Funds withdrawal') }}</h4>
+                            <p class="text-center">
+                              {{ translate('Please fill the amount to be withdrawn') }}
+                            </p>
+                            <div class="mb-3 text-center">
+                              <label for="withdraw-amount" class="d-block fs-18 font-semi-bold mb-2">
+                                {{ translate('Withdraw Amount') }}
+                              </label>
+
+                              <input type="number" id="withdraw-amount" name="withdraw_amount"
+                                     class="h-70 form-control text-24 fs-25-important rounded-10 light-placeholder text-center"
+                                     placeholder="{{ translate('ex') }}: {{ webCurrencyConverter(amount: 500) }}"
+                                     required min="1" max="{{ $totalWalletBalance }}">
+
+                              <div class="mt-2">
+                                <span class="fs-14 text-danger font-semi-bold">
+                                  {{ translate('Note') }}:
+                                  {{ translate('You can withdraw up to') }}
+                                  {{ webCurrencyConverter(amount: $totalWalletBalance) }}
+                                </span>
+                              </div>
+                            </div>
+
+                            <input type="hidden" value="web" name="payment_platform" required>
+                            <input type="hidden" value="{{ request()->url() }}" name="external_redirect_link"
+                                   required>
+                          </div>
+                          <button type="submit" class="btn btn--primary w-100">
+                            {{ translate('Withdraw') }}
+                          </button>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              @endif
 
               <div class="col-md-12">
                 <div class="">
