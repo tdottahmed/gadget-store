@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\WalletTransaction;
 use App\Utils\Helpers;
 use App\Models\AddFundBonusCategories;
+use App\Models\AffiliateWithdrawAccount;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 
@@ -28,7 +29,7 @@ class UserWalletController extends Controller
             $paymentGatewayList = payment_gateways();
             $addFundBonusList = $this->getAddFundBonusList();
 
-            $filterCount = count($request['types']??[]) + (int)!empty($request['transaction_range']) + (int)!empty($request['filter_by']);
+            $filterCount = count($request['types'] ?? []) + (int)!empty($request['transaction_range']) + (int)!empty($request['filter_by']);
 
             if ($request->has('flag') && $request['flag'] == 'success') {
                 Toastr::success(translate('add_fund_to_wallet_success'));
@@ -53,7 +54,6 @@ class UserWalletController extends Controller
                 'filterBy' => $request['filter_by'] ?? '',
                 'transactionRange' => $request['transaction_range'] ?? '',
             ]);
-
         } else {
             Toastr::warning(translate('access_denied!'));
             return redirect()->route('home');
@@ -93,15 +93,15 @@ class UserWalletController extends Controller
                 $query->where(function ($query) use ($types, $request) {
                     return $query->when(!empty($types), function ($query) use ($types, $request) {
                         return $query->when(!in_array('earned_by_referral', $types), function ($query) use ($types) {
-                                return $query->where('reference', '!=', 'earned_by_referral');
-                            })->whereIn('transaction_type', $types)
+                            return $query->where('reference', '!=', 'earned_by_referral');
+                        })->whereIn('transaction_type', $types)
                             ->orWhere(function ($query) use ($types, $request) {
                                 return $query->whereNull('reference');
                             });
                     })->when(in_array('added_via_payment_method', $request['types'] ?? []), function ($query) use ($types, $request) {
                         return $query->orWhere('reference', 'add_funds_to_wallet');
                     })->when(in_array('earned_by_referral', $request['types'] ?? []), function ($query) use ($types, $request) {
-                       return $query->orWhere('reference', 'earned_by_referral');
+                        return $query->orWhere('reference', 'earned_by_referral');
                     });
                 });
             })
@@ -133,5 +133,56 @@ class UserWalletController extends Controller
             }
         }
         return $transactionTypes ?? [];
+    }
+
+    public function accountSetup()
+    {
+        $user = auth('customer')->user();
+        $affiliateWithdrawAccount = AffiliateWithdrawAccount::where('user_id', $user->id)->first();
+        return view(VIEW_FILE_NAMES['affiliate_account_setup'], [
+            'withdrawMethod' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->withdraw_method : '',
+            'fullName' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->full_name : '',
+            'phone' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->phone : '',
+            'walletNumber' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->wallet_number : '',
+            'bankName' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->bank_name : '',
+            'bankAccountNo' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->bank_account_no : '',
+            'bankBranch' => $affiliateWithdrawAccount ? $affiliateWithdrawAccount->bank_branch : '',
+        ]);
+    }
+
+    public function updateAffiliateAccountSetup(Request $request)
+    {
+        $request->validate([
+            'withdraw_method' => 'required|string',
+            'full_name' => 'required|string|max:255',
+            'phone' => 'required|string',
+
+            'wallet_number' => 'nullable|string',
+            'bank_name' => 'nullable|string',
+            'bank_account_no' => 'nullable|string',
+            'bank_branch' => 'nullable|string',
+            'account_screenshot' => 'nullable|image|max:2048',
+        ]);
+
+        $user = auth('customer')->user();
+
+        $data = $request->only([
+            'withdraw_method',
+            'full_name',
+            'phone',
+            'wallet_number',
+            'bank_name',
+            'bank_account_no',
+            'bank_branch',
+        ]);
+
+        $affiliateWithdrawAccount = AffiliateWithdrawAccount::where('user_id', $user->id)->first();
+        if ($affiliateWithdrawAccount) {
+            $affiliateWithdrawAccount->update($data);
+        } else {
+            $affiliateWithdrawAccount = AffiliateWithdrawAccount::create(['user_id' => $user->id], $data);
+        }
+
+        return back()->with('success', 'Withdrawal account updated successfully');
     }
 }
