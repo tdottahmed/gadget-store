@@ -25,6 +25,7 @@ use App\Http\Controllers\Web\WebController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Enums\ViewPaths\Web\Review;
+use App\Http\Controllers\Customer\AffiliateController;
 use App\Http\Controllers\Web\CurrencyController;
 use App\Http\Controllers\Web\PageController;
 use App\Http\Controllers\Web\ReviewController;
@@ -232,6 +233,8 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     Route::controller(UserWalletController::class)->group(function () {
         Route::get('wallet-account', 'myWalletAccount')->name('wallet-account'); //theme fashion
         Route::get('wallet', 'index')->name('wallet')->middleware('customer');
+        Route::get('affiliate-account-setup', 'accountSetup')->name('affiliate.account-setup')->middleware('customer');
+        Route::post('affiliate-account-setup', 'updateAffiliateAccountSetup')->name('affiliate.account-setup.update');
     });
 
     Route::controller(UserLoyaltyController::class)->group(function () {

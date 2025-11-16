@@ -76,4 +76,6 @@ return [
     'frontend_app_blog_details_view' => 'web-views.blogs.details',
     'frontend_popular_blogs_view' => 'web-views.blogs.index-popular',
     'blog_seo_meta_content_partials' => 'web-views.partials._blogSEOMetaContentData',
+
+    'affiliate_account_setup' => 'web-views.users-profile.account',
 ];
