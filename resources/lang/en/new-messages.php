@@ -3461,4 +3461,9 @@ return [
 	"The_affiliate_withdrawal_maximum_amount_must_be_a_number" => "The affiliate withdrawal maximum amount must be a number",
 	"The_affiliate_withdrawal_minimum_amount_must_be_at_least_0" => "The affiliate withdrawal minimum amount must be at least 0",
 	"The_affiliate_withdrawal_minimum_amount_must_be_a_number" => "The affiliate withdrawal minimum amount must be a number",
+	"no_withdraw_request_found" => "No withdraw request found",
+	"no_withdraw_method_found" => "No withdraw method found",
+	"all_withdrawal_requests" => "All withdrawal requests",
+	"Created At" => "Created At",
+	"Reference" => "Reference",
 ];
