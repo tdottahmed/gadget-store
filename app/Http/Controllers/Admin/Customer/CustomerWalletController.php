@@ -35,9 +35,7 @@ class CustomerWalletController extends BaseController
         private readonly BusinessSettingRepositoryInterface        $businessSettingRepo,
         private readonly WalletTransactionRepositoryInterface      $walletTransactionRepo,
         private readonly AddFundBonusCategoriesRepositoryInterface $addFundBonusCategoriesRepo,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @param Request|null $request
@@ -70,7 +68,8 @@ class CustomerWalletController extends BaseController
             user_id: $request['customer_id'],
             amount: $request['amount'],
             transactionType: 'add_fund_by_admin',
-            reference: $request['reference']);
+            reference: $request['reference']
+        );
 
         $customer = $this->customerRepo->getFirstWhere(params: ['id' => $request['customer_id']]);
         $customerWalletService->sendPushNotificationMessage(request: $request, customer: $customer);
@@ -187,4 +186,22 @@ class CustomerWalletController extends BaseController
         return back();
     }
 
+    public function depositReport(Request|null $request, string $type = null): View
+    {
+        $customerStatus = $this->businessSettingRepo->getFirstWhere(params: ['type' => 'wallet_status'])['value'];
+        $filters = [
+            'to' => $request['to'],
+            'from' => $request['from'],
+            'transaction_type' => $request['transaction_type'] ?? 'all',
+            'customer_id' => $request['customer_id'],
+        ];
+
+        $data = $this->walletTransactionRepo->getListWhereSelect(filters: $filters, dataLimit: 'all');
+        $transactions = $this->walletTransactionRepo->getListWhere(filters: $filters, dataLimit: getWebConfig(name: WebConfigKey::PAGINATION_LIMIT));
+        $customer = "all";
+        if (isset($request['customer_id']) && $request['customer_id'] != 'all' && !is_null($request['customer_id']) && $request->has('customer_id')) {
+            $customer = $this->customerRepo->getFirstWhere(params: ['id' => $request['customer_id']]);
+        }
+        return view('admin-views.customer.wallet.report', compact('data', 'transactions', 'customerStatus', 'customer'));
+    }
 }
