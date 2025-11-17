@@ -727,6 +727,25 @@
             </span>
           </a>
         </li>
+        <li>
+          <a class="nav-link {{ Request::is('admin/report/deposit-report') ? 'active' : '' }}"
+             href="{{ route('admin.report.deposit-report') }}"
+             title="{{ translate('Deposit_Report_and_withdrawal_Report') }}">
+            <i class="fi fi-sr-rectangle-list"></i>
+            <span class="aside-mini-hidden-element text-truncate">
+              {{ translate('Deposit_Report_and_withdrawal_Report') }}
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-link {{ Request::is('admin/report/profit-loss') ? 'active' : '' }}"
+             href="{{ route('admin.report.profit-loss') }}" title="{{ translate('Profit_Loss_Report') }}">
+            <i class="fi fi-sr-stats"></i>
+            <span class="aside-mini-hidden-element text-truncate">
+              {{ translate('Profit_Loss_Report') }}
+            </span>
+          </a>
+        </li>
       @endif
 
       @if (Helpers::module_permission_check('blog_management'))

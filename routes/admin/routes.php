@@ -352,6 +352,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
                 Route::post('bonus-setup-status', 'updateStatus')->name('bonus-setup-status');
                 Route::get('bonus-setup/edit/{id}', 'getUpdateView')->name('bonus-setup-edit');
                 Route::delete('bonus-setup-delete', 'deleteBonus')->name('bonus-setup-delete');
+                Route::get('deposit-report', 'depositReport')->name('deposit-report');
             });
         });
 
@@ -444,6 +445,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
         Route::controller(ReportController::class)->group(function () {
             Route::get('earning', 'earning_index')->name('earning');
             Route::get('admin-earning', 'admin_earning')->name('admin-earning');
+            Route::get('profit-loss', 'admin_earning')->name('profit-loss');
+            Route::get('vendor/profit-loss', 'vendorEarning')->name('vendor-profit-loss');
             Route::get('admin-earning-excel-export', 'exportAdminEarning')->name('admin-earning-excel-export');
             Route::post('admin-earning-duration-download-pdf', 'admin_earning_duration_download_pdf')->name('admin-earning-duration-download-pdf');
             Route::get('vendor-earning', 'vendorEarning')->name('vendor-earning');
@@ -476,6 +479,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::get('affiliate/{id}/reject', 'reject')->name('affiliate.reject');
             Route::get('affiliate/transaction', 'transaction')->name('affiliate.transaction');
             Route::get('affiliate/sales', 'sales')->name('affiliate.sales');
+        });
+    });
+    Route::group(['prefix' => 'report', 'as' => 'report.', 'middleware' => ['module:report']], function () {
+        Route::controller(CustomerWalletController::class)->group(function () {
+            Route::get('deposit-report', 'depositReport')->name('deposit-report');
         });
     });
 
