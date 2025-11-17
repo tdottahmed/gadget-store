@@ -3466,4 +3466,10 @@ return [
 	"all_withdrawal_requests" => "All withdrawal requests",
 	"Created At" => "Created At",
 	"Reference" => "Reference",
+	"affiliate_sales" => "Affiliate sales",
+	"Affiliate Sales List" => "Affiliate Sales List",
+	"Affiliate Withdrawal Report" => "Affiliate Withdrawal Report",
+	"all_affiliate_withdrawal_requests" => "All affiliate withdrawal requests",
+	"affiliate_sales_report" => "Affiliate sales report",
+	"affiliate_transaction_report" => "Affiliate transaction report",
 ];

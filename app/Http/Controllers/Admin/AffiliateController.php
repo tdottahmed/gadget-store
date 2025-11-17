@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AffiliateOrder;
 use App\Models\AffiliateWithdrawRequest;
 use App\Models\WalletTransaction;
 use App\Models\WithdrawalMethod;
@@ -74,6 +75,15 @@ class AffiliateController extends Controller
         $affiliateTransactions = WalletTransaction::where('reference', 'earned_by_referral')->orWhere('reference', 'customer_withdrawal')->latest()->paginate(20);
         return view('admin-views.affiliate.transaction', [
             'affiliateTransactions' => $affiliateTransactions,
+            'stats' => $this->stats(),
+        ]);
+    }
+
+    public function sales()
+    {
+        $affiliateOrders = AffiliateOrder::with('order', 'reffedByUser', 'customerUser')->latest()->paginate(20);
+        return view('admin-views.affiliate.sales', [
+            'affiliateOrders' => $affiliateOrders,
             'stats' => $this->stats(),
         ]);
     }

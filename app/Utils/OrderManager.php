@@ -30,6 +30,7 @@ use App\Models\BusinessSetting;
 use App\Models\OfflinePayments;
 use App\Models\ShippingAddress;
 use App\Events\OrderPlacedEvent;
+use App\Models\AffiliateOrder;
 use App\Models\OrderTransaction;
 use App\Models\ReferralCustomer;
 use App\Models\WalletTransaction;
@@ -669,6 +670,17 @@ class OrderManager
                     amount: usdToDefaultCurrency(amount: $refEarningExchangeRate),
                     transaction_type: 'add_fund_by_admin',
                     reference: 'earned_by_referral'
+                );
+                // Track referral order info
+                AffiliateOrder::updateOrCreate(
+                    ['order_id' => $orderId],
+                    [
+                        'customer_id' => $order['customer_id'],
+                        'referred_by' => $customer->referred_by,
+                        'first_order' => 1,
+                        'bonus_applied' => 1,
+                        'bonus_amount' => usdToDefaultCurrency($refEarningExchangeRate),
+                    ]
                 );
             }
         }

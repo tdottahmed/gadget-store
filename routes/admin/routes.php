@@ -475,6 +475,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             Route::get('affiliate/{id}/approve', 'approve')->name('affiliate.approve');
             Route::get('affiliate/{id}/reject', 'reject')->name('affiliate.reject');
             Route::get('affiliate/transaction', 'transaction')->name('affiliate.transaction');
+            Route::get('affiliate/sales', 'sales')->name('affiliate.sales');
         });
     });
 
