@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AffiliateWithdrawRequest;
+use App\Models\WalletTransaction;
 use App\Models\WithdrawalMethod;
 use Devrabiul\ToastMagic\Facades\ToastMagic;
 use Illuminate\Http\Request;
@@ -66,5 +67,14 @@ class AffiliateController extends Controller
         $withdrawal->save();
         ToastMagic::success('Withdrawal request rejected successfully');
         return redirect()->route('admin.report.affiliate.pending');
+    }
+
+    public function transaction()
+    {
+        $affiliateTransactions = WalletTransaction::where('reference', 'earned_by_referral')->orWhere('reference', 'customer_withdrawal')->latest()->paginate(20);
+        return view('admin-views.affiliate.transaction', [
+            'affiliateTransactions' => $affiliateTransactions,
+            'stats' => $this->stats(),
+        ]);
     }
 }
