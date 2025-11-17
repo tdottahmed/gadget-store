@@ -14,21 +14,10 @@
           <div class="card-header">
             <h3 class="card-title">{{ translate('affiliate_Report') }}</h3>
           </div>
-          <div class="inline-page-menu my-4">
-            <ul class="nav nav-pills nav--tab gap-3">
-              <li class="nav-item"><a class="nav-link {{ Request::is('admin/report/affiliate') ? 'active' : '' }}"
-                   href="{{ route('admin.report.affiliate') }}">{{ translate('Affiliate_Report') }}</a>
-              </li>
-              <li class="nav-item"><a class="nav-link {{ Request::is('admin/report/affiliate/pending') ? 'active' : '' }}"
-                   href="{{ route('admin.report.affiliate.pending') }}">{{ translate('pending') }}</a>
-              </li>
-              <li class="nav-item"><a
-                   class="nav-link {{ Request::is('admin/report/affiliate/approved') ? 'active' : '' }}"
-                   href="{{ route('admin.report.affiliate.approved') }}">{{ translate('approved') }}</a>
-              </li>
-
-            </ul>
+          <div class="row g-3 mb-4">
+            @include('admin-views.affiliate._stats', ['stats' => $stats])
           </div>
+          @include('admin-views.affiliate._tabs')
           <div class="card-body">
             <div class="row">
               <div class="col-md-12">
