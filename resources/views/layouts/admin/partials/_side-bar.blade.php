@@ -746,6 +746,15 @@
             </span>
           </a>
         </li>
+        <li>
+          <a class="nav-link {{ Request::is('admin/report/vendors') || Request::is('admin/report/vendor-view/*') ? 'active' : '' }}"
+             href="{{ route('admin.report.vendors') }}" title="{{ translate('vendors_reports') }}">
+            <i class="fi fi-sr-stats"></i>
+            <span class="aside-mini-hidden-element text-truncate">
+              {{ translate('vendors_reports') }}
+            </span>
+          </a>
+        </li>
       @endif
 
       @if (Helpers::module_permission_check('blog_management'))

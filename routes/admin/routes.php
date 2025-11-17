@@ -402,6 +402,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin', '
             });
         });
     });
+    Route::group(['prefix' => 'report', 'as' => 'report.', 'middleware' => ['module:report']], function () {
+        Route::controller(VendorController::class)->group(function () {
+            Route::get('vendors', 'getReportsView')->name('vendors');
+            Route::get('vendor-view/{id}/{tab?}', 'getViewReport')->name('vendor-report-view');
+        });
+    });
 
 
     Route::group(['prefix' => 'employee', 'as' => 'employee.', 'middleware' => ['module:user_section']], function () {

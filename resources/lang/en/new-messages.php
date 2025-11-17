@@ -3496,4 +3496,9 @@ return [
 	"customer withdrawal" => "Customer withdrawal",
 	"Deposit_Report_and_withdrawal_Report" => "Deposit Report and withdrawal Report",
 	"Profit_Loss_Report" => "Profit Loss Report",
+	"order_info" => "Order info",
+	"Customer_Loyalty_Report" => "Customer Loyalty Report",
+	"vendors_reports" => "Vendors reports",
+	"vendor_Details" => "Vendor Details",
+	"Vendor_details" => "Vendor details",
 ];
