@@ -1098,7 +1098,8 @@
           Request::is('admin/system-setup/web-config/app-settings') ||
           Request::is('admin/system-setup/invoice-settings/') ||
           Request::is('admin/business-settings/delivery-restriction') ||
-          Request::is('admin/system-setup/db-index')
+          Request::is('admin/system-setup/db-index') ||
+          Request::is('admin/system-setup/theme/setup')
               ? 'active'
               : '' }}"
              href="{{ route('admin.system-setup.environment-setup') }}" title="{{ translate('System_Setup') }}">
