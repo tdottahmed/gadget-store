@@ -3291,4 +3291,5 @@ return [
 	"Steadfast Base URL" => "Steadfast Base URL",
 	"Configure your Steadfast Courier API credentials to enable automatic order delivery management." => "Configure your Steadfast Courier API credentials to enable automatic order delivery management.",
 	"Steadfast Courier Integration" => "Steadfast Courier Integration",
+	"Selected_shipping_method_not_found" => "Selected shipping method not found",
 ];

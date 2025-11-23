@@ -1132,6 +1132,57 @@ function addToCart(
             success: function (response) {
                 if (response.status === 2) {
                     if (redirectToCheckoutValue !== "false") {
+                        // Automatically select first shipping method and proceed to checkout
+                        if (response.shipping_method_list && response.shipping_method_list.length > 0) {
+                            // Get the first shipping method ID
+                            let firstShippingMethodId = response.shipping_method_list[0].id;
+                            
+                            // Prepare form data with shipping method
+                            let formData = $(formSelector).serializeArray();
+                            formData.push({ name: "buy_now", value: 1 });
+                            formData.push({ name: "shipping_method_exist", value: 1 });
+                            formData.push({ name: "shipping_method_id", value: firstShippingMethodId });
+                            
+                            // Resubmit with shipping method
+                            $.post({
+                                url: formActionUrl,
+                                data: formData,
+                                beforeSend: function () {
+                                    $("#loading").show();
+                                },
+                                success: function (shippingResponse) {
+                                    if (shippingResponse.status == 1) {
+                                        updateNavCart();
+                                        toastr.success(shippingResponse.message, {
+                                            CloseButton: true,
+                                            ProgressBar: true,
+                                        });
+                                        
+                                        $(".close-quick-view-modal").click();
+                                        
+                                        // Redirect to checkout
+                                        let checkoutUrl = shippingResponse.redirect_to_url || 
+                                                         ($("#route-checkout-details").data("url")) || 
+                                                         url || 
+                                                         "/checkout-details";
+                                        setTimeout(function () {
+                                            location.href = checkoutUrl;
+                                        }, 100);
+                                    } else {
+                                        toastr.error(shippingResponse.message || "Error processing shipping method");
+                                    }
+                                },
+                                complete: function () {
+                                    $("#loading").hide();
+                                },
+                            });
+                        } else {
+                            // No shipping methods available, show error
+                            toastr.error(response.message || "Shipping method not available");
+                        }
+                        return false;
+                    } else {
+                        // Not redirecting to checkout, show modal as before
                         hideProductDetailsStickySection();
                         $("#buyNowModal-body").html(
                             response.shippingMethodHtmlView
