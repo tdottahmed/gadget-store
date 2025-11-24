@@ -270,11 +270,86 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    
 @endsection
 
 @push('script')
 
     <script>
+        // LocalStorage key for checkout form data
+        const CHECKOUT_FORM_STORAGE_KEY = 'checkout_form_data';
+        let isRestoringData = false; // Flag to prevent reload loop during restore
+        
+        // Save form data to localStorage
+        function saveCheckoutFormData() {
+            const formData = {
+                contact_person_name: $('#contact_person_name').val(),
+                phone: $('#phone').val(),
+                email: $('#email').val() || '',
+                city: $('#city').val(),
+                address: $('#address').val(),
+                shipping_method_id: $('input[name="shipping_method_id"]:checked').val() || ''
+            };
+            localStorage.setItem(CHECKOUT_FORM_STORAGE_KEY, JSON.stringify(formData));
+        }
+        
+        // Restore form data from localStorage
+        function restoreCheckoutFormData() {
+            const savedData = localStorage.getItem(CHECKOUT_FORM_STORAGE_KEY);
+            if (savedData) {
+                try {
+                    isRestoringData = true; // Set flag to prevent reload
+                    const formData = JSON.parse(savedData);
+                    if (formData.contact_person_name) {
+                        $('#contact_person_name').val(formData.contact_person_name);
+                    }
+                    if (formData.phone) {
+                        $('#phone').val(formData.phone);
+                    }
+                    if (formData.email) {
+                        $('#email').val(formData.email);
+                    }
+                    if (formData.city) {
+                        $('#city').val(formData.city);
+                    }
+                    if (formData.address) {
+                        $('#address').val(formData.address);
+                    }
+                    if (formData.shipping_method_id) {
+                        const radio = $('#shipping_method_' + formData.shipping_method_id);
+                        if (radio.length) {
+                            radio.prop('checked', true);
+                            // Update visual selection without triggering change event
+                            $('.shipping-method-item').removeClass('selected');
+                            radio.closest('.shipping-method-item').addClass('selected');
+                        }
+                    }
+                    // Reset flag after a short delay to allow all updates to complete
+                    setTimeout(function() {
+                        isRestoringData = false;
+                    }, 100);
+                } catch (e) {
+                    console.error('Error restoring form data:', e);
+                    isRestoringData = false;
+                }
+            }
+        }
+        
+        // Clear form data from localStorage
+        function clearCheckoutFormData() {
+            localStorage.removeItem(CHECKOUT_FORM_STORAGE_KEY);
+        }
+        
+        // Save form data on input change
+        $('#contact_person_name, #phone, #email, #city, #address').on('input change', function() {
+            saveCheckoutFormData();
+        });
+        
+        // Restore form data on page load
+        $(document).ready(function() {
+            restoreCheckoutFormData();
+        });
+        
         $('#checkout-form').submit(function (e) {
             e.preventDefault();
             
@@ -343,6 +418,9 @@
                             ProgressBar: true
                         });
                     } else {
+                        // Clear localStorage after successful submission
+                        clearCheckoutFormData();
+                        
                         toastr.success('{{ translate("address_saved_successfully")}}', {
                             CloseButton: true,
                             ProgressBar: true
@@ -370,12 +448,20 @@
         
         // Handle shipping method selection change - update shipping cost via AJAX
         $('.shipping-method-radio').on('change', function() {
+            // Prevent reload loop when restoring data
+            if (isRestoringData) {
+                return;
+            }
+            
             let methodId = $(this).val();
             let cartGroupId = $('#checkout-cart-group-id').val();
             
             // Update visual selection
             $('.shipping-method-item').removeClass('selected');
             $(this).closest('.shipping-method-item').addClass('selected');
+            
+            // Save form data before reload
+            saveCheckoutFormData();
             
             if (!cartGroupId || !methodId) {
                 return;
@@ -400,6 +486,7 @@
                 success: function(response) {
                     if (response.status == 1) {
                         // Reload page to update order summary with new shipping cost
+                        // Form data will be restored from localStorage after reload
                         location.reload();
                     } else {
                         toastr.error('{{ translate("failed_to_update_shipping_method")}}', {
