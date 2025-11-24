@@ -418,7 +418,18 @@ class WebController extends Controller
             $countriesCode[] = $country['code'];
         }
 
-        return view(VIEW_FILE_NAMES['order_shipping'], [
+        // Get shipping methods for checkout
+        $shippingMethods = \App\Utils\Helpers::getShippingMethods(1, 'admin');
+        $cartGroupIds = \App\Utils\CartManager::get_cart_group_ids(type: 'checked');
+        $selectedShippingMethod = null;
+        if (count($cartGroupIds) > 0) {
+            $cartShipping = \App\Models\CartShipping::whereIn('cart_group_id', $cartGroupIds)->first();
+            if ($cartShipping) {
+                $selectedShippingMethod = $cartShipping->shipping_method_id;
+            }
+        }
+
+        return view('web-views.checkout.checkout-details', [
             'physical_product_view' => $response['physical_product_view'],
             'zip_codes' => $zipCodes,
             'country_restrict_status' => $countryRestrictStatus,
@@ -429,7 +440,11 @@ class WebController extends Controller
             'billing_input_by_customer' => $billingInputByCustomer,
             'default_location' => $defaultLocation,
             'shipping_addresses' => $shippingAddresses,
-            'billing_addresses' => $shippingAddresses
+            'billing_addresses' => $shippingAddresses,
+            'response' => $response,
+            'shipping_methods' => $shippingMethods,
+            'selected_shipping_method' => $selectedShippingMethod,
+            'cart_group_ids' => $cartGroupIds
         ]);
     }
 

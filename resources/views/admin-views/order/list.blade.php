@@ -303,6 +303,12 @@
                                                     href="{{ route('admin.orders.generate-invoice', [$order['id']]) }}">
                                                     <i class="fi fi-sr-down-to-line"></i>
                                                 </a>
+                                                <a class="btn btn-outline-info btn-outline-info-dark icon-btn"
+                                                    target="_blank" rel="noopener"
+                                                    title="{{ translate('view invoice') }}"
+                                                    href="{{ route('admin.orders.invoice-view', [$order['id']]) }}">
+                                                    <i class="fi fi-sr-file-invoice"></i>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>

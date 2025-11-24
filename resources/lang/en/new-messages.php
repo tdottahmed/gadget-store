@@ -3379,5 +3379,4 @@ return [
 	"Last Updated:" => "Last Updated:",
 	"Recipient Information" => "Recipient Information",
 	"Carrier" => "Carrier",
->>>>>>> 76ec38c4e24d3306e98c4ae664dfe82e76d24c5b
 ];

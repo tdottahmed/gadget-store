@@ -334,6 +334,31 @@ class OrderController extends BaseController
         $this->generatePdf(view: $mpdfView, filePrefix: 'order_invoice_', filePostfix: $order['id'], pdfType: 'invoice');
     }
 
+    public function getInvoiceView(string|int $id): View|RedirectResponse
+    {
+        $order = $this->orderRepo->getFirstWhere(params: ['id' => $id], relations: ['seller', 'shipping', 'details']);
+
+        if (!$order) {
+            ToastMagic::error(translate('Order_not_found'));
+            return back();
+        }
+
+        $firstDetail = $order['details']->first();
+        $vendorId = $firstDetail?->seller_id;
+        $vendor = $vendorId ? $this->vendorRepo->getFirstWhere(params: ['id' => $vendorId]) : null;
+
+        $companyPhone = getWebConfig(name: 'company_phone');
+        $companyEmail = getWebConfig(name: 'company_email');
+        $companyName = getWebConfig(name: 'company_name');
+        $companyWebLogo = getWebConfig(name: 'company_web_logo');
+        $invoiceSettings = getWebConfig(name: 'invoice_settings');
+
+        return view(
+            'admin-views.order.invoice',
+            compact('order', 'vendor', 'companyPhone', 'companyEmail', 'companyName', 'companyWebLogo', 'invoiceSettings')
+        );
+    }
+
     public function updateStatus(
         Request                       $request,
         DeliveryManTransactionService $deliveryManTransactionService,

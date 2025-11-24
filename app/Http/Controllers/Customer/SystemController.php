@@ -83,18 +83,55 @@ class SystemController extends Controller
 
         if (isset($shipping['save_address']) && $shipping['save_address'] == 'on') {
 
-            if ($shipping['contact_person_name'] == null || $shipping['address'] == null || $shipping['city'] == null || $shipping['zip'] == null || $shipping['country'] == null || ($is_guest && $shipping['email'] == null)) {
+            // Simplified checkout validation - only require name, phone, email (for guests), city, and address
+            if ($shipping['contact_person_name'] == null || $shipping['city'] == null || $shipping['address'] == null || ($is_guest && (!isset($shipping['email']) || $shipping['email'] == null))) {
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping_address')
                 ], 403);
-            } elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+            }
+
+            // Set default values for required database fields if not provided
+            $defaultLocation = getWebConfig(name: 'default_location');
+            $defaultCountry = 'Bangladesh';
+            if ($defaultLocation) {
+                // Check if $defaultLocation is already an array or a JSON string
+                if (is_array($defaultLocation)) {
+                    $locationData = $defaultLocation;
+                } else {
+                    $locationData = json_decode($defaultLocation, true);
+                }
+                if (is_array($locationData) && isset($locationData['country'])) {
+                    $defaultCountry = $locationData['country'];
+                }
+            }
+
+            $shipping['address_type'] = $shipping['address_type'] ?? 'home';
+            // City is now required, so don't set default
+            if (empty($shipping['city'])) {
                 return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_country.')
+                    'errors' => translate('City_is_required')
                 ], 403);
-            } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
-                ], 403);
+            }
+            $shipping['zip'] = $shipping['zip'] ?? '0000';
+            $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+            $shipping['latitude'] = $shipping['latitude'] ?? '0';
+            $shipping['longitude'] = $shipping['longitude'] ?? '0';
+
+            // Only validate country/zip restrictions if they are actually set (not defaults)
+            if ($shipping['country'] != 'N/A' && $shipping['country'] != '0000' && $shipping['country'] != $defaultCountry) {
+                if ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+                    return response()->json([
+                        'errors' => translate('Delivery_unavailable_in_this_country.')
+                    ], 403);
+                }
+            }
+
+            if ($shipping['zip'] != '0000' && $shipping['zip'] != 'N/A') {
+                if ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
+                    return response()->json([
+                        'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
+                    ], 403);
+                }
             }
 
             $address_id = DB::table('shipping_addresses')->insertGetId([
@@ -107,27 +144,64 @@ class SystemController extends Controller
                 'zip' => $shipping['zip'],
                 'country' => $shipping['country'],
                 'phone' => $shipping['phone'],
-                'email' => auth('customer')->check() ? null : $shipping['email'],
+                'email' => auth('customer')->check() ? null : ($shipping['email'] ?? null),
                 'latitude' => $shipping['latitude'],
                 'longitude' => $shipping['longitude'],
                 'is_billing' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-        } else if (isset($shipping['shipping_method_id']) && $shipping['shipping_method_id'] == 0) {
+        } else if (isset($shipping['shipping_method_id']) && ($shipping['shipping_method_id'] == 0 || !isset($shipping['update_address']))) {
 
-            if ($shipping['contact_person_name'] == null || $shipping['address'] == null || $shipping['city'] == null || $shipping['zip'] == null || $shipping['country'] == null || ($is_guest && $shipping['email'] == null)) {
+            // Simplified checkout validation - only require name, phone, email (for guests), city, and address
+            if ($shipping['contact_person_name'] == null || $shipping['city'] == null || $shipping['address'] == null || ($is_guest && (!isset($shipping['email']) || $shipping['email'] == null))) {
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping/billing_address')
                 ], 403);
-            } elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+            }
+
+            // Set default values for required database fields if not provided
+            $defaultLocation = getWebConfig(name: 'default_location');
+            $defaultCountry = 'Bangladesh';
+            if ($defaultLocation) {
+                // Check if $defaultLocation is already an array or a JSON string
+                if (is_array($defaultLocation)) {
+                    $locationData = $defaultLocation;
+                } else {
+                    $locationData = json_decode($defaultLocation, true);
+                }
+                if (is_array($locationData) && isset($locationData['country'])) {
+                    $defaultCountry = $locationData['country'];
+                }
+            }
+
+            $shipping['address_type'] = $shipping['address_type'] ?? 'home';
+            // City is now required, so don't set default
+            if (empty($shipping['city'])) {
                 return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_country')
+                    'errors' => translate('City_is_required')
                 ], 403);
-            } elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
-                ], 403);
+            }
+            $shipping['zip'] = $shipping['zip'] ?? '0000';
+            $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+            $shipping['latitude'] = $shipping['latitude'] ?? '0';
+            $shipping['longitude'] = $shipping['longitude'] ?? '0';
+
+            // Only validate country/zip restrictions if they are actually set (not defaults)
+            if ($shipping['country'] != 'N/A' && $shipping['country'] != '0000' && $shipping['country'] != $defaultCountry) {
+                if ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+                    return response()->json([
+                        'errors' => translate('Delivery_unavailable_in_this_country')
+                    ], 403);
+                }
+            }
+
+            if ($shipping['zip'] != '0000' && $shipping['zip'] != 'N/A') {
+                if ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
+                    return response()->json([
+                        'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
+                    ], 403);
+                }
             }
 
             $address_id = DB::table('shipping_addresses')->insertGetId([
@@ -140,7 +214,7 @@ class SystemController extends Controller
                 'zip' => $shipping['zip'],
                 'country' => $shipping['country'],
                 'phone' => $shipping['phone'],
-                'email' => auth('customer')->check() ? null : $shipping['email'],
+                'email' => auth('customer')->check() ? null : ($shipping['email'] ?? null),
                 'latitude' => $shipping['latitude'],
                 'longitude' => $shipping['longitude'],
                 'is_billing' => 0,
@@ -148,8 +222,17 @@ class SystemController extends Controller
                 'updated_at' => now(),
             ]);
         } else {
-            if (isset($shipping['shipping_method_id'])) {
+            // Check if we're trying to use an existing address (not simplified checkout)
+            // In simplified checkout, shipping_method_id refers to the shipping method, not an address ID
+            // So we check if update_address is set to determine if we're using an existing address
+            if (isset($shipping['update_address']) && isset($shipping['shipping_method_id']) && $shipping['shipping_method_id'] > 0) {
+                // This is using an existing address (not simplified checkout)
                 $address = ShippingAddress::find($shipping['shipping_method_id']);
+                if (!$address) {
+                    return response()->json([
+                        'errors' => translate('Shipping_address_not_found')
+                    ], 403);
+                }
                 if (!$address->country || !$address->zip) {
                     return response()->json([
                         'errors' => translate('Please_update_country_and_zip_for_this_shipping_address')
@@ -165,7 +248,75 @@ class SystemController extends Controller
                 }
                 $address_id = $shipping['shipping_method_id'];
             } else {
-                $address_id =  0;
+                // Simplified checkout - create new address even if shipping_method_id is set (it's the shipping method, not address ID)
+                // Simplified checkout validation - only require name, phone, email (for guests), city, and address
+                if ($shipping['contact_person_name'] == null || $shipping['city'] == null || $shipping['address'] == null || ($is_guest && (!isset($shipping['email']) || $shipping['email'] == null))) {
+                    return response()->json([
+                        'errors' => translate('Fill_all_required_fields_of_shipping/billing_address')
+                    ], 403);
+                }
+
+                // Set default values for required database fields if not provided
+                $defaultLocation = getWebConfig(name: 'default_location');
+                $defaultCountry = 'Bangladesh';
+                if ($defaultLocation) {
+                    // Check if $defaultLocation is already an array or a JSON string
+                    if (is_array($defaultLocation)) {
+                        $locationData = $defaultLocation;
+                    } else {
+                        $locationData = json_decode($defaultLocation, true);
+                    }
+                    if (is_array($locationData) && isset($locationData['country'])) {
+                        $defaultCountry = $locationData['country'];
+                    }
+                }
+
+                $shipping['address_type'] = $shipping['address_type'] ?? 'home';
+                // City is now required, so don't set default
+                if (empty($shipping['city'])) {
+                    return response()->json([
+                        'errors' => translate('City_is_required')
+                    ], 403);
+                }
+                $shipping['zip'] = $shipping['zip'] ?? '0000';
+                $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+                $shipping['latitude'] = $shipping['latitude'] ?? '0';
+                $shipping['longitude'] = $shipping['longitude'] ?? '0';
+
+                // Only validate country/zip restrictions if they are actually set (not defaults)
+                if ($shipping['country'] != 'N/A' && $shipping['country'] != '0000' && $shipping['country'] != $defaultCountry) {
+                    if ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
+                        return response()->json([
+                            'errors' => translate('Delivery_unavailable_in_this_country')
+                        ], 403);
+                    }
+                }
+
+                if ($shipping['zip'] != '0000' && $shipping['zip'] != 'N/A') {
+                    if ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
+                        return response()->json([
+                            'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
+                        ], 403);
+                    }
+                }
+
+                $address_id = DB::table('shipping_addresses')->insertGetId([
+                    'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id') : 0)),
+                    'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
+                    'contact_person_name' => $shipping['contact_person_name'],
+                    'address_type' => $shipping['address_type'],
+                    'address' => $shipping['address'],
+                    'city' => $shipping['city'],
+                    'zip' => $shipping['zip'],
+                    'country' => $shipping['country'],
+                    'phone' => $shipping['phone'],
+                    'email' => auth('customer')->check() ? null : ($shipping['email'] ?? null),
+                    'latitude' => $shipping['latitude'],
+                    'longitude' => $shipping['longitude'],
+                    'is_billing' => 0,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
         }
 
@@ -319,24 +470,67 @@ class SystemController extends Controller
 
         // Shipping start
         $addressId = $shipping['shipping_method_id'] ?? 0;
-        $shipping['country'] = 'Bangladesh';
+        
+        // Set default country
+        $defaultLocation = getWebConfig(name: 'default_location');
+        $defaultCountry = 'Bangladesh';
+        if ($defaultLocation) {
+            // Check if $defaultLocation is already an array or a JSON string
+            if (is_array($defaultLocation)) {
+                $locationData = $defaultLocation;
+            } else {
+                $locationData = json_decode($defaultLocation, true);
+            }
+            if (is_array($locationData) && isset($locationData['country'])) {
+                $defaultCountry = $locationData['country'];
+            }
+        }
+        $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+        
         if (isset($shipping['shipping_method_id'])) {
-            if ($shipping['contact_person_name'] == null || !isset($shipping['address_type']) || $shipping['address'] == null || $shipping['city'] == null || !isset($shipping['zip']) || $shipping['zip'] == null || !isset($shipping['country']) || $shipping['country'] == null || $shipping['phone'] == null || ($isGuestCustomer && $shipping['email'] == null)) {
+            // Simplified checkout validation - only require name, phone, email (for guests), and address
+            if ($shipping['contact_person_name'] == null || $shipping['address'] == null || $shipping['phone'] == null || ($isGuestCustomer && (!isset($shipping['email']) || $shipping['email'] == null))) {
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping_address')
                 ], 403);
-            } elseif ($countryRestrictStatus && !self::delivery_country_exist_check($shipping['country'])) {
+            }
+
+            // Set default values for required database fields if not provided
+            $shipping['address_type'] = $shipping['address_type'] ?? 'home';
+            // City is now required, so don't set default
+            if (empty($shipping['city'])) {
                 return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_country.')
+                    'errors' => translate('City_is_required')
                 ], 403);
-            } elseif ($zipRestrictStatus && !self::delivery_zipcode_exist_check($shipping['zip'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
-                ], 403);
+            }
+            $shipping['zip'] = $shipping['zip'] ?? '0000';
+            $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+
+            // Only validate country/zip restrictions if they are actually set (not defaults)
+            if ($shipping['country'] != 'N/A' && $shipping['country'] != '0000' && $shipping['country'] != $defaultCountry) {
+                if ($countryRestrictStatus && !self::delivery_country_exist_check($shipping['country'])) {
+                    return response()->json([
+                        'errors' => translate('Delivery_unavailable_in_this_country.')
+                    ], 403);
+                }
+            }
+
+            if ($shipping['zip'] != '0000' && $shipping['zip'] != 'N/A') {
+                if ($zipRestrictStatus && !self::delivery_zipcode_exist_check($shipping['zip'])) {
+                    return response()->json([
+                        'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
+                    ], 403);
+                }
             }
         }
 
         if (isset($shipping['save_address']) && $shipping['save_address'] == 'on') {
+            // Ensure default values are set
+            $shipping['address_type'] = $shipping['address_type'] ?? 'home';
+            $shipping['city'] = $shipping['city'] ?? 'N/A';
+            $shipping['zip'] = $shipping['zip'] ?? '0000';
+            $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+            
             $addressId = ShippingAddress::insertGetId([
                 'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id') : 0)),
                 'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
@@ -347,9 +541,9 @@ class SystemController extends Controller
                 'zip' => $shipping['zip'],
                 'country' => $shipping['country'],
                 'phone' => $shipping['phone'],
-                'latitude' => $shipping['latitude'] ?? "",
-                'longitude' => $shipping['longitude'] ?? "",
-                'email' => auth('customer')->check() ? null : $shipping['email'],
+                'latitude' => $shipping['latitude'] ?? "0",
+                'longitude' => $shipping['longitude'] ?? "0",
+                'email' => auth('customer')->check() ? null : ($shipping['email'] ?? null),
                 'is_billing' => 0,
             ]);
         } elseif (isset($shipping['update_address']) && $shipping['update_address'] == 'on') {
@@ -365,6 +559,12 @@ class SystemController extends Controller
             $getShipping->longitude = $shipping['longitude'] ?? "";
             $getShipping->save();
         } elseif (isset($shipping['shipping_method_id']) && !isset($shipping['update_address']) && !isset($shipping['save_address'])) {
+            // Ensure default values are set
+            $shipping['address_type'] = $shipping['address_type'] ?? 'home';
+            $shipping['city'] = $shipping['city'] ?? 'N/A';
+            $shipping['zip'] = $shipping['zip'] ?? '0000';
+            $shipping['country'] = $shipping['country'] ?? $defaultCountry;
+            
             $addressId = ShippingAddress::insertGetId([
                 'customer_id' => auth('customer')->check() ? 0 : ((session()->has('guest_id') ? session('guest_id') : 0)),
                 'is_guest' => auth('customer')->check() ? 0 : (session()->has('guest_id') ? 1 : 0),
@@ -375,9 +575,9 @@ class SystemController extends Controller
                 'zip' => $shipping['zip'],
                 'country' => $shipping['country'],
                 'phone' => $shipping['phone'],
-                'email' => auth('customer')->check() ? null : $shipping['email'],
-                'latitude' => $shipping['latitude'] ?? '',
-                'longitude' => $shipping['longitude'] ?? '',
+                'email' => auth('customer')->check() ? null : ($shipping['email'] ?? null),
+                'latitude' => $shipping['latitude'] ?? '0',
+                'longitude' => $shipping['longitude'] ?? '0',
                 'is_billing' => 0,
             ]);
         }
