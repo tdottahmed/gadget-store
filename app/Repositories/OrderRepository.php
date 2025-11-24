@@ -11,6 +11,7 @@ use App\Models\OrderTransaction;
 use App\Models\Product;
 use App\Models\SellerWallet;
 use App\Models\Transaction;
+use App\Models\OrderShipment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -28,10 +29,8 @@ class OrderRepository implements OrderRepositoryInterface
         private readonly AdminWallet                  $adminWallet,
         private readonly SellerWallet                 $sellerWallet,
         private readonly Transaction                  $transaction,
-        private readonly OrderTransaction             $orderTransaction,
-    )
-    {
-    }
+        private readonly OrderTransaction             $orderTransaction
+    ) {}
 
     public function add(array $data): string|object
     {
@@ -367,7 +366,6 @@ class OrderRepository implements OrderRepositoryInterface
                 $payerId = 1;
                 $paymentReceiverId = $order['seller_id'];
                 $paidTo = 'seller';
-
             } elseif ($order->coupon_discount_bearer == 'seller') {
                 $paidBy = 'seller';
                 $payerId = $order['seller_id'];
@@ -430,7 +428,6 @@ class OrderRepository implements OrderRepositoryInterface
                 $payerId = 1;
                 $paymentReceiverId = $order->seller_id;
                 $paidTo = 'seller';
-
             } elseif ($order->free_delivery_bearer == 'seller' && $order->shipping_responsibility == 'inhouse_shipping') {
                 $sellerWallet->delivery_charge_earned -= $order->extra_discount;
                 $sellerWallet->total_earning -= $order->extra_discount;

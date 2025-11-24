@@ -48,6 +48,7 @@ use App\Contracts\Repositories\LoyaltyPointTransactionRepositoryInterface;
 use App\Contracts\Repositories\OrderExpectedDeliveryHistoryRepositoryInterface;
 use App\Models\FraudCheckHistory;
 use App\Models\Order as ModelsOrder;
+use App\Models\OrderShipment;
 use App\Services\SteadFastCourierService;
 use PhpParser\Node\Expr\AssignOp\Mod;
 use ShahariarAhmad\CourierFraudCheckerBd\Facade\CourierFraudCheckerBd;
@@ -258,6 +259,7 @@ class OrderController extends BaseController
 
         if ($order) {
             $physicalProduct = false;
+            $orderShipment = OrderShipment::where('order_id', $id)->first();
             if (isset($order->details)) {
                 foreach ($order->details as $orderDetail) {
                     $orderDetailProduct = json_decode($orderDetail?->product_details, true);
@@ -303,7 +305,8 @@ class OrderController extends BaseController
                     'zipCodes',
                     'orderCount',
                     'isOrderOnlyDigital',
-                    'fraudCheckHistory'
+                    'fraudCheckHistory',
+                    'orderShipment'
                 ));
             } else {
                 $orderCount = $this->orderRepo->getListWhereCount(filters: ['customer_id' => $order['customer_id'], 'order_type' => 'POS']);
