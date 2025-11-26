@@ -188,8 +188,74 @@ $(".web-announcement-slideUp").on("click", function () {
     localStorage.setItem("offerBarHideUntil", hideUntil);
 });
 
-$(".category-menu-toggle-btn").on("click", function () {
-    $(".megamenu-wrap").toggleClass("show");
+// Function to check if device is desktop (>= 768px)
+function isDesktop() {
+    return $(window).width() >= 768;
+}
+
+// Handle category menu toggle - hover on desktop, click on mobile/tablet
+function initCategoryMenuToggle() {
+    const $toggleBtn = $(".category-menu-toggle-btn");
+    const $megamenu = $(".megamenu-wrap");
+    
+    // Remove existing event handlers
+    $toggleBtn.off("click mouseenter mouseleave");
+    $megamenu.off("mouseenter mouseleave");
+    $(document).off("click.categoryMenu");
+    
+    if (isDesktop()) {
+        // Desktop: Use hover
+        $toggleBtn.on("mouseenter", function () {
+            $megamenu.addClass("show");
+        });
+        
+        // Keep menu open when hovering over it
+        $megamenu.on("mouseenter", function () {
+            $megamenu.addClass("show");
+        });
+        
+        // Hide menu when mouse leaves button or menu
+        $toggleBtn.on("mouseleave", function () {
+            setTimeout(function () {
+                if (!$megamenu.is(":hover") && !$toggleBtn.is(":hover")) {
+                    $megamenu.removeClass("show");
+                }
+            }, 100);
+        });
+        
+        $megamenu.on("mouseleave", function () {
+            setTimeout(function () {
+                if (!$toggleBtn.is(":hover") && !$megamenu.is(":hover")) {
+                    $megamenu.removeClass("show");
+                }
+            }, 100);
+        });
+    } else {
+        // Mobile/Tablet: Use click toggle
+        $toggleBtn.on("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $megamenu.toggleClass("show");
+        });
+        
+        // Close menu when clicking outside on mobile/tablet
+        $(document).on("click.categoryMenu", function (e) {
+            if (!$toggleBtn.is(e.target) && 
+                !$toggleBtn.has(e.target).length && 
+                !$megamenu.is(e.target) && 
+                !$megamenu.has(e.target).length) {
+                $megamenu.removeClass("show");
+            }
+        });
+    }
+}
+
+// Initialize on page load
+initCategoryMenuToggle();
+
+// Re-initialize on window resize
+$(window).on("resize", function () {
+    initCategoryMenuToggle();
 });
 
 $(".navbar-tool-icon-box").on("click", function () {
