@@ -8043,6 +8043,9 @@ span.badge-accent:hover {
     .megamenu-wrap {
         display: none;
     }
+    .megamenu-wrap.show {
+        display: block;
+    }
 }
 
 .category-menu-wrap {
