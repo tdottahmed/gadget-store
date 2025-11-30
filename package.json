@@ -7,9 +7,11 @@
         "watch-poll": "npm run watch -- --watch-poll",
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
         "prod": "npm run production",
-        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "copy-assets": "mkdir -p public/themes/greenmarket/assets/css public/themes/greenmarket/assets/js public/themes/greenmarket/assets/webfonts && cp node_modules/slick-carousel/slick/slick.css public/themes/greenmarket/assets/css/ && cp node_modules/slick-carousel/slick/slick-theme.css public/themes/greenmarket/assets/css/ && cp node_modules/slick-carousel/slick/slick.min.js public/themes/greenmarket/assets/js/ && cp -r node_modules/slick-carousel/slick/fonts public/themes/greenmarket/assets/css/ 2>/dev/null || true && cp node_modules/@fortawesome/fontawesome-free/css/all.min.css public/themes/greenmarket/assets/css/fontawesome.min.css && cp -r node_modules/@fortawesome/fontawesome-free/webfonts public/themes/greenmarket/assets/ && sed -i 's|../webfonts|/themes/greenmarket/assets/webfonts|g' public/themes/greenmarket/assets/css/fontawesome.min.css"
     },
     "devDependencies": {
+        "@fortawesome/fontawesome-free": "^7.1.0",
         "autoprefixer": "^10.4.22",
         "axios": "^0.19",
         "bootstrap": "^4.0.0",
@@ -22,6 +24,7 @@
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.20.1",
         "sass-loader": "^8.0.0",
+        "slick-carousel": "^1.8.1",
         "tailwindcss": "^3.4.18",
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.6.10"

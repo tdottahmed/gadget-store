@@ -12,77 +12,153 @@
     <meta property="twitter:title" content="Welcome To {{ $web_config['company_name'] }} Home" />
     <meta property="twitter:url" content="{{ env('APP_URL') }}">
     <meta property="twitter:description" content="{{ $web_config['meta_description'] }}">
+    <style>
+        .container-ds {
+            max-width: 1512px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        .bg-primary-dark {
+            background-color: #1a5f3f;
+        }
+        .bg-primary-green {
+            background-color: #2d8659;
+        }
+        .bg-primary-light {
+            background-color: #d8f7e5;
+        }
+        .text-primary-semi-dark {
+            color: #a8d4c0;
+        }
+        .bg-primary-dark-green {
+            background-color: #0d3d26;
+        }
+        .text-primary-light-green {
+            color: #a8d4c0;
+        }
+        .bg-neutral-off-white {
+            background-color: #f5f5f5;
+        }
+        .we-care-section {
+            background: linear-gradient(135deg, #2d8659 0%, #1a5f3f 100%);
+            padding: 4rem 0;
+        }
+        .product-slider .slick-slide {
+            padding: 0 10px;
+        }
+        .product-slider .slick-prev,
+        .product-slider .slick-next {
+            z-index: 1;
+        }
+        .product-slider .slick-prev {
+            left: -30px;
+        }
+        .product-slider .slick-next {
+            right: -30px;
+        }
+        .relativ {
+            position: relative;
+        }
+    </style>
 @endpush
 
 @section('content')
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-green-600 to-green-800 text-white py-20">
-        <div class="container mx-auto px-4">
-            <div class="text-center">
-                <h1 class="text-5xl font-bold mb-4">{{ translate('welcome_to') }} {{ $web_config['company_name'] }}</h1>
-                <p class="text-xl mb-8">{{ translate('your_one_stop_shop_for_all_your_needs') }}</p>
-                <a href="{{ route('products') }}" class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">
-                    {{ translate('shop_now') }}
-                </a>
-            </div>
+    <section class="relative overflow-hidden">
+        <div class="hero-slider">
+            @if(isset($bannerTypeMainSectionBanner) && $bannerTypeMainSectionBanner)
+                <div>
+                    <img src="{{ getStorageImages(path: $bannerTypeMainSectionBanner->photo_full_url ?? null, type: 'banner') }}" 
+                         alt="Slider image 1"
+                         class="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[580px] object-cover">
+                </div>
+            @else
+                <!-- Use template slider images as fallback -->
+                <div>
+                    <img src="{{ asset('themes/greenmarket/assets/images/slider/Web Slider 01_KMGsqf98.webp') }}" 
+                         alt="Slider image 1"
+                         class="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[580px] object-cover">
+                </div>
+                <div>
+                    <img src="{{ asset('themes/greenmarket/assets/images/slider/Web Slider 02_KMG5yaqx6.webp') }}" 
+                         alt="Slider image 2"
+                         class="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[580px] object-cover">
+                </div>
+            @endif
         </div>
     </section>
 
-    <!-- Featured Categories -->
-    <section class="py-12 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-8">{{ translate('shop_by_category') }}</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                @for($i = 1; $i <= 6; $i++)
-                    <div class="text-center">
-                        <div class="bg-gray-100 rounded-lg p-6 mb-4 hover:shadow-lg transition-shadow cursor-pointer">
-                            <div class="w-16 h-16 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                </svg>
-                            </div>
-                            <h3 class="font-semibold text-gray-800">{{ translate('category') }} {{ $i }}</h3>
+    <!-- Category Bar -->
+    <section class="bg-primary-light py-3">
+        <div class="container-ds">
+            <div class="category-slider">
+                @if(isset($categories) && $categories->count() > 0)
+                    @foreach($categories->take(12) as $category)
+                        <div>
+                            <a href="{{ route('products', ['data_from' => 'category', 'id' => $category->id]) }}"
+                                class="flex flex-col items-center gap-2 text-[#389e63] hover:scale-110 transition-transform group">
+                                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                                    @if($category->icon)
+                                        <img src="{{ getStorageImages(path: $category->icon, type: 'category') }}" alt="{{ $category->name }}" class="w-6 h-6">
+                                    @else
+                                        <i class="fas fa-th-large text-xl"></i>
+                                    @endif
+                                </div>
+                                <span class="text-lg font-bold">{{ $category->name }}</span>
+                            </a>
                         </div>
-                    </div>
-                @endfor
-            </div>
-        </div>
-    </section>
-
-    <!-- Flash Deals -->
-    @if (isset($flashDeal['flashDeal']) && $flashDeal['flashDeal'] && isset($flashDeal['flashDealProducts']) && $flashDeal['flashDealProducts'] && count($flashDeal['flashDealProducts']) > 0)
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-3xl font-bold">{{ translate('flash_deals') }}</h2>
-                @if(isset($flashDeal['flashDeal']->id))
-                    <a href="{{ route('flash-deals', ['id' => $flashDeal['flashDeal']->id]) }}" class="text-green-600 hover:text-green-700 font-semibold">
-                        {{ translate('view_all') }} →
-                    </a>
+                    @endforeach
                 @else
-                    <a href="{{ route('products') }}" class="text-green-600 hover:text-green-700 font-semibold">
-                        {{ translate('view_all') }} →
-                    </a>
+                    @for($i = 1; $i <= 8; $i++)
+                        <div>
+                            <a href="#"
+                                class="flex flex-col items-center gap-2 text-[#389e63] hover:scale-110 transition-transform group">
+                                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                                    <i class="fas fa-leaf text-xl"></i>
+                                </div>
+                                <span class="text-lg font-bold">{{ translate('category') }} {{ $i }}</span>
+                            </a>
+                        </div>
+                    @endfor
                 @endif
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                @foreach($flashDeal['flashDealProducts']->take(6) as $product)
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                        <div class="aspect-square bg-gray-200 relative">
-                            <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}" 
-                                 alt="{{ $product->name ?? 'Product' }}" class="w-full h-full object-cover">
-                            @if(isset($product->discount) && $product->discount > 0)
-                                <span class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                                    -{{ $product->discount }}%
-                                </span>
-                            @endif
+        </div>
+    </section>
+
+    <!-- Our Best Sellers Section -->
+    @if(isset($flashDeal['flashDealProducts']) && $flashDeal['flashDealProducts']->count() > 0)
+    <section class="py-5 bg-white">
+        <div class="container-ds">
+            <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('flash_deals') }}</h2>
+            <div class="bestsellers-slider product-slider">
+                @foreach($flashDeal['flashDealProducts']->take(10) as $product)
+                    <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
+                        <div class="relativ p-8">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
+                                    alt="{{ $product->name ?? 'Product' }}" 
+                                    class="w-full h-64 object-contain">
+                            </a>
+                        </div>
+                        <div class="bg-[#F2F2F2] flex">
+                            <button class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 quick-view-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                            </button>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">{{ $product->name ?? 'Product' }}</h3>
-                            <div class="flex items-center justify-between">
-                                <span class="text-green-600 font-bold">{{ session('currency_symbol') ?? '$' }}{{ $product->unit_price ?? 0 }}</span>
-                                @if(isset($product->unit_price) && $product->unit_price > 0)
-                                    <span class="text-gray-400 line-through text-sm">{{ session('currency_symbol') ?? '$' }}{{ $product->unit_price }}</span>
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">{{ $product->name ?? translate('product') }}</h3>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-[#669900]">{{ session('currency_symbol') ?? '৳' }}{{ number_format($product->unit_price ?? 0, 2) }}</span>
+                                @if(isset($product->discount) && $product->discount > 0)
+                                    @php
+                                        $originalPrice = ($product->unit_price ?? 0) / (1 - ($product->discount / 100));
+                                    @endphp
+                                    <span class="text-medium text-[#afb4be] line-through">{{ session('currency_symbol') ?? '৳' }}{{ number_format($originalPrice, 2) }}</span>
                                 @endif
                             </div>
                         </div>
@@ -93,90 +169,299 @@
     </section>
     @endif
 
-    <!-- Featured Products -->
-    <section class="py-12 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-3xl font-bold">{{ translate('featured_products') }}</h2>
-                <a href="{{ route('products', ['data_from' => 'featured', 'page' => 1]) }}" class="text-green-600 hover:text-green-700 font-semibold">
-                    {{ translate('view_all') }} →
-                </a>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
-                    @foreach($featuredProductsList->take(6) as $product)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                            <div class="aspect-square bg-gray-200 relative">
-                                <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}" 
-                                     alt="{{ $product->name ?? 'Product' }}" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">{{ $product->name ?? 'Product' }}</h3>
-                                <p class="text-green-600 font-bold mb-2">{{ session('currency_symbol') ?? '$' }}{{ $product->unit_price ?? 0 }}</p>
-                                <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}" class="block w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-center">
-                                    {{ translate('view_details') }}
-                                </a>
+    <!-- Honey Section - Using Featured Products -->
+    @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
+    <section class="py-12 bg-neutral-off-white">
+        <div class="container-ds">
+            <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('featured_products') }}</h2>
+            <div class="honey-slider product-slider">
+                @foreach($featuredProductsList->take(10) as $product)
+                    <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
+                        <div class="relativ p-8">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
+                                    alt="{{ $product->name ?? 'Product' }}" 
+                                    class="w-full h-64 object-contain">
+                            </a>
+                        </div>
+                        <div class="bg-[#F2F2F2] flex">
+                            <button class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 quick-view-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">{{ $product->name ?? translate('product') }}</h3>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-[#669900]">{{ session('currency_symbol') ?? '৳' }}{{ number_format($product->unit_price ?? 0, 2) }}</span>
+                                @if(isset($product->discount) && $product->discount > 0)
+                                    @php
+                                        $originalPrice = ($product->unit_price ?? 0) / (1 - ($product->discount / 100));
+                                    @endphp
+                                    <span class="text-medium text-[#afb4be] line-through">{{ session('currency_symbol') ?? '৳' }}{{ number_format($originalPrice, 2) }}</span>
+                                @endif
                             </div>
                         </div>
-                    @endforeach
-                @else
-                    @for($i = 1; $i <= 6; $i++)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                            <div class="aspect-square bg-gray-200">
-                                <div class="w-full h-full flex items-center justify-center">
-                                    <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-800 mb-2">{{ translate('product') }} {{ $i }}</h3>
-                                <p class="text-green-600 font-bold mb-2">{{ session('currency_symbol') ?? '$' }}99.99</p>
-                                <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
-                                    {{ translate('add_to_cart') }}
-                                </button>
-                            </div>
-                        </div>
-                    @endfor
-                @endif
-            </div>
-        </div>
-    </section>
-
-    <!-- Banner Section -->
-    @if (isset($bannerTypeMainSectionBanner) && !empty($bannerTypeMainSectionBanner))
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="relative rounded-lg overflow-hidden">
-                <img src="{{ getStorageImages(path: $bannerTypeMainSectionBanner->photo_full_url ?? null, type: 'banner') }}" 
-                     alt="Banner" class="w-full h-64 object-cover">
-                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                    <div class="text-center text-white">
-                        <h2 class="text-4xl font-bold mb-4">{{ translate('do_not_miss_today`s_deal') }}!</h2>
-                        <a href="{{ isset($bannerTypeMainSectionBanner->url) && $bannerTypeMainSectionBanner->url ? $bannerTypeMainSectionBanner->url : route('products') }}" 
-                           class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block">
-                            {{ translate('shop_now') }}
-                        </a>
                     </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
     @endif
 
-    <!-- Newsletter Section -->
-    <section class="py-12 bg-green-600 text-white">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-4">{{ translate('subscribe_to_our_newsletter') }}</h2>
-            <p class="mb-6">{{ translate('get_the_latest_updates_and_offers') }}</p>
-            <form class="max-w-md mx-auto flex gap-2">
-                <input type="email" placeholder="{{ translate('enter_your_email') }}" 
-                       class="flex-1 px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
-                <button type="submit" class="bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                    {{ translate('subscribe') }}
-                </button>
-            </form>
+    <!-- Wellness Section - Using Latest Products -->
+    @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
+    <section class="py-12 bg-white">
+        <div class="container-ds">
+            <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('wellness') }}</h2>
+            <div class="wellness-slider product-slider">
+                @foreach($featuredProductsList->skip(5)->take(10) as $product)
+                    <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
+                        <div class="relativ p-8">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
+                                    alt="{{ $product->name ?? 'Product' }}" 
+                                    class="w-full h-64 object-contain">
+                            </a>
+                        </div>
+                        <div class="bg-[#F2F2F2] flex">
+                            <button class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 quick-view-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">{{ $product->name ?? translate('product') }}</h3>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-[#669900]">{{ session('currency_symbol') ?? '৳' }}{{ number_format($product->unit_price ?? 0, 2) }}</span>
+                                @if(isset($product->discount) && $product->discount > 0)
+                                    @php
+                                        $originalPrice = ($product->unit_price ?? 0) / (1 - ($product->discount / 100));
+                                    @endphp
+                                    <span class="text-medium text-[#afb4be] line-through">{{ session('currency_symbol') ?? '৳' }}{{ number_format($originalPrice, 2) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- All Products Section -->
+    @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
+    <section class="py-12 bg-neutral-off-white">
+        <div class="container-ds">
+            <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('all_products') }}</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                @foreach($featuredProductsList->take(10) as $product)
+                    <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
+                        <div class="relativ p-8">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
+                                    alt="{{ $product->name ?? 'Product' }}" 
+                                    class="w-full h-64 object-contain">
+                            </a>
+                        </div>
+                        <div class="bg-[#F2F2F2] flex">
+                            <button class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 quick-view-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">{{ $product->name ?? translate('product') }}</h3>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-[#669900]">{{ session('currency_symbol') ?? '৳' }}{{ number_format($product->unit_price ?? 0, 2) }}</span>
+                                @if(isset($product->discount) && $product->discount > 0)
+                                    @php
+                                        $originalPrice = ($product->unit_price ?? 0) / (1 - ($product->discount / 100));
+                                    @endphp
+                                    <span class="text-medium text-[#afb4be] line-through">{{ session('currency_symbol') ?? '৳' }}{{ number_format($originalPrice, 2) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- Recently Viewed Section -->
+    @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
+    <section class="py-12 bg-white">
+        <div class="container-ds">
+            <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('recently_viewed') }}</h2>
+            <div class="recently-viewed-slider product-slider">
+                @foreach($featuredProductsList->take(10) as $product)
+                    <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
+                        <div class="relativ p-8">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
+                                    alt="{{ $product->name ?? 'Product' }}" 
+                                    class="w-full h-64 object-contain">
+                            </a>
+                        </div>
+                        <div class="bg-[#F2F2F2] flex">
+                            <button class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 quick-view-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                            <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="{{ $product->id ?? '' }}">
+                                <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
+                                <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">{{ $product->name ?? translate('product') }}</h3>
+                            </a>
+                            <div class="flex items-center gap-2">
+                                <span class="text-2xl font-bold text-[#669900]">{{ session('currency_symbol') ?? '৳' }}{{ number_format($product->unit_price ?? 0, 2) }}</span>
+                                @if(isset($product->discount) && $product->discount > 0)
+                                    @php
+                                        $originalPrice = ($product->unit_price ?? 0) / (1 - ($product->discount / 100));
+                                    @endphp
+                                    <span class="text-medium text-[#afb4be] line-through">{{ session('currency_symbol') ?? '৳' }}{{ number_format($originalPrice, 2) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
+
+    <!-- We Care Section -->
+    <section class="we-care-section">
+        <div class="container-ds text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">{{ translate('we_care') }}</h2>
+            <p class="text-white/90 text-lg max-w-3xl mx-auto">{{ translate('our_mission_is_to_provide_the_best_quality_products') }}</p>
         </div>
     </section>
 @endsection
 
+@push('script')
+<script>
+    $(document).ready(function() {
+        // Hero Slider
+        if ($('.hero-slider').length) {
+            $('.hero-slider').slick({
+                dots: true,
+                infinite: true,
+                speed: 500,
+                fade: true,
+                cssEase: 'linear',
+                autoplay: true,
+                autoplaySpeed: 3000,
+                arrows: true
+            });
+        }
+
+        // Category Slider
+        if ($('.category-slider').length) {
+            $('.category-slider').slick({
+                dots: false,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 8,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 2000,
+                arrows: true,
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 6,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 4,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 640,
+                        settings: {
+                            slidesToShow: 3,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
+            });
+        }
+
+        // Product Sliders
+        $('.product-slider').each(function() {
+            if ($(this).length) {
+                $(this).slick({
+                    dots: false,
+                    infinite: true,
+                    speed: 300,
+                    slidesToShow: 5,
+                    slidesToScroll: 1,
+                    autoplay: true,
+                    autoplaySpeed: 3000,
+                    arrows: true,
+                    responsive: [
+                        {
+                            breakpoint: 1024,
+                            settings: {
+                                slidesToShow: 4,
+                                slidesToScroll: 1
+                            }
+                        },
+                        {
+                            breakpoint: 768,
+                            settings: {
+                                slidesToShow: 3,
+                                slidesToScroll: 1
+                            }
+                        },
+                        {
+                            breakpoint: 640,
+                            settings: {
+                                slidesToShow: 2,
+                                slidesToScroll: 1
+                            }
+                        }
+                    ]
+                });
+            }
+        });
+
+        // Quick View
+        $('.quick-view-btn').on('click', function() {
+            var productId = $(this).data('product-id');
+            if (productId && typeof quickView !== 'undefined') {
+                quickView(productId);
+            }
+        });
+
+        // Add to Cart
+        $('.add-to-cart-btn').on('click', function() {
+            var productId = $(this).data('product-id');
+            if (productId && typeof addToCart !== 'undefined') {
+                addToCart(productId);
+            }
+        });
+    });
+</script>
+@endpush

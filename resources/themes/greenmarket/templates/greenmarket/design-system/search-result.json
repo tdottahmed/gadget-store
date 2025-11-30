@@ -1,0 +1,628 @@
+{
+  "designSystem": {
+    "name": "NATURO Search Results Design System",
+    "version": "1.0.0",
+    "description": "Design system for NATURO search dropdown/results component",
+    
+    "colors": {
+      "primary": {
+        "darkGreen": "#0D3B2E",
+        "green": "#2D5F3F",
+        "brightGreen": "#00FF41"
+      },
+      "neutral": {
+        "white": "#FFFFFF",
+        "offWhite": "#F8F8F8",
+        "lightGray": "#F0F0F0",
+        "gray": "#E0E0E0",
+        "mediumGray": "#CCCCCC",
+        "darkGray": "#666666",
+        "black": "#000000"
+      },
+      "background": {
+        "dropdown": "#FFFFFF",
+        "header": "#F8F8F8",
+        "resultHover": "#F5F5F5",
+        "searchBar": "#0D3B2E"
+      },
+      "text": {
+        "primary": "#000000",
+        "secondary": "#666666",
+        "tertiary": "#999999",
+        "price": "#000000",
+        "originalPrice": "#999999",
+        "searchCount": "#666666"
+      },
+      "ui": {
+        "border": "#E0E0E0",
+        "divider": "#F0F0F0",
+        "searchIcon": "#FFFFFF",
+        "closeIcon": "#999999",
+        "closeIconHover": "#000000"
+      }
+    },
+
+    "typography": {
+      "fontFamily": {
+        "primary": "'Hind Siliguri', 'Noto Sans Bengali', 'Inter', sans-serif",
+        "bangla": "'Hind Siliguri', 'Noto Sans Bengali', sans-serif"
+      },
+      "fontSize": {
+        "xs": "0.625rem",
+        "sm": "0.75rem",
+        "base": "0.875rem",
+        "md": "1rem",
+        "lg": "1.125rem"
+      },
+      "fontWeight": {
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": 1.25,
+        "normal": 1.5,
+        "relaxed": 1.75
+      }
+    },
+
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem"
+    },
+
+    "layout": {
+      "searchBar": {
+        "width": {
+          "mobile": "100%",
+          "tablet": "600px",
+          "desktop": "900px"
+        },
+        "height": "48px",
+        "position": "relative"
+      },
+      "dropdown": {
+        "width": "100%",
+        "maxHeight": "500px",
+        "position": "absolute",
+        "top": "calc(100% + 8px)",
+        "left": 0,
+        "zIndex": 9999
+      }
+    },
+
+    "components": {
+      "searchBar": {
+        "structure": {
+          "container": {
+            "position": "relative",
+            "width": "100%",
+            "maxWidth": "900px"
+          },
+          "input": {
+            "width": "100%",
+            "height": "48px",
+            "padding": "0.75rem 3rem 0.75rem 3rem",
+            "background": "#0D3B2E",
+            "border": "1px solid rgba(255, 255, 255, 0.2)",
+            "borderRadius": "6px",
+            "color": "#FFFFFF",
+            "fontSize": "0.875rem",
+            "fontFamily": "'Hind Siliguri', 'Noto Sans Bengali', 'Inter', sans-serif",
+            "transition": "all 0.3s ease",
+            "placeholder": {
+              "color": "rgba(255, 255, 255, 0.6)"
+            },
+            "focus": {
+              "borderColor": "#00FF41",
+              "outline": "none",
+              "boxShadow": "0 0 0 3px rgba(0, 255, 65, 0.1)"
+            }
+          },
+          "searchIcon": {
+            "position": "absolute",
+            "left": "1rem",
+            "top": "50%",
+            "transform": "translateY(-50%)",
+            "color": "rgba(255, 255, 255, 0.8)",
+            "size": "1.125rem",
+            "pointerEvents": "none"
+          },
+          "clearButton": {
+            "position": "absolute",
+            "right": "1rem",
+            "top": "50%",
+            "transform": "translateY(-50%)",
+            "width": "24px",
+            "height": "24px",
+            "background": "transparent",
+            "border": "none",
+            "borderRadius": "50%",
+            "cursor": "pointer",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "color": "rgba(255, 255, 255, 0.6)",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "background": "rgba(255, 255, 255, 0.1)",
+              "color": "#FFFFFF"
+            }
+          }
+        }
+      },
+
+      "searchDropdown": {
+        "structure": {
+          "container": {
+            "background": "#FFFFFF",
+            "borderRadius": "8px",
+            "boxShadow": "0 8px 24px rgba(0, 0, 0, 0.15)",
+            "overflow": "hidden",
+            "border": "1px solid #E0E0E0",
+            "marginTop": "0.5rem"
+          },
+          "animation": {
+            "enter": "slideDown 0.3s ease, fadeIn 0.3s ease",
+            "exit": "slideUp 0.3s ease, fadeOut 0.3s ease"
+          }
+        }
+      },
+
+      "searchHeader": {
+        "structure": {
+          "container": {
+            "padding": "0.75rem 1rem",
+            "background": "#F8F8F8",
+            "borderBottom": "1px solid #E0E0E0",
+            "display": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center"
+          },
+          "text": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#666666"
+          },
+          "highlight": {
+            "fontWeight": 700,
+            "color": "#000000"
+          }
+        }
+      },
+
+      "searchResults": {
+        "structure": {
+          "container": {
+            "maxHeight": "450px",
+            "overflowY": "auto",
+            "overflowX": "hidden"
+          },
+          "scrollbar": {
+            "width": "6px",
+            "track": {
+              "background": "#F5F5F5"
+            },
+            "thumb": {
+              "background": "#CCCCCC",
+              "borderRadius": "3px",
+              "hover": {
+                "background": "#999999"
+              }
+            }
+          }
+        }
+      },
+
+      "searchResultItem": {
+        "structure": {
+          "container": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "1rem",
+            "padding": "0.875rem 1rem",
+            "borderBottom": "1px solid #F0F0F0",
+            "cursor": "pointer",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "background": "#F5F5F5"
+            },
+            "active": {
+              "background": "#F0F0F0"
+            }
+          },
+          "imageContainer": {
+            "width": "50px",
+            "height": "50px",
+            "flexShrink": 0,
+            "background": "#F8F8F8",
+            "borderRadius": "6px",
+            "border": "1px solid #E0E0E0",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "padding": "0.375rem"
+          },
+          "image": {
+            "width": "100%",
+            "height": "100%",
+            "objectFit": "contain"
+          },
+          "content": {
+            "flex": 1,
+            "minWidth": 0,
+            "display": "flex",
+            "flexDirection": "column",
+            "gap": "0.25rem"
+          },
+          "title": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#000000",
+            "lineHeight": 1.4,
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "0.5rem"
+          },
+          "titleBangla": {
+            "fontWeight": 500
+          },
+          "titleEnglish": {
+            "fontWeight": 400,
+            "color": "#666666"
+          },
+          "separator": {
+            "color": "#CCCCCC"
+          },
+          "priceContainer": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "0.5rem"
+          },
+          "price": {
+            "fontSize": "0.875rem",
+            "fontWeight": 700,
+            "color": "#000000"
+          },
+          "originalPrice": {
+            "fontSize": "0.75rem",
+            "fontWeight": 400,
+            "color": "#999999",
+            "textDecoration": "line-through"
+          }
+        }
+      },
+
+      "noResults": {
+        "structure": {
+          "container": {
+            "padding": "3rem 2rem",
+            "textAlign": "center",
+            "display": "flex",
+            "flexDirection": "column",
+            "alignItems": "center",
+            "gap": "1rem"
+          },
+          "icon": {
+            "fontSize": "3rem",
+            "color": "#CCCCCC"
+          },
+          "title": {
+            "fontSize": "1rem",
+            "fontWeight": 600,
+            "color": "#000000",
+            "marginBottom": "0.25rem"
+          },
+          "message": {
+            "fontSize": "0.875rem",
+            "color": "#666666",
+            "lineHeight": 1.5
+          }
+        }
+      },
+
+      "loadingState": {
+        "structure": {
+          "container": {
+            "padding": "2rem",
+            "display": "flex",
+            "justifyContent": "center",
+            "alignItems": "center"
+          },
+          "spinner": {
+            "width": "32px",
+            "height": "32px",
+            "border": "3px solid #F0F0F0",
+            "borderTop": "3px solid #2D5F3F",
+            "borderRadius": "50%",
+            "animation": "spin 0.8s linear infinite"
+          }
+        }
+      },
+
+      "searchSuggestions": {
+        "structure": {
+          "container": {
+            "padding": "1rem",
+            "borderTop": "1px solid #E0E0E0",
+            "background": "#F8F8F8"
+          },
+          "title": {
+            "fontSize": "0.75rem",
+            "fontWeight": 600,
+            "color": "#666666",
+            "marginBottom": "0.5rem",
+            "textTransform": "uppercase",
+            "letterSpacing": "0.05em"
+          },
+          "list": {
+            "display": "flex",
+            "flexWrap": "wrap",
+            "gap": "0.5rem"
+          },
+          "suggestionTag": {
+            "padding": "0.375rem 0.75rem",
+            "background": "#FFFFFF",
+            "border": "1px solid #E0E0E0",
+            "borderRadius": "16px",
+            "fontSize": "0.75rem",
+            "fontWeight": 500,
+            "color": "#666666",
+            "cursor": "pointer",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "background": "#2D5F3F",
+              "borderColor": "#2D5F3F",
+              "color": "#FFFFFF"
+            }
+          }
+        }
+      },
+
+      "recentSearches": {
+        "structure": {
+          "container": {
+            "padding": "1rem"
+          },
+          "header": {
+            "display": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center",
+            "marginBottom": "0.75rem"
+          },
+          "title": {
+            "fontSize": "0.75rem",
+            "fontWeight": 600,
+            "color": "#666666",
+            "textTransform": "uppercase",
+            "letterSpacing": "0.05em"
+          },
+          "clearButton": {
+            "fontSize": "0.75rem",
+            "fontWeight": 500,
+            "color": "#2D5F3F",
+            "background": "transparent",
+            "border": "none",
+            "cursor": "pointer",
+            "padding": "0.25rem 0.5rem",
+            "borderRadius": "4px",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "background": "#F0F0F0"
+            }
+          },
+          "list": {
+            "display": "flex",
+            "flexDirection": "column",
+            "gap": "0.25rem"
+          },
+          "item": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "0.75rem",
+            "padding": "0.5rem 0.75rem",
+            "borderRadius": "6px",
+            "cursor": "pointer",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "background": "#F5F5F5"
+            }
+          },
+          "icon": {
+            "color": "#999999",
+            "size": "1rem"
+          },
+          "text": {
+            "fontSize": "0.875rem",
+            "color": "#000000",
+            "flex": 1
+          }
+        }
+      }
+    },
+
+    "effects": {
+      "shadows": {
+        "dropdown": "0 8px 24px rgba(0, 0, 0, 0.15)",
+        "inputFocus": "0 0 0 3px rgba(0, 255, 65, 0.1)"
+      },
+      "transitions": {
+        "fast": "0.15s ease",
+        "base": "0.3s ease",
+        "slow": "0.5s ease"
+      },
+      "animations": {
+        "slideDown": {
+          "from": "transform: translateY(-10px), opacity: 0",
+          "to": "transform: translateY(0), opacity: 1",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "slideUp": {
+          "from": "transform: translateY(0), opacity: 1",
+          "to": "transform: translateY(-10px), opacity: 0",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "fadeIn": {
+          "from": "opacity: 0",
+          "to": "opacity: 1",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "fadeOut": {
+          "from": "opacity: 1",
+          "to": "opacity: 0",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "spin": {
+          "from": "transform: rotate(0deg)",
+          "to": "transform: rotate(360deg)",
+          "duration": "0.8s",
+          "easing": "linear",
+          "iteration": "infinite"
+        }
+      }
+    },
+
+    "icons": {
+      "size": {
+        "xs": "0.75rem",
+        "sm": "1rem",
+        "base": "1.125rem",
+        "lg": "1.25rem"
+      },
+      "common": [
+        "search",
+        "x",
+        "clock",
+        "trending-up",
+        "arrow-right"
+      ]
+    },
+
+    "localization": {
+      "languages": ["Bengali", "English"],
+      "currency": {
+        "symbol": "৳",
+        "position": "prefix",
+        "format": "৳1,800"
+      },
+      "text": {
+        "searchPlaceholder": {
+          "bn": "নাচুরো তে সন্ধান করুন...",
+          "en": "Search in Naturo..."
+        },
+        "resultsFound": {
+          "bn": "ফলাফল পাওয়া গেছে",
+          "en": "results found"
+        },
+        "noResults": {
+          "bn": "কোন ফলাফল পাওয়া যায়নি",
+          "en": "No results found"
+        },
+        "recentSearches": {
+          "bn": "সাম্প্রতিক অনুসন্ধান",
+          "en": "Recent Searches"
+        },
+        "clearAll": {
+          "bn": "সব মুছুন",
+          "en": "Clear All"
+        },
+        "popularSearches": {
+          "bn": "জনপ্রিয় অনুসন্ধান",
+          "en": "Popular Searches"
+        }
+      }
+    },
+
+    "responsive": {
+      "mobile": {
+        "searchWidth": "100%",
+        "dropdownPadding": "0.75rem",
+        "itemGap": "0.75rem"
+      },
+      "tablet": {
+        "searchWidth": "600px",
+        "dropdownPadding": "1rem",
+        "itemGap": "1rem"
+      },
+      "desktop": {
+        "searchWidth": "900px",
+        "dropdownPadding": "1rem",
+        "itemGap": "1rem"
+      }
+    },
+
+    "accessibility": {
+      "focusVisible": {
+        "outline": "2px solid #00FF41",
+        "outlineOffset": "2px"
+      },
+      "ariaLabels": {
+        "searchInput": "Search products",
+        "clearSearch": "Clear search",
+        "closeResults": "Close search results"
+      },
+      "keyboard": {
+        "arrowNavigation": true,
+        "enterToSelect": true,
+        "escapeToClose": true,
+        "tabToNavigate": true
+      }
+    },
+
+    "behavior": {
+      "debounce": {
+        "delay": "300ms",
+        "description": "Delay before triggering search after user stops typing"
+      },
+      "minCharacters": {
+        "value": 1,
+        "description": "Minimum characters required to trigger search"
+      },
+      "maxResults": {
+        "value": 10,
+        "description": "Maximum number of results to display initially"
+      },
+      "autoFocus": {
+        "enabled": false,
+        "description": "Auto-focus search input when dropdown opens"
+      },
+      "closeOnClickOutside": {
+        "enabled": true,
+        "description": "Close dropdown when clicking outside"
+      },
+      "highlightQuery": {
+        "enabled": true,
+        "style": {
+          "fontWeight": 700,
+          "color": "#2D5F3F"
+        }
+      }
+    },
+
+    "states": {
+      "empty": {
+        "showRecentSearches": true,
+        "showPopularSearches": true
+      },
+      "loading": {
+        "showSpinner": true,
+        "disableInput": false
+      },
+      "error": {
+        "message": "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।",
+        "retryButton": true
+      }
+    }
+  }
+}

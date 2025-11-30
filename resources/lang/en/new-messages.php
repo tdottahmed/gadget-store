@@ -3517,4 +3517,11 @@ return [
 	"customer_service" => "Customer service",
 	"follow_us" => "Follow us",
 	"all_rights_reserved" => "All rights reserved",
+	"we_care" => "We care",
+	"our_mission_is_to_provide_the_best_quality_products" => "Our mission is to provide the best quality products",
+	"wellness" => "Wellness",
+	"recently_viewed" => "Recently viewed",
+	"discover_the_power_of_nature" => "Discover the power of nature",
+	"search_in" => "Search in",
+	"providing_high_quality_organic_and_natural_products" => "Providing high quality organic and natural products",
 ];
