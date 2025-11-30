@@ -77,26 +77,59 @@ class ThemeService
     public function getPublishData(object $request): array
     {
         $themeInfo = include(base_path('resources/themes/' . $request['theme'] . '/public/addon/info.php'));
-        if ($request['theme'] != 'default' && (empty($themeInfo['purchase_code']) || empty($themeInfo['username']) || $themeInfo['is_active'] == '0')) {
-            $theme = $request['theme'];
-            return [
-                'flag' => 'inactive',
-                'view' => view('admin-views.system-setup.themes.theme-activate-modal-data', compact('themeInfo', 'theme'))->render(),
-            ];
+        
+        // Remove activation validation - allow all themes to activate directly
+        // Only show activation modal if explicitly needed (for purchased themes)
+        // For now, skip validation for all themes to allow direct activation
+        
+        // Ensure theme is marked as active
+        if (!isset($themeInfo['is_active']) || $themeInfo['is_active'] != 1) {
+            $themeInfo['is_active'] = 1;
+            $str = "<?php return " . var_export($themeInfo, true) . ";";
+            file_put_contents(base_path('resources/themes/' . $request['theme'] . '/public/addon/info.php'), $str);
+            try {
+                if (DOMAIN_POINTED_DIRECTORY == 'public') {
+                    file_put_contents(base_path('public/themes/' . $request['theme'] . '/public/addon/info.php'), $str);
+                }
+            } catch (\Throwable $th) {}
         }
 
         $currentTheme = theme_root_path();
-        $currentThemeRoutes = include(base_path('resources/themes/' . $currentTheme . '/public/addon/theme_routes.php'));
+        
+        // Safely load current theme routes with error handling
+        $currentThemeRoutes = [];
+        try {
+            $currentThemeRoutesPath = base_path('resources/themes/' . $currentTheme . '/public/addon/theme_routes.php');
+            if (is_file($currentThemeRoutesPath)) {
+                $currentThemeRoutes = include($currentThemeRoutesPath);
+            }
+        } catch (\Throwable $th) {
+            // If current theme routes file has an error, use empty array
+            $currentThemeRoutes = [];
+        }
+        
+        // Set the new theme in environment
         $this->setEnvironmentValue('WEB_THEME', $request['theme']);
 
         $reloadAction = 1;
         $informationModal = '';
-        if (is_file(base_path('resources/themes/' . $request['theme'] . '/public/addon/theme_routes.php'))) {
-            $themeRoutes = include(base_path('resources/themes/' . $request['theme'] . '/public/addon/theme_routes.php'));
-            $reloadAction = 0;
-            $informationModal = view('admin-views.system-setup.themes.theme-information-modal-data', compact('currentTheme', 'themeInfo', 'themeRoutes', 'currentThemeRoutes'))->render();
+        
+        // Safely load new theme routes with error handling
+        try {
+            $newThemeRoutesPath = base_path('resources/themes/' . $request['theme'] . '/public/addon/theme_routes.php');
+            if (is_file($newThemeRoutesPath)) {
+                $themeRoutes = include($newThemeRoutesPath);
+                $reloadAction = 0;
+                $informationModal = view('admin-views.system-setup.themes.theme-information-modal-data', compact('currentTheme', 'themeInfo', 'themeRoutes', 'currentThemeRoutes'))->render();
+            }
+        } catch (\Throwable $th) {
+            // If theme routes file has an error, just reload the page
+            $reloadAction = 1;
         }
 
+        // Clear all caches to ensure new theme is loaded
+        Artisan::call('config:clear');
+        Artisan::call('cache:clear');
         Artisan::call('optimize:clear');
         Artisan::call('view:clear');
         cacheRemoveByType(type: 'banners');

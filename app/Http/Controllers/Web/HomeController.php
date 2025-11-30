@@ -49,6 +49,8 @@ class HomeController extends Controller
             'default' => self::default_theme(),
             'theme_aster' => self::theme_aster(),
             'theme_fashion' => self::theme_fashion(),
+            'greenmarket' => self::greenmarket(),
+            default => self::default_theme(), // Fallback to default theme for unknown themes
         };
     }
 
@@ -374,6 +376,33 @@ class HomeController extends Controller
                 'topVendorsListSectionShowingStatus',
                 'clearanceSaleProducts',
                 'recommendedProduct'
+            )
+        );
+    }
+
+    public function greenmarket(): View
+    {
+        $homeCategories = $this->cacheHomeCategoriesList();
+        $categories = CategoryManager::getCategoriesWithCountingAndPriorityWiseSorting();
+        $userId = Auth::guard('customer')->user() ? Auth::guard('customer')->id() : 0;
+        $flashDeal = ProductManager::getPriorityWiseFlashDealsProductsQuery(userId: $userId);
+        $bannerTypeMainSectionBanner = $this->cacheBannerTable(bannerType: 'Main Section Banner');
+        
+        $featuredProductsList = ProductManager::getPriorityWiseFeaturedProductsQuery(
+            query: $this->product->active()->with(['clearanceSale' => function ($query) {
+                return $query->active();
+            }]), 
+            dataLimit: 6
+        );
+
+        return view(
+            VIEW_FILE_NAMES['home'],
+            compact(
+                'flashDeal',
+                'featuredProductsList',
+                'categories',
+                'homeCategories',
+                'bannerTypeMainSectionBanner'
             )
         );
     }

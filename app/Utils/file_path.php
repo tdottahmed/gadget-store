@@ -38,51 +38,61 @@ if (!function_exists('getStorageImages')) {
             'product' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-1-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-1-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-1-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/placeholder-1-1.png',
             ],
             'avatar' => [
                 'theme_aster' => 'assets/img/placeholder/user.png',
                 'theme_fashion' => 'assets/img/placeholder/user.png',
+                'greenmarket' => 'assets/img/placeholder/user.png',
                 'default' => 'public/assets/front-end/img/placeholder/user.png',
             ],
             'banner' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-2-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-2-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-2-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/placeholder-2-1.png',
             ],
             'wide-banner' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-4-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-4-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-4-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/placeholder-4-1.png',
             ],
             'brand' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-1-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-2-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-1-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/placeholder-1-1.png',
             ],
             'category' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-1-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-1-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-1-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/placeholder-1-1.png',
             ],
             'logo' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-4-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-4-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-4-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/placeholder-4-1.png',
             ],
             'shop' => [
                 'theme_aster' => 'assets/img/placeholder/shop.png',
                 'theme_fashion' => 'assets/img/placeholder/shop.png',
+                'greenmarket' => 'assets/img/placeholder/shop.png',
                 'default' => 'public/assets/front-end/img/placeholder/shop.png',
             ],
             'shop-banner' => [
                 'theme_aster' => 'assets/img/placeholder/placeholder-4-1.png',
                 'theme_fashion' => 'assets/img/placeholder/placeholder-4-1.png',
+                'greenmarket' => 'assets/img/placeholder/placeholder-4-1.png',
                 'default' => 'public/assets/front-end/img/placeholder/seller-banner.png',
             ],
             'business-page' => [
                 'theme_aster' => 'assets/img/placeholder/business-page.png',
                 'theme_fashion' => 'assets/img/placeholder/business-page.png',
+                'greenmarket' => 'assets/img/placeholder/business-page.png',
                 'default' => 'public/assets/front-end/img/placeholder/business-page.png',
             ],
         ];
@@ -90,10 +100,9 @@ if (!function_exists('getStorageImages')) {
         if (isset($placeholderMap[$type])) {
             if (is_array($placeholderMap[$type])) {
                 $theme = theme_root_path();
-                $placeholderPath = theme_asset(path: $placeholderMap[$type][$theme]);
-                if ($theme == 'default') {
-                    $placeholderPath = theme_asset(path: $placeholderMap[$type][$theme]);
-                }
+                // Use theme-specific placeholder if available, otherwise fallback to 'default'
+                $themeKey = isset($placeholderMap[$type][$theme]) ? $theme : 'default';
+                $placeholderPath = theme_asset(path: $placeholderMap[$type][$themeKey]);
                 return (!empty($path) && $path['status'] == 200) ? $path['path'] : $placeholderPath;
             } else {
                 return (!empty($path) && isset($path['status']) && $path['status'] == 200) ? $path['path'] : dynamicAsset(path: 'public/assets/' . $placeholderMap[$type]);
