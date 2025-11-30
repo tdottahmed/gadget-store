@@ -12,54 +12,6 @@
     <meta property="twitter:title" content="Welcome To {{ $web_config['company_name'] }} Home" />
     <meta property="twitter:url" content="{{ env('APP_URL') }}">
     <meta property="twitter:description" content="{{ $web_config['meta_description'] }}">
-    <style>
-        .container-ds {
-            max-width: 1512px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        .bg-primary-dark {
-            background-color: #1a5f3f;
-        }
-        .bg-primary-green {
-            background-color: #2d8659;
-        }
-        .bg-primary-light {
-            background-color: #d8f7e5;
-        }
-        .text-primary-semi-dark {
-            color: #a8d4c0;
-        }
-        .bg-primary-dark-green {
-            background-color: #0d3d26;
-        }
-        .text-primary-light-green {
-            color: #a8d4c0;
-        }
-        .bg-neutral-off-white {
-            background-color: #f5f5f5;
-        }
-        .we-care-section {
-            background: linear-gradient(135deg, #2d8659 0%, #1a5f3f 100%);
-            padding: 4rem 0;
-        }
-        .product-slider .slick-slide {
-            padding: 0 10px;
-        }
-        .product-slider .slick-prev,
-        .product-slider .slick-next {
-            z-index: 1;
-        }
-        .product-slider .slick-prev {
-            left: -30px;
-        }
-        .product-slider .slick-next {
-            right: -30px;
-        }
-        .relativ {
-            position: relative;
-        }
-    </style>
 @endpush
 
 @section('content')
@@ -89,7 +41,7 @@
     </section>
 
     <!-- Category Bar -->
-    <section class="bg-primary-light py-3">
+    <section class="bg-[#d8f7e5] py-3">
         <div class="container-ds">
             <div class="category-slider">
                 @if(isset($categories) && $categories->count() > 0)
@@ -133,7 +85,7 @@
             <div class="bestsellers-slider product-slider">
                 @foreach($flashDeal['flashDealProducts']->take(10) as $product)
                     <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-                        <div class="relativ p-8">
+                        <div class="relative p-8">
                             <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
                                 <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
                                     alt="{{ $product->name ?? 'Product' }}" 
@@ -171,13 +123,13 @@
 
     <!-- Honey Section - Using Featured Products -->
     @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
-    <section class="py-12 bg-neutral-off-white">
+    <section class="py-12 bg-[#f5f5f5]">
         <div class="container-ds">
             <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('featured_products') }}</h2>
             <div class="honey-slider product-slider">
                 @foreach($featuredProductsList->take(10) as $product)
                     <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-                        <div class="relativ p-8">
+                        <div class="relative p-8">
                             <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
                                 <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
                                     alt="{{ $product->name ?? 'Product' }}" 
@@ -221,7 +173,7 @@
             <div class="wellness-slider product-slider">
                 @foreach($featuredProductsList->skip(5)->take(10) as $product)
                     <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-                        <div class="relativ p-8">
+                        <div class="relative p-8">
                             <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
                                 <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
                                     alt="{{ $product->name ?? 'Product' }}" 
@@ -259,13 +211,13 @@
 
     <!-- All Products Section -->
     @if(isset($featuredProductsList) && $featuredProductsList->count() > 0)
-    <section class="py-12 bg-neutral-off-white">
+    <section class="py-12 bg-[#f5f5f5]">
         <div class="container-ds">
             <h2 class="text-3xl font-bold text-[#212529] mb-8 uppercase tracking-wider">{{ translate('all_products') }}</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 @foreach($featuredProductsList->take(10) as $product)
                     <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-                        <div class="relativ p-8">
+                        <div class="relative p-8">
                             <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
                                 <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
                                     alt="{{ $product->name ?? 'Product' }}" 
@@ -309,7 +261,7 @@
             <div class="recently-viewed-slider product-slider">
                 @foreach($featuredProductsList->take(10) as $product)
                     <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-                        <div class="relativ p-8">
+                        <div class="relative p-8">
                             <a href="{{ route('product', ['slug' => $product->slug ?? '#']) }}">
                                 <img src="{{ getStorageImages(path: $product->thumbnail_full_url ?? null, type: 'product') }}"
                                     alt="{{ $product->name ?? 'Product' }}" 

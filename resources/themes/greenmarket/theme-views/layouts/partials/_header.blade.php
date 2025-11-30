@@ -1,8 +1,8 @@
 <!-- Header -->
 <header>
     <!-- Top Bar - Hidden on tablet and mobile -->
-    <div class="bg-primary-dark text-white py-2 hidden lg:block">
-        <div class="max-w-[1512px] mx-auto px-4 flex justify-between items-center text-sm py-1">
+    <div class="bg-[#1a5f3f] text-white py-2 hidden lg:block">
+        <div class="max-w-[1240px] mx-auto px-4 flex justify-between items-center text-sm py-1">
             <div class="flex items-center gap-2 ml-8">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -11,7 +11,7 @@
                 <span>{{ getWebConfig('phone') ?? '09639812525' }}</span>
             </div>
             <div class="flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
@@ -28,8 +28,8 @@
     </div>
 
     <!-- Main Header -->
-    <div class="bg-primary-green">
-        <div class="max-w-[1512px] mx-auto px-4 md:px-6 lg:px-2 py-3 flex justify-between items-center gap-4">
+    <div class="bg-[#2d8659]">
+        <div class="max-w-[1240px] mx-auto px-4 md:px-6 lg:px-2 py-3 flex justify-between items-center gap-4">
             <!-- Logo -->
             <div class="flex-shrink-0">
                 <a href="{{ route('home') }}">
@@ -44,9 +44,9 @@
             <div class="hidden md:flex flex-1 max-w-5xl lg:mx-8 md:mx-4">
                 <form action="{{ route('products') }}" method="GET" class="relative w-full">
                     <input type="text" name="name" placeholder="{{ translate('search_in') }} {{ $web_config['company_name'] ?? 'Store' }}..."
-                        class="w-full bg-primary-dark text-white font-semibold text-sm placeholder-primary-semi-dark px-10 py-2 md:py-3 lg:py-3 pr-12 focus:outline-none">
+                        class="w-full bg-[#1a5f3f] text-white font-semibold text-sm placeholder-[#a8d4c0] px-10 py-2 md:py-3 lg:py-3 pr-12 focus:outline-none">
                     <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2">
-                        <svg class="w-5 h-5 text-primary-semi-dark" fill="none" stroke="currentColor"
+                        <svg class="w-5 h-5 text-[#a8d4c0]" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
