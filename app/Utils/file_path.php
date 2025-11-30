@@ -103,13 +103,13 @@ if (!function_exists('getStorageImages')) {
                 // Use theme-specific placeholder if available, otherwise fallback to 'default'
                 $themeKey = isset($placeholderMap[$type][$theme]) ? $theme : 'default';
                 $placeholderPath = theme_asset(path: $placeholderMap[$type][$themeKey]);
-                return (!empty($path) && $path['status'] == 200) ? $path['path'] : $placeholderPath;
+                return (!empty($path) && isset($path['status']) && $path['status'] == 200) ? $path['path'] : $placeholderPath;
             } else {
                 return (!empty($path) && isset($path['status']) && $path['status'] == 200) ? $path['path'] : dynamicAsset(path: 'public/assets/' . $placeholderMap[$type]);
             }
         }
 
-        return (!empty($path) && $path['status'] == 200) ? $path['path'] : dynamicStorage(path: 'public/assets/front-end/img/placeholder/placeholder-2-1.png');
+        return (!empty($path) && isset($path['status']) && $path['status'] == 200) ? $path['path'] : dynamicStorage(path: 'public/assets/front-end/img/placeholder/placeholder-2-1.png');
     }
 }
 

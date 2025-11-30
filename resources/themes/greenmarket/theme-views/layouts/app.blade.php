@@ -15,6 +15,11 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ $web_config['fav_icon']['path'] }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ $web_config['fav_icon']['path'] }}">
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     @if(file_exists(public_path('themes/greenmarket/assets/css/tailwind.css')))
         <link rel="stylesheet" href="{{ asset('themes/greenmarket/assets/css/tailwind.css') }}">
@@ -26,6 +31,22 @@
     <!-- Additional CSS -->
     @if(file_exists(public_path('themes/greenmarket/assets/css/custom.css')))
         <link rel="stylesheet" href="{{ asset('themes/greenmarket/assets/css/custom.css') }}">
+    @endif
+    <!-- Slick Carousel CSS -->
+    @if(file_exists(public_path('themes/greenmarket/assets/css/slick.css')))
+        <link rel="stylesheet" type="text/css" href="{{ asset('themes/greenmarket/assets/css/slick.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('themes/greenmarket/assets/css/slick-theme.css') }}" />
+    @else
+        <!-- Fallback to CDN if local files not found -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    @endif
+    <!-- FontAwesome -->
+    @if(file_exists(public_path('themes/greenmarket/assets/css/fontawesome.min.css')))
+        <link rel="stylesheet" href="{{ asset('themes/greenmarket/assets/css/fontawesome.min.css') }}">
+    @else
+        <!-- Fallback to CDN if local files not found -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @endif
     <link rel="stylesheet" href="{{ dynamicAsset(path: 'public/assets/backend/libs/intl-tel-input/css/intlTelInput.css') }}">
     <link rel="stylesheet" href="{{ dynamicAsset(path: 'public/assets/backend/libs/google-recaptcha/google-recaptcha-init.css') }}">
@@ -41,11 +62,17 @@
             --secondary-color: {{ $web_config['secondary_color'] }};
             --secondary-rgb: {{ getHexToRGBColorCode($web_config['secondary_color']) }};
         }
+        .font-primary {
+            font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+        }
+        .font-secondary {
+            font-family: "Poppins", sans-serif;
+        }
     </style>
 
     {!! getSystemDynamicPartials(type: 'analytics_script') !!}
 </head>
-<body class="bg-gray-50">
+<body class="font-primary text-[#212529] bg-white antialiased">
     <div id="loading" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90">
         <div class="text-center">
             <img width="200" alt="Loading" 
@@ -88,6 +115,13 @@
 
     <!-- Scripts -->
     <script src="{{ dynamicAsset(path: 'public/assets/front-end/vendor/jquery/dist/jquery-2.2.4.min.js') }}"></script>
+    <!-- Slick Carousel JS -->
+    @if(file_exists(public_path('themes/greenmarket/assets/js/slick.min.js')))
+        <script type="text/javascript" src="{{ asset('themes/greenmarket/assets/js/slick.min.js') }}"></script>
+    @else
+        <!-- Fallback to CDN if local file not found -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    @endif
     @if(file_exists(public_path('themes/greenmarket/assets/js/main.js')))
         <script src="{{ asset('themes/greenmarket/assets/js/main.js') }}"></script>
     @endif

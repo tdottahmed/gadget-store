@@ -1,0 +1,747 @@
+{
+  "designSystem": {
+    "name": "NATURO Checkout Page Design System",
+    "version": "1.0.0",
+    "description": "Design system for NATURO checkout page modal/drawer component",
+    
+    "colors": {
+      "primary": {
+        "darkGreen": "#0D3B2E",
+        "green": "#2D5F3F",
+        "brightGreen": "#7ED321"
+      },
+      "accent": {
+        "orange": "#FF6347",
+        "lightOrange": "#FFE5DC"
+      },
+      "neutral": {
+        "white": "#FFFFFF",
+        "offWhite": "#F5F5F5",
+        "lightGray": "#E9E9E9",
+        "gray": "#CCCCCC",
+        "mediumGray": "#999999",
+        "darkGray": "#666666",
+        "black": "#000000"
+      },
+      "background": {
+        "overlay": "rgba(0, 0, 0, 0.5)",
+        "modal": "#FFFFFF",
+        "section": "#F8F8F8",
+        "summaryRow": "#F5F5F5",
+        "input": "#FFFFFF",
+        "radioOption": "#FFFFFF"
+      },
+      "text": {
+        "primary": "#000000",
+        "secondary": "#666666",
+        "tertiary": "#999999",
+        "placeholder": "#CCCCCC",
+        "price": "#000000",
+        "label": "#000000",
+        "link": "#2D5F3F"
+      },
+      "ui": {
+        "border": "#E0E0E0",
+        "divider": "#ECECEC",
+        "inputBorder": "#E0E0E0",
+        "inputFocus": "#7ED321",
+        "radioUnselected": "#E0E0E0",
+        "radioSelected": "#7ED321",
+        "buttonPrimary": "#FF6347",
+        "buttonPrimaryHover": "#FF5533",
+        "buttonText": "#FFFFFF"
+      }
+    },
+
+    "typography": {
+      "fontFamily": {
+        "primary": "'Hind Siliguri', 'Noto Sans Bengali', 'Inter', sans-serif",
+        "bangla": "'Hind Siliguri', 'Noto Sans Bengali', sans-serif"
+      },
+      "fontSize": {
+        "xs": "0.625rem",
+        "sm": "0.75rem",
+        "base": "0.875rem",
+        "md": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem"
+      },
+      "fontWeight": {
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700,
+        "extrabold": 800
+      },
+      "lineHeight": {
+        "tight": 1.25,
+        "normal": 1.5,
+        "relaxed": 1.75
+      }
+    },
+
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem"
+    },
+
+    "layout": {
+      "modal": {
+        "width": {
+          "mobile": "100%",
+          "tablet": "600px",
+          "desktop": "700px"
+        },
+        "maxWidth": "700px",
+        "maxHeight": "90vh",
+        "position": "fixed",
+        "top": "50%",
+        "left": "50%",
+        "transform": "translate(-50%, -50%)",
+        "zIndex": 9999
+      },
+      "overlay": {
+        "position": "fixed",
+        "top": 0,
+        "left": 0,
+        "width": "100vw",
+        "height": "100vh",
+        "zIndex": 9998
+      }
+    },
+
+    "components": {
+      "checkoutModal": {
+        "structure": {
+          "container": {
+            "background": "#FFFFFF",
+            "borderRadius": "12px",
+            "boxShadow": "0 8px 32px rgba(0, 0, 0, 0.2)",
+            "overflow": "hidden",
+            "display": "flex",
+            "flexDirection": "column",
+            "maxHeight": "90vh"
+          },
+          "animation": {
+            "enter": "fadeIn 0.3s ease, scaleIn 0.3s ease",
+            "exit": "fadeOut 0.3s ease, scaleOut 0.3s ease"
+          }
+        }
+      },
+
+      "modalHeader": {
+        "structure": {
+          "container": {
+            "padding": "1.5rem",
+            "borderBottom": "1px solid #E0E0E0",
+            "background": "#FFFFFF",
+            "display": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center",
+            "position": "sticky",
+            "top": 0,
+            "zIndex": 10
+          },
+          "title": {
+            "fontSize": "1.25rem",
+            "fontWeight": 700,
+            "color": "#000000",
+            "margin": 0,
+            "lineHeight": 1.3
+          },
+          "closeButton": {
+            "width": "32px",
+            "height": "32px",
+            "borderRadius": "50%",
+            "background": "transparent",
+            "border": "none",
+            "cursor": "pointer",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "transition": "all 0.3s ease",
+            "color": "#666666",
+            "hover": {
+              "background": "#F5F5F5",
+              "color": "#000000"
+            }
+          }
+        }
+      },
+
+      "modalContent": {
+        "structure": {
+          "container": {
+            "flex": 1,
+            "overflowY": "auto",
+            "overflowX": "hidden",
+            "padding": "1.5rem"
+          },
+          "scrollbar": {
+            "width": "6px",
+            "track": {
+              "background": "#F5F5F5"
+            },
+            "thumb": {
+              "background": "#CCCCCC",
+              "borderRadius": "3px",
+              "hover": {
+                "background": "#999999"
+              }
+            }
+          }
+        }
+      },
+
+      "orderSummary": {
+        "structure": {
+          "container": {
+            "marginBottom": "1.5rem"
+          },
+          "item": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "1rem",
+            "padding": "1rem 0",
+            "borderBottom": "1px solid #F0F0F0"
+          },
+          "imageContainer": {
+            "width": "60px",
+            "height": "60px",
+            "flexShrink": 0,
+            "background": "#F8F8F8",
+            "borderRadius": "6px",
+            "border": "1px solid #E0E0E0",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "padding": "0.5rem"
+          },
+          "image": {
+            "width": "100%",
+            "height": "100%",
+            "objectFit": "contain"
+          },
+          "details": {
+            "flex": 1
+          },
+          "title": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#000000",
+            "marginBottom": "0.25rem",
+            "lineHeight": 1.4
+          },
+          "price": {
+            "fontSize": "0.875rem",
+            "fontWeight": 700,
+            "color": "#000000"
+          },
+          "quantityControl": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "0.75rem"
+          },
+          "quantityButton": {
+            "width": "32px",
+            "height": "32px",
+            "border": "1px solid #E0E0E0",
+            "borderRadius": "4px",
+            "background": "#FFFFFF",
+            "color": "#000000",
+            "fontSize": "1.125rem",
+            "cursor": "pointer",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "background": "#F5F5F5",
+              "borderColor": "#CCCCCC"
+            }
+          },
+          "quantityDisplay": {
+            "fontSize": "1rem",
+            "fontWeight": 600,
+            "color": "#000000",
+            "minWidth": "20px",
+            "textAlign": "center"
+          }
+        }
+      },
+
+      "priceSummary": {
+        "structure": {
+          "container": {
+            "background": "#F8F8F8",
+            "padding": "1rem",
+            "borderRadius": "8px",
+            "marginBottom": "1.5rem"
+          },
+          "row": {
+            "display": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center",
+            "padding": "0.5rem 0"
+          },
+          "label": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#666666"
+          },
+          "value": {
+            "fontSize": "0.875rem",
+            "fontWeight": 600,
+            "color": "#000000"
+          },
+          "deliverySelector": {
+            "display": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center",
+            "padding": "0.5rem 0"
+          },
+          "deliveryLink": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#2D5F3F",
+            "textDecoration": "none",
+            "cursor": "pointer",
+            "hover": {
+              "textDecoration": "underline"
+            }
+          },
+          "totalRow": {
+            "display": "flex",
+            "justifyContent": "space-between",
+            "alignItems": "center",
+            "padding": "0.75rem 0",
+            "marginTop": "0.5rem",
+            "borderTop": "2px solid #E0E0E0"
+          },
+          "totalLabel": {
+            "fontSize": "1rem",
+            "fontWeight": 700,
+            "color": "#000000"
+          },
+          "totalValue": {
+            "fontSize": "1.25rem",
+            "fontWeight": 800,
+            "color": "#000000"
+          }
+        }
+      },
+
+      "formSection": {
+        "structure": {
+          "container": {
+            "marginBottom": "2rem"
+          },
+          "heading": {
+            "fontSize": "1.125rem",
+            "fontWeight": 700,
+            "color": "#000000",
+            "marginBottom": "1.5rem",
+            "textAlign": "center"
+          },
+          "fieldGroup": {
+            "display": "flex",
+            "flexDirection": "column",
+            "gap": "1rem"
+          }
+        }
+      },
+
+      "formField": {
+        "structure": {
+          "container": {
+            "display": "flex",
+            "flexDirection": "column",
+            "gap": "0.5rem"
+          },
+          "label": {
+            "fontSize": "0.875rem",
+            "fontWeight": 600,
+            "color": "#000000"
+          },
+          "input": {
+            "width": "100%",
+            "padding": "0.875rem 1rem",
+            "border": "1px solid #E0E0E0",
+            "borderRadius": "6px",
+            "fontSize": "0.875rem",
+            "color": "#000000",
+            "background": "#FFFFFF",
+            "transition": "all 0.3s ease",
+            "placeholder": {
+              "color": "#CCCCCC"
+            },
+            "focus": {
+              "borderColor": "#7ED321",
+              "outline": "none",
+              "boxShadow": "0 0 0 3px rgba(126, 211, 33, 0.1)"
+            }
+          },
+          "textarea": {
+            "width": "100%",
+            "padding": "0.875rem 1rem",
+            "border": "1px solid #E0E0E0",
+            "borderRadius": "6px",
+            "fontSize": "0.875rem",
+            "color": "#000000",
+            "background": "#FFFFFF",
+            "minHeight": "100px",
+            "resize": "vertical",
+            "fontFamily": "'Hind Siliguri', 'Noto Sans Bengali', sans-serif",
+            "transition": "all 0.3s ease",
+            "focus": {
+              "borderColor": "#7ED321",
+              "outline": "none",
+              "boxShadow": "0 0 0 3px rgba(126, 211, 33, 0.1)"
+            }
+          },
+          "phoneInput": {
+            "width": "100%",
+            "padding": "0.875rem 1rem",
+            "border": "1px solid #E0E0E0",
+            "borderRadius": "6px",
+            "fontSize": "0.875rem",
+            "color": "#000000",
+            "background": "#FFFFFF",
+            "fontFamily": "'Inter', sans-serif"
+          }
+        }
+      },
+
+      "deliveryOptions": {
+        "structure": {
+          "container": {
+            "marginBottom": "2rem"
+          },
+          "heading": {
+            "fontSize": "0.875rem",
+            "fontWeight": 700,
+            "color": "#000000",
+            "marginBottom": "1rem"
+          },
+          "optionsList": {
+            "display": "flex",
+            "flexDirection": "column",
+            "gap": "0.75rem"
+          },
+          "option": {
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "space-between",
+            "padding": "1rem",
+            "border": "1px solid #E0E0E0",
+            "borderRadius": "8px",
+            "background": "#FFFFFF",
+            "cursor": "pointer",
+            "transition": "all 0.3s ease",
+            "hover": {
+              "borderColor": "#7ED321",
+              "background": "#F8FFF0"
+            },
+            "selected": {
+              "borderColor": "#7ED321",
+              "background": "#F8FFF0",
+              "borderWidth": "2px"
+            }
+          },
+          "radioContainer": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "0.75rem",
+            "flex": 1
+          },
+          "radio": {
+            "width": "20px",
+            "height": "20px",
+            "border": "2px solid #E0E0E0",
+            "borderRadius": "50%",
+            "position": "relative",
+            "flexShrink": 0,
+            "selected": {
+              "borderColor": "#7ED321",
+              "after": {
+                "content": "",
+                "position": "absolute",
+                "top": "50%",
+                "left": "50%",
+                "transform": "translate(-50%, -50%)",
+                "width": "10px",
+                "height": "10px",
+                "borderRadius": "50%",
+                "background": "#7ED321"
+              }
+            }
+          },
+          "optionLabel": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#000000"
+          },
+          "optionPrice": {
+            "fontSize": "0.875rem",
+            "fontWeight": 700,
+            "color": "#000000"
+          }
+        }
+      },
+
+      "submitButton": {
+        "structure": {
+          "container": {
+            "padding": "1rem 1.5rem",
+            "borderTop": "1px solid #E0E0E0",
+            "background": "#FFFFFF",
+            "position": "sticky",
+            "bottom": 0,
+            "zIndex": 10
+          },
+          "button": {
+            "width": "100%",
+            "padding": "1rem 2rem",
+            "background": "#FF6347",
+            "color": "#FFFFFF",
+            "border": "none",
+            "borderRadius": "8px",
+            "fontSize": "1rem",
+            "fontWeight": 700,
+            "cursor": "pointer",
+            "transition": "all 0.3s ease",
+            "display": "flex",
+            "alignItems": "center",
+            "justifyContent": "center",
+            "gap": "0.5rem",
+            "hover": {
+              "background": "#FF5533",
+              "transform": "translateY(-2px)",
+              "boxShadow": "0 4px 12px rgba(255, 99, 71, 0.3)"
+            },
+            "disabled": {
+              "background": "#CCCCCC",
+              "cursor": "not-allowed",
+              "transform": "none",
+              "boxShadow": "none"
+            }
+          },
+          "disclaimer": {
+            "fontSize": "0.75rem",
+            "color": "#999999",
+            "textAlign": "center",
+            "marginTop": "0.75rem",
+            "lineHeight": 1.5
+          }
+        }
+      }
+    },
+
+    "effects": {
+      "shadows": {
+        "modal": "0 8px 32px rgba(0, 0, 0, 0.2)",
+        "button": "0 4px 12px rgba(255, 99, 71, 0.3)",
+        "inputFocus": "0 0 0 3px rgba(126, 211, 33, 0.1)"
+      },
+      "transitions": {
+        "fast": "0.15s ease",
+        "base": "0.3s ease",
+        "slow": "0.5s ease"
+      },
+      "animations": {
+        "fadeIn": {
+          "from": "opacity: 0",
+          "to": "opacity: 1",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "scaleIn": {
+          "from": "transform: translate(-50%, -50%) scale(0.95)",
+          "to": "transform: translate(-50%, -50%) scale(1)",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "fadeOut": {
+          "from": "opacity: 1",
+          "to": "opacity: 0",
+          "duration": "0.3s",
+          "easing": "ease"
+        },
+        "scaleOut": {
+          "from": "transform: translate(-50%, -50%) scale(1)",
+          "to": "transform: translate(-50%, -50%) scale(0.95)",
+          "duration": "0.3s",
+          "easing": "ease"
+        }
+      }
+    },
+
+    "validation": {
+      "required": {
+        "borderColor": "#FF0000",
+        "message": {
+          "fontSize": "0.75rem",
+          "color": "#FF0000",
+          "marginTop": "0.25rem"
+        }
+      },
+      "success": {
+        "borderColor": "#00A651",
+        "icon": {
+          "color": "#00A651"
+        }
+      }
+    },
+
+    "localization": {
+      "languages": ["Bengali", "English"],
+      "currency": {
+        "symbol": "৳",
+        "position": "suffix",
+        "format": "1,800 TK"
+      },
+      "text": {
+        "checkoutTitle": {
+          "bn": "অর্ডার কনফার্ম - ক্যাশ অন ডেলিভারিতে",
+          "en": "Confirm Order - Cash on Delivery"
+        },
+        "name": {
+          "bn": "নাম",
+          "en": "Name"
+        },
+        "mobileNumber": {
+          "bn": "মোবাইল নাম্বার",
+          "en": "Mobile Number"
+        },
+        "address": {
+          "bn": "ঠিকানা",
+          "en": "Address"
+        },
+        "orderNote": {
+          "bn": "অর্ডার নোট",
+          "en": "Order Note"
+        },
+        "delivery": {
+          "bn": "ডেলিভারি",
+          "en": "Delivery"
+        },
+        "selectDeliveryArea": {
+          "bn": "ডেলিভারি এরিয়া সিলেক্ট করুন",
+          "en": "Select Delivery Area"
+        },
+        "insideDhaka": {
+          "bn": "ঢাকা সিটির ভেতরে",
+          "en": "Inside Dhaka City"
+        },
+        "outsideDhaka": {
+          "bn": "ঢাকা সিটির বাইরে",
+          "en": "Outside Dhaka City"
+        },
+        "districtDelivery": {
+          "bn": "ঢাকা জেলার বাইরে",
+          "en": "Outside Dhaka District"
+        },
+        "confirmOrder": {
+          "bn": "অর্ডার কনফার্ম করুন",
+          "en": "Confirm Order"
+        },
+        "total": {
+          "bn": "সর্বমোট",
+          "en": "Total"
+        },
+        "cart": {
+          "bn": "মোট",
+          "en": "Cart"
+        }
+      }
+    },
+
+    "responsive": {
+      "mobile": {
+        "modalWidth": "100%",
+        "modalHeight": "100vh",
+        "modalBorderRadius": "0",
+        "padding": "1rem"
+      },
+      "tablet": {
+        "modalWidth": "600px",
+        "modalHeight": "auto",
+        "modalBorderRadius": "12px",
+        "padding": "1.5rem"
+      },
+      "desktop": {
+        "modalWidth": "700px",
+        "modalHeight": "auto",
+        "modalBorderRadius": "12px",
+        "padding": "1.5rem"
+      }
+    },
+
+    "accessibility": {
+      "focusVisible": {
+        "outline": "2px solid #7ED321",
+        "outlineOffset": "2px"
+      },
+      "ariaLabels": {
+        "closeCheckout": "Close checkout",
+        "decreaseQuantity": "Decrease quantity",
+        "increaseQuantity": "Increase quantity",
+        "selectDelivery": "Select delivery option"
+      },
+      "keyboard": {
+        "escapeToClose": true,
+        "tabNavigation": true,
+        "enterToSubmit": true
+      }
+    },
+
+    "states": {
+      "loading": {
+        "buttonText": "প্রসেসিং...",
+        "disabled": true,
+        "spinner": true
+      },
+      "error": {
+        "borderColor": "#FF0000",
+        "backgroundColor": "#FFF0F0"
+      },
+      "success": {
+        "message": "অর্ডার সফল হয়েছে!",
+        "icon": "check-circle"
+      }
+    },
+
+    "formValidation": {
+      "rules": {
+        "name": {
+          "required": true,
+          "minLength": 2,
+          "pattern": "^[a-zA-Z\\s\\u0980-\\u09FF]+$"
+        },
+        "phone": {
+          "required": true,
+          "pattern": "^01[3-9]\\d{8}$",
+          "length": 11
+        },
+        "address": {
+          "required": true,
+          "minLength": 10
+        }
+      },
+      "messages": {
+        "required": "এই ফিল্ডটি আবশ্যক",
+        "invalidPhone": "সঠিক মোবাইল নম্বর দিন",
+        "invalidFormat": "সঠিক ফরম্যাট দিন"
+      }
+    }
+  }
+}

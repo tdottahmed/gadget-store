@@ -1,0 +1,547 @@
+{
+  "designSystem": {
+    "name": "NATURO E-commerce Design System",
+    "version": "1.0.0",
+    "description": "Complete design system for NATURO natural products e-commerce platform",
+    
+    "colors": {
+      "primary": {
+        "green": "#2D5F3F",
+        "lightGreen": "#4CAF50",
+        "neonGreen": "#39FF14",
+        "darkGreen": "#1B3A2C"
+      },
+      "secondary": {
+        "gold": "#D4AF37",
+        "amber": "#FFA500",
+        "brown": "#8B4513"
+      },
+      "neutral": {
+        "white": "#FFFFFF",
+        "offWhite": "#F8F9FA",
+        "lightGray": "#E9ECEF",
+        "gray": "#6C757D",
+        "darkGray": "#495057",
+        "black": "#000000"
+      },
+      "background": {
+        "primary": "#FFFFFF",
+        "secondary": "#F8F9FA",
+        "hero": "linear-gradient(135deg, #1B3A2C 0%, #2D5F3F 100%)",
+        "footer": "#1B3A2C"
+      },
+      "text": {
+        "primary": "#212529",
+        "secondary": "#6C757D",
+        "light": "#FFFFFF",
+        "link": "#2D5F3F",
+        "linkHover": "#4CAF50"
+      },
+      "ui": {
+        "border": "#DEE2E6",
+        "divider": "#E9ECEF",
+        "shadow": "rgba(0, 0, 0, 0.1)",
+        "overlay": "rgba(0, 0, 0, 0.5)"
+      },
+      "status": {
+        "success": "#28A745",
+        "warning": "#FFC107",
+        "error": "#DC3545",
+        "info": "#17A2B8",
+        "inStock": "#4CAF50",
+        "outOfStock": "#DC3545"
+      }
+    },
+
+    "typography": {
+      "fontFamily": {
+        "primary": "'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif",
+        "secondary": "'Poppins', sans-serif",
+        "display": "'Playfair Display', serif"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem",
+        "5xl": "3rem"
+      },
+      "fontWeight": {
+        "light": 300,
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700,
+        "extrabold": 800
+      },
+      "lineHeight": {
+        "tight": 1.2,
+        "normal": 1.5,
+        "relaxed": 1.75,
+        "loose": 2
+      },
+      "letterSpacing": {
+        "tighter": "-0.05em",
+        "tight": "-0.025em",
+        "normal": "0",
+        "wide": "0.025em",
+        "wider": "0.05em",
+        "widest": "0.1em"
+      }
+    },
+
+    "spacing": {
+      "0": "0",
+      "1": "0.25rem",
+      "2": "0.5rem",
+      "3": "0.75rem",
+      "4": "1rem",
+      "5": "1.25rem",
+      "6": "1.5rem",
+      "8": "2rem",
+      "10": "2.5rem",
+      "12": "3rem",
+      "16": "4rem",
+      "20": "5rem",
+      "24": "6rem",
+      "32": "8rem"
+    },
+
+    "layout": {
+      "container": {
+        "maxWidth": "1400px",
+        "padding": "0 2rem"
+      },
+      "grid": {
+        "columns": {
+          "mobile": 2,
+          "tablet": 3,
+          "desktop": 5,
+          "wide": 6
+        },
+        "gap": {
+          "mobile": "1rem",
+          "tablet": "1.5rem",
+          "desktop": "2rem"
+        }
+      },
+      "breakpoints": {
+        "xs": "0px",
+        "sm": "576px",
+        "md": "768px",
+        "lg": "992px",
+        "xl": "1200px",
+        "xxl": "1400px"
+      }
+    },
+
+    "components": {
+      "productCard": {
+        "width": "100%",
+        "aspectRatio": "3/4",
+        "background": "#FFFFFF",
+        "border": "1px solid #E9ECEF",
+        "borderRadius": "8px",
+        "padding": "1rem",
+        "transition": "all 0.3s ease",
+        "hover": {
+          "transform": "translateY(-4px)",
+          "boxShadow": "0 8px 16px rgba(0, 0, 0, 0.12)",
+          "borderColor": "#4CAF50"
+        },
+        "structure": {
+          "imageContainer": {
+            "aspectRatio": "1/1",
+            "marginBottom": "0.75rem",
+            "borderRadius": "4px",
+            "overflow": "hidden",
+            "background": "#F8F9FA"
+          },
+          "image": {
+            "width": "100%",
+            "height": "100%",
+            "objectFit": "contain",
+            "padding": "0.5rem"
+          },
+          "content": {
+            "padding": "0.5rem 0"
+          },
+          "title": {
+            "fontSize": "0.875rem",
+            "fontWeight": 500,
+            "color": "#212529",
+            "marginBottom": "0.25rem",
+            "lineHeight": 1.4,
+            "maxLines": 2,
+            "overflow": "hidden",
+            "textOverflow": "ellipsis"
+          },
+          "price": {
+            "fontSize": "1rem",
+            "fontWeight": 700,
+            "color": "#2D5F3F",
+            "marginBottom": "0.5rem"
+          },
+          "originalPrice": {
+            "fontSize": "0.875rem",
+            "fontWeight": 400,
+            "color": "#6C757D",
+            "textDecoration": "line-through",
+            "marginLeft": "0.5rem"
+          },
+          "rating": {
+            "display": "flex",
+            "alignItems": "center",
+            "gap": "0.25rem",
+            "fontSize": "0.75rem",
+            "color": "#D4AF37",
+            "marginBottom": "0.5rem"
+          },
+          "badge": {
+            "position": "absolute",
+            "top": "0.5rem",
+            "right": "0.5rem",
+            "padding": "0.25rem 0.5rem",
+            "borderRadius": "4px",
+            "fontSize": "0.75rem",
+            "fontWeight": 600,
+            "variants": {
+              "sale": {
+                "background": "#DC3545",
+                "color": "#FFFFFF"
+              },
+              "new": {
+                "background": "#4CAF50",
+                "color": "#FFFFFF"
+              },
+              "featured": {
+                "background": "#FFA500",
+                "color": "#FFFFFF"
+              }
+            }
+          }
+        }
+      },
+
+      "button": {
+        "primary": {
+          "background": "#2D5F3F",
+          "color": "#FFFFFF",
+          "padding": "0.75rem 1.5rem",
+          "borderRadius": "6px",
+          "border": "none",
+          "fontSize": "1rem",
+          "fontWeight": 600,
+          "cursor": "pointer",
+          "transition": "all 0.3s ease",
+          "hover": {
+            "background": "#4CAF50",
+            "transform": "translateY(-2px)",
+            "boxShadow": "0 4px 12px rgba(45, 95, 63, 0.3)"
+          }
+        },
+        "secondary": {
+          "background": "transparent",
+          "color": "#2D5F3F",
+          "padding": "0.75rem 1.5rem",
+          "borderRadius": "6px",
+          "border": "2px solid #2D5F3F",
+          "fontSize": "1rem",
+          "fontWeight": 600,
+          "cursor": "pointer",
+          "transition": "all 0.3s ease",
+          "hover": {
+            "background": "#2D5F3F",
+            "color": "#FFFFFF"
+          }
+        },
+        "icon": {
+          "width": "2.5rem",
+          "height": "2.5rem",
+          "borderRadius": "50%",
+          "border": "none",
+          "background": "#F8F9FA",
+          "color": "#2D5F3F",
+          "cursor": "pointer",
+          "transition": "all 0.3s ease",
+          "hover": {
+            "background": "#2D5F3F",
+            "color": "#FFFFFF"
+          }
+        }
+      },
+
+      "header": {
+        "height": "auto",
+        "background": "#FFFFFF",
+        "borderBottom": "1px solid #E9ECEF",
+        "position": "sticky",
+        "top": 0,
+        "zIndex": 1000,
+        "boxShadow": "0 2px 8px rgba(0, 0, 0, 0.05)",
+        "topBar": {
+          "background": "#2D5F3F",
+          "color": "#FFFFFF",
+          "padding": "0.5rem 0",
+          "fontSize": "0.875rem"
+        },
+        "navigation": {
+          "padding": "1rem 0",
+          "display": "flex",
+          "alignItems": "center",
+          "justifyContent": "space-between"
+        },
+        "logo": {
+          "fontSize": "2rem",
+          "fontWeight": 700,
+          "color": "#2D5F3F",
+          "letterSpacing": "0.05em"
+        }
+      },
+
+      "hero": {
+        "minHeight": "400px",
+        "background": "linear-gradient(135deg, #1B3A2C 0%, #2D5F3F 100%)",
+        "color": "#FFFFFF",
+        "padding": "4rem 0",
+        "display": "flex",
+        "alignItems": "center",
+        "position": "relative",
+        "overflow": "hidden",
+        "decorativeElements": {
+          "leaves": {
+            "position": "absolute",
+            "opacity": 0.2,
+            "filter": "brightness(1.5)"
+          }
+        }
+      },
+
+      "categorySection": {
+        "padding": "3rem 0",
+        "background": "#FFFFFF",
+        "title": {
+          "fontSize": "1.5rem",
+          "fontWeight": 700,
+          "color": "#212529",
+          "marginBottom": "2rem",
+          "textTransform": "uppercase",
+          "letterSpacing": "0.05em"
+        }
+      },
+
+      "footer": {
+        "background": "#1B3A2C",
+        "color": "#FFFFFF",
+        "padding": "3rem 0 1rem",
+        "sections": {
+          "padding": "2rem 0",
+          "borderBottom": "1px solid rgba(255, 255, 255, 0.1)"
+        },
+        "links": {
+          "color": "rgba(255, 255, 255, 0.8)",
+          "fontSize": "0.875rem",
+          "hover": {
+            "color": "#FFFFFF",
+            "textDecoration": "underline"
+          }
+        },
+        "social": {
+          "display": "flex",
+          "gap": "1rem",
+          "marginTop": "1rem"
+        }
+      },
+
+      "input": {
+        "default": {
+          "padding": "0.75rem 1rem",
+          "border": "1px solid #DEE2E6",
+          "borderRadius": "6px",
+          "fontSize": "1rem",
+          "transition": "all 0.3s ease",
+          "focus": {
+            "borderColor": "#4CAF50",
+            "outline": "none",
+            "boxShadow": "0 0 0 3px rgba(76, 175, 80, 0.1)"
+          }
+        },
+        "search": {
+          "padding": "0.75rem 1rem 0.75rem 2.5rem",
+          "border": "1px solid #DEE2E6",
+          "borderRadius": "24px",
+          "fontSize": "0.875rem",
+          "background": "#F8F9FA"
+        }
+      },
+
+      "badge": {
+        "default": {
+          "padding": "0.25rem 0.75rem",
+          "borderRadius": "12px",
+          "fontSize": "0.75rem",
+          "fontWeight": 600,
+          "display": "inline-block"
+        },
+        "variants": {
+          "organic": {
+            "background": "#E8F5E9",
+            "color": "#2E7D32"
+          },
+          "vegan": {
+            "background": "#FFF3E0",
+            "color": "#E65100"
+          },
+          "glutenFree": {
+            "background": "#E3F2FD",
+            "color": "#1565C0"
+          },
+          "discount": {
+            "background": "#FFEBEE",
+            "color": "#C62828"
+          }
+        }
+      },
+
+      "card": {
+        "default": {
+          "background": "#FFFFFF",
+          "borderRadius": "8px",
+          "padding": "1.5rem",
+          "boxShadow": "0 2px 8px rgba(0, 0, 0, 0.08)",
+          "transition": "all 0.3s ease"
+        }
+      }
+    },
+
+    "effects": {
+      "shadows": {
+        "sm": "0 1px 2px rgba(0, 0, 0, 0.05)",
+        "base": "0 2px 8px rgba(0, 0, 0, 0.08)",
+        "md": "0 4px 12px rgba(0, 0, 0, 0.1)",
+        "lg": "0 8px 16px rgba(0, 0, 0, 0.12)",
+        "xl": "0 12px 24px rgba(0, 0, 0, 0.15)"
+      },
+      "transitions": {
+        "fast": "0.15s ease",
+        "base": "0.3s ease",
+        "slow": "0.5s ease"
+      },
+      "animations": {
+        "fadeIn": {
+          "keyframes": "opacity 0 to 1",
+          "duration": "0.3s"
+        },
+        "slideUp": {
+          "keyframes": "transform translateY(20px) to translateY(0)",
+          "duration": "0.4s"
+        },
+        "scaleIn": {
+          "keyframes": "transform scale(0.95) to scale(1)",
+          "duration": "0.3s"
+        }
+      }
+    },
+
+    "icons": {
+      "size": {
+        "sm": "1rem",
+        "base": "1.5rem",
+        "lg": "2rem",
+        "xl": "2.5rem"
+      },
+      "library": "lucide-react or similar",
+      "common": [
+        "shopping-cart",
+        "user",
+        "search",
+        "heart",
+        "star",
+        "menu",
+        "x",
+        "chevron-down",
+        "chevron-right",
+        "check",
+        "leaf",
+        "package"
+      ]
+    },
+
+    "placeholders": {
+      "productImage": {
+        "background": "#F8F9FA",
+        "color": "#DEE2E6",
+        "display": "flex",
+        "alignItems": "center",
+        "justifyContent": "center",
+        "icon": "package",
+        "iconSize": "3rem"
+      },
+      "text": {
+        "short": "Product Name",
+        "medium": "Natural Organic Product",
+        "long": "Premium Natural Organic Product Description"
+      }
+    },
+
+    "patterns": {
+      "productGrid": {
+        "display": "grid",
+        "gridTemplateColumns": {
+          "mobile": "repeat(2, 1fr)",
+          "tablet": "repeat(3, 1fr)",
+          "desktop": "repeat(5, 1fr)",
+          "wide": "repeat(6, 1fr)"
+        },
+        "gap": "1.5rem"
+      },
+      "categoryGrid": {
+        "display": "grid",
+        "gridTemplateColumns": {
+          "mobile": "repeat(2, 1fr)",
+          "tablet": "repeat(4, 1fr)",
+          "desktop": "repeat(6, 1fr)"
+        },
+        "gap": "1rem"
+      }
+    },
+
+    "accessibility": {
+      "focusVisible": {
+        "outline": "2px solid #4CAF50",
+        "outlineOffset": "2px"
+      },
+      "skipLink": {
+        "position": "absolute",
+        "left": "-9999px",
+        "focus": {
+          "left": "1rem",
+          "top": "1rem"
+        }
+      },
+      "contrast": {
+        "minimum": "4.5:1",
+        "enhanced": "7:1"
+      }
+    },
+
+    "imagery": {
+      "productPhotography": {
+        "style": "clean, well-lit product shots",
+        "background": "white or transparent",
+        "format": "JPEG, PNG, WebP",
+        "aspectRatio": "1:1 or 3:4",
+        "resolution": "high-DPI ready"
+      },
+      "heroImages": {
+        "style": "nature, leaves, organic elements",
+        "overlay": "dark gradient for text readability",
+        "minHeight": "400px"
+      }
+    }
+  }
+}
