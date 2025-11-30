@@ -1,0 +1,44 @@
+/* Custom CSS for Greenmarket Theme */
+/* This file is for theme-specific customizations that don't fit into Tailwind utilities */
+
+/* Ensure Tailwind doesn't conflict with existing Bootstrap styles */
+.greenmarket-theme {
+    /* Scope all Tailwind styles within this class if needed */
+}
+
+/* Loading spinner */
+#loading {
+    display: flex;
+}
+
+#loading.hidden {
+    display: none;
+}
+
+/* Smooth transitions */
+* {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+    opacity: 0.8;
+}
+
