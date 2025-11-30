@@ -14,17 +14,27 @@ trait SettingsTrait
     {
         $envFile = app()->environmentFilePath();
         $str = file_get_contents($envFile);
-        if (is_bool(env($envKey))) {
-            $oldValue = var_export(env($envKey), true);
+        
+        // Escape the key for regex
+        $escapedKey = preg_quote($envKey, '/');
+        
+        // Pattern to match the key at start of line with any value
+        $pattern = "/^[\s]*{$escapedKey}=.*$/m";
+        
+        $newLine = "{$envKey}={$envValue}";
+        
+        if (preg_match($pattern, $str)) {
+            // Key exists, replace all occurrences with a single clean line
+            $str = preg_replace($pattern, '', $str);
+            // Remove empty lines that might have been created
+            $str = preg_replace("/\n\n+/", "\n", $str);
+            // Add the new line at the end
+            $str = rtrim($str) . "\n{$newLine}\n";
         } else {
-            $oldValue = env($envKey);
+            // Key doesn't exist, append it
+            $str = rtrim($str) . "\n{$newLine}\n";
         }
-
-        if (strpos($str, $envKey) !== false) {
-            $str = str_replace("{$envKey}={$oldValue}", "{$envKey}={$envValue}", $str);
-        } else {
-            $str .= "{$envKey}={$envValue}\n";
-        }
+        
         $fp = fopen($envFile, 'w');
         fwrite($fp, $str);
         fclose($fp);
