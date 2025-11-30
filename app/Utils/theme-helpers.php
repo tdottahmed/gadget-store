@@ -7,6 +7,13 @@ if (!function_exists('theme_asset')) {
         if ($themeName == 'default') {
             return dynamicAsset(path: $path);
         } else {
+            // Check if symlink exists in public/themes (for web accessibility)
+            $symlinkPath = public_path('themes/' . $themeName);
+            if (is_link($symlinkPath) || (file_exists($symlinkPath) && is_dir($symlinkPath))) {
+                return asset('themes/' . $themeName . '/' . $path);
+            }
+            
+            // Fallback to original logic
             if (DOMAIN_POINTED_DIRECTORY == 'public') {
                 return dynamicAsset(path: 'public/themes/' . $themeName . '/public/' . $path);
             } else {
