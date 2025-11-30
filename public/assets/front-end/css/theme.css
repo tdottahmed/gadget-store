@@ -13516,7 +13516,6 @@ label:not(.form-check-label):not(.custom-control-label):not(
     animation: fadeInUp 0.3s;
     -webkit-animation: fadeInUp 0.3s;
     -moz-animation: fadeInUp 0.3s;
-
 }
 
 @media (max-width: 767.98px) {
@@ -18845,7 +18844,7 @@ body {
     position: relative;
     margin-top: 6px;
     line-height: 17px;
-    width: 304px;
+    width: max-content;
     border-radius: 3px;
 }
 
@@ -19336,7 +19335,7 @@ html[dir="rtl"] .badge-style {
     }
 
     .maintenance-mode-container p.info {
-        font-size: .85rem;
+        font-size: 0.85rem;
     }
 }
 
