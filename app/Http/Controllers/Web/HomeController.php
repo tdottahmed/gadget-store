@@ -387,14 +387,13 @@ class HomeController extends Controller
         $userId = Auth::guard('customer')->user() ? Auth::guard('customer')->id() : 0;
         $flashDeal = ProductManager::getPriorityWiseFlashDealsProductsQuery(userId: $userId);
         $bannerTypeMainSectionBanner = $this->cacheBannerTable(bannerType: 'Main Section Banner');
-        
+
         $featuredProductsList = ProductManager::getPriorityWiseFeaturedProductsQuery(
             query: $this->product->active()->with(['clearanceSale' => function ($query) {
                 return $query->active();
-            }]), 
+            }]),
             dataLimit: 6
         );
-
         return view(
             VIEW_FILE_NAMES['home'],
             compact(
@@ -551,7 +550,7 @@ class HomeController extends Controller
             )
         );
     }
-    
+
     public function fetchProducts(Request $request)
     {
         $skip = (int) $request->input('skip', 0);
