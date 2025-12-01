@@ -3524,4 +3524,5 @@ return [
 	"discover_the_power_of_nature" => "Discover the power of nature",
 	"search_in" => "Search in",
 	"providing_high_quality_organic_and_natural_products" => "Providing high quality organic and natural products",
+	"Welcome_to" => "Welcome to",
 ];
