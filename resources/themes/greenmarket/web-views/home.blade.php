@@ -19,6 +19,7 @@
   {{-- Hero Slider --}}
   @include(VIEW_FILE_NAMES['hero_slider'])
 
+  <h1 class="text-3xl">Hello World</h1>
 
 @endsection
 

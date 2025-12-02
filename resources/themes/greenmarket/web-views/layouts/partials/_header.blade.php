@@ -34,8 +34,7 @@
       <!-- Logo -->
       <div class="flex-shrink-0">
         <a href="{{ route('home') }}" class="flex items-center">
-          <img src="{{ asset('themes/greenmarket/assets/images/Naturo-Logo.png') }}"
-               alt="{{ $web_config['company_name'] ?? 'Logo' }}"
+          <img src="{{ $web_config['web_logo']['path'] ?? '' }}" alt="{{ $web_config['company_name'] ?? 'Logo' }}"
                class="h-8 w-auto object-contain sm:h-10 md:h-12 lg:h-14"
                onerror="this.src='{{ $web_config['web_logo']['path'] ?? '' }}'">
         </a>
