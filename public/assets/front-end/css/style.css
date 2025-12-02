@@ -326,7 +326,6 @@ a {
         border: none !important;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
-        /*box-shadow: none !important;*/
         min-width: 250px !important;
         animation: none !important;
         -webkit-animation: none !important;
@@ -335,11 +334,16 @@ a {
         visibility: hidden;
         opacity: 0;
         transition: all ease 0.1s;
+        max-height: 500px;
+        overflow: visible !important;
+        overflow-y: auto;
     }
     .__dropdown-menu-2 .dropdown-menu {
         min-width: 250px !important;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .__dropdown-menu-2.show {
         visibility: visible;
@@ -360,10 +364,34 @@ a {
     }
 }
 @media (min-width: 768px) and (max-width: 1279px) {
-    .__dropdown-menu-2 li {
+    .navbar-nav.mega-nav .__dropdown-menu-2 li {
         display: flex;
         justify-content: space-between;
         gap: 20px;
+        position: relative;
+        overflow: visible;
+    }
+    .navbar-nav.mega-nav .__dropdown-menu-2 li .dropdown-menu {
+        display: none !important;
+        position: absolute;
+        top: -5px;
+        right: 100%;
+        min-width: 250px !important;
+        margin-right: 5px;
+        z-index: 1050;
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        max-height: 400px;
+        overflow-y: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    .navbar-nav.mega-nav .__dropdown-menu-2 li:hover > .dropdown-menu {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     .__dropdown-menu-2 li:not(:last-child) {
         border-bottom: 1px solid #eef6ff;
@@ -390,6 +418,37 @@ a {
         border-top-right-radius: 5px;
         padding-bottom: 0;
         padding-top: 0;
+    }
+}
+@media (min-width: 1280px) {
+    .navbar-nav.mega-nav .__dropdown-menu-2 li {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        position: relative;
+        overflow: visible;
+    }
+    .navbar-nav.mega-nav .__dropdown-menu-2 li .dropdown-menu {
+        display: none !important;
+        position: absolute;
+        top: -5px;
+        right: 100%;
+        min-width: 250px !important;
+        margin-right: 5px;
+        z-index: 1050;
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        max-height: 400px;
+        overflow-y: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    .navbar-nav.mega-nav .__dropdown-menu-2 li:hover > .dropdown-menu {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
 @media (max-width: 767px) {
@@ -426,9 +485,12 @@ a {
     .__dropdown-menu li .dropdown-menu,
     .__dropdown-menu-2 li .dropdown-menu {
         right: unset !important;
+        left: 0 !important;
         margin: 0 !important;
         transform: translate(0) !important;
         width: 100% !important;
+        display: none !important;
+        position: static;
     }
     .__dropdown-menu li .dropdown-menu li a,
     .__dropdown-menu-2 li .dropdown-menu li a {
@@ -478,17 +540,30 @@ a {
 .navbar-stuck-menu {
     padding-bottom: 0 !important;
     padding-top: 0 !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
 }
 
-.navbar-expand-md .navbar-nav .nav-item button,
-.navbar-expand-md .navbar-nav .nav-item > a {
-    transition: all ease 0.3s;
+.navbar-collapse {
+    overflow: visible !important;
+}
+    position: relative;
+    overflow: visible !important;
 }
 
 .navbar-expand-md .navbar-nav .nav-item .dropdown > button:hover,
 .navbar-expand-md .navbar-nav .nav-item > button:hover,
 .navbar-expand-md .navbar-nav .nav-item > a:hover {
     opacity: 0.6 !important;
+}
+
+/* Force dropdown visibility */
+.navbar-stuck-menu .dropdown-menu {
+    overflow: visible !important;
+}
+
+.navbar-stuck-menu li.dropdown {
+    overflow: visible !important;
 }
 
 .__top-slider-images .carousel-inner a {

@@ -256,7 +256,7 @@
                 @foreach ($categories as $category)
                   @php($categoryIndex++)
                   @if ($categoryIndex < 10)
-                    <li class="__inline-17">
+                    <li class="__inline-17 dropdown">
                       <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('products', ['category_id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
                            class="dropdown-item d-flex gap-10px align-items-center flex-grow-1">
@@ -276,7 +276,7 @@
                       @if ($category->childes->count() > 0)
                         <ul class="dropdown-menu text-align-direction">
                           @foreach ($category['childes'] as $subCategory)
-                            <li class="__inline-17">
+                            <li class="__inline-17 dropdown">
                               <div class="d-flex justify-content-between align-items-center">
                                 <a class="dropdown-item flex-grow-1"
                                    href="{{ route('products', ['sub_category_id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">
@@ -333,12 +333,12 @@
                   {{ translate('categories') }}
                 </span>
               </a>
-              <ul class="dropdown-menu __dropdown-menu-2 text-align-direction scroll-bar">
+              <ul class="dropdown-menu text-align-direction scroll-bar __dropdown-menu-sizing">
                 @php($categoryIndex = 0)
                 @foreach ($categories as $category)
                   @php($categoryIndex++)
                   @if ($categoryIndex < 10)
-                    <li class="__inline-17">
+                    <li class="__inline-17 dropdown">
                       <div class="d-flex justify-content-between align-items-center">
                         <a href="{{ route('products', ['category_id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
                            class="dropdown-item d-flex gap-10px align-items-center flex-grow-1">
@@ -358,7 +358,7 @@
                       @if ($category->childes->count() > 0)
                         <ul class="dropdown-menu text-align-direction">
                           @foreach ($category['childes'] as $subCategory)
-                            <li class="__inline-17">
+                            <li class="__inline-17 dropdown">
                               <div class="d-flex justify-content-between align-items-center">
                                 <a class="dropdown-item flex-grow-1"
                                    href="{{ route('products', ['sub_category_id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">
