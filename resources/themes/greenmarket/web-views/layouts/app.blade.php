@@ -94,7 +94,7 @@
   @include('web-views.layouts.partials._header')
 
   <main>
-    <div class="mx-auto max-w-[1240px]">
+    <div class="mx-auto">
       @yield('content')
     </div>
   </main>
