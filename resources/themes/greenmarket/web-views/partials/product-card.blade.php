@@ -1,7 +1,7 @@
 <!-- Product Card -->
 <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
     <div class="relativ p-8">
-        <a href="#">
+        <a href="{{ route('product', ['slug' => 'signature-honey-combo']) }}">
             <img src="https://prd.place/400" alt="Spray Dried Beetroot Powder"
                 class="w-full h-64 object-contain">
         </a>
@@ -16,7 +16,7 @@
         </button>
     </div>
     <div class="p-4">
-        <a href="#">
+        <a href="{{ route('product', ['slug' => 'signature-honey-combo']) }}">
             <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">স্প্রে ড্রাইড বিটরুট পাউডার |
                 Spray
                 Dried Beetroot Powder</h3>

@@ -1,7 +1,7 @@
 <!-- Header -->
 <header>
   <!-- Top Bar - Hidden on tablet and mobile -->
-  <div class="hidden bg-[#1a5f3f] py-2 text-white lg:block">
+  <div class="hidden top-bar-bg py-2 text-white lg:block">
     <div class="mx-auto flex max-w-[1240px] items-center justify-between px-4 py-1 text-sm">
       <div class="hidden items-center gap-2 md:flex">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
   </div>
 
   <!-- Main Header -->
-  <div class="bg-[#2d8659]">
+  <div class="main-header-bg">
     <div
          class="mx-auto flex max-w-[1240px] items-center justify-between gap-2 px-3 py-2 sm:gap-4 sm:px-4 sm:py-3 md:gap-4 md:px-6 lg:gap-4 lg:px-2 lg:py-3">
       <!-- Logo -->
@@ -45,7 +45,7 @@
         <form action="{{ route('products') }}" method="GET" class="relative w-full">
           <input type="text" name="name"
                  placeholder="{{ translate('search_in') }} {{ $web_config['company_name'] ?? 'Store' }}..."
-                 class="w-full bg-[#1a5f3f] px-10 py-2 pr-12 text-sm font-semibold text-white placeholder-[#a8d4c0] focus:outline-none md:py-3 lg:py-3">
+                 class="w-full top-bar-bg px-10 py-2 pr-12 text-sm font-semibold text-white placeholder-[#a8d4c0] focus:outline-none md:py-3 lg:py-3">
           <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2">
             <svg class="h-5 w-5 text-[#a8d4c0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

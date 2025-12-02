@@ -110,11 +110,8 @@
   @if (isset($whatsapp['status']) && $whatsapp['status'] == 1)
     <div class="fixed bottom-6 right-6 z-40">
       <a href="https://wa.me/{{ $whatsapp['phone'] }}?text=Hello%20there!" target="_blank"
-         class="block flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg transition-colors hover:bg-green-600">
-        <svg class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-          <path
-                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198-.05-.371-.223-.52-.173-.149-1.476-1.82-2.02-2.491-.543-.671-.362-.743.135-1.234.135-.149.298-.298.446-.446.149-.149.198-.248.298-.248.099 0 .173.05.248.174.074.124.347.644.52.868.173.223.298.372.521.62.223.248.372.298.62.149.248-.149 1.027-.644 1.975-1.05.948-.405 1.675-.3 1.95.15.273.446.173 1.275-.074 1.771" />
-        </svg>
+         class="block flex h-12 w-12 items-center justify-center rounded-full whatsapp-bg shadow-lg">
+         <i class="fa-brands fa-whatsapp text-xl text-white font-semibold"></i>
       </a>
     </div>
   @endif
@@ -122,7 +119,7 @@
   <!-- Scroll to Top Button -->
   <button id="scroll-top"
           class="fixed bottom-24 right-6 z-40 flex hidden h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-all hover:opacity-90"
-          style="background-color: var(--primary-color);">
+          style="background-color: #003315;">
     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
     </svg>

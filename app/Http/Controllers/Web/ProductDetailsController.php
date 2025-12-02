@@ -53,6 +53,8 @@ class ProductDetailsController extends Controller
             'default' => self::getDefaultTheme(slug: $slug),
             'theme_aster' => self::getThemeAster(slug: $slug),
             'theme_fashion' => self::getThemeFashion(slug: $slug),
+            'greenmarket' => self::getGreenmarketTheme(slug: $slug),
+            default => self::getDefaultTheme(slug: $slug),
         };
     }
 
@@ -428,5 +430,11 @@ class ProductDetailsController extends Controller
 
         Toastr::error(translate('not_found'));
         return back();
+    }
+
+    public function getGreenmarketTheme(string $slug): View|RedirectResponse
+    {
+        // For now, return static view. Later can be updated with dynamic product data
+        return view(VIEW_FILE_NAMES['products_details']);
     }
 }

@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="bg-[#0d3d26] text-white pt-12 pb-8">
+<footer class="footer-bg text-white pt-12 pb-8">
     <div class="container-ds">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 border-b border-white/10 pb-12">
             <!-- Brand Column -->
