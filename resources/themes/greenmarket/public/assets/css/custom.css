@@ -11,24 +11,24 @@
     --color-primary-semi-dark: #25b672;
     --color-primary-dark: #000f06;
     --color-primary-dark-green: #1b3a2c;
-    
+
     --color-secondary-gold: #d4af37;
     --color-secondary-amber: #ffa500;
     --color-secondary-brown: #8b4513;
-    
+
     --color-neutral-white: #ffffff;
     --color-neutral-off-white: #f8f9fa;
     --color-neutral-light-gray: #e9ecef;
     --color-neutral-gray: #6c757d;
     --color-neutral-dark-gray: #495057;
     --color-neutral-black: #000000;
-    
+
     /* Typography */
     --font-sans: "Inter", sans-serif;
     --font-primary: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
     --font-secondary: "Poppins", sans-serif;
     --font-display: "Playfair Display", serif;
-    
+
     /* Spacing */
     --spacing-container: 2rem;
 }
@@ -108,7 +108,7 @@ html {
 }
 
 .badge-sale {
-    background: #DC3545;
+    background: #dc3545;
     color: var(--color-neutral-white);
 }
 
@@ -326,7 +326,9 @@ header {
 
 /* Smooth transitions */
 * {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-property: color, background-color, border-color,
+        text-decoration-color, fill, stroke, opacity, box-shadow, transform,
+        filter, backdrop-filter;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
 }
@@ -357,14 +359,24 @@ header {
         padding-left: 1rem;
         padding-right: 1rem;
     }
-    
+
     .product-slider .slick-prev,
     .product-slider .slick-next {
         display: none !important;
     }
-    
+
     .category-slider .slick-prev,
     .category-slider .slick-next {
         display: none !important;
     }
+}
+
+.top-bar-bg {
+    background-color: #000f06 !important;
+}
+
+.main-header-bg,
+.footer-bg,
+.whatsapp-bg {
+    background-color: #003315 !important;
 }
