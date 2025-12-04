@@ -66,7 +66,7 @@
           @endphp
           @if ($cartCount > 0)
             <span
-                  class="absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4">{{ $cartCount }}</span>
+                  class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4">{{ $cartCount }}</span>
           @endif
           <span class="hidden text-sm md:inline">{{ translate('cart') }}</span>
         </a>

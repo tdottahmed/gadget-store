@@ -364,6 +364,23 @@
 @endpush
 
 @section('content')
+    <!-- Product Data for Tracking (Hidden) -->
+    @php
+        $productId = $product->id ?? null;
+        $productSlug = $product->slug ?? '';
+        $productName = $product->name ?? '';
+        $productImage = $product ? getStorageImages(path: $product->thumbnail_full_url ?? '', type: 'product') : '';
+        $productPrice = $product ? getProductPriceByType(product: $product, type: 'discounted_unit_price', result: 'string') : '';
+    @endphp
+    <div id="product-details-page" 
+         data-product-id="{{ $productId }}"
+         data-product-slug="{{ $productSlug }}"
+         data-product-name="{{ $productName }}"
+         data-product-image="{{ $productImage }}"
+         data-product-price="{{ $productPrice }}"
+         style="display: none;">
+    </div>
+
     <!-- Main Content -->
     <main class="container-ds">
         <!-- Product Section -->
@@ -375,11 +392,11 @@
                         <div
                             class="w-full aspect-square bg-white border border-[#F0F0F0] rounded-lg p-8 flex items-center justify-center">
                             <img id="main-product-image"
-                                src="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp"
-                                alt="সিগনেচার হানি কম্বো" class="w-full h-full object-contain">
+                                src="{{ $productImage ?: 'https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp' }}"
+                                alt="{{ $productName ?: 'সিগনেচার হানি কম্বো' }}" class="w-full h-full object-contain">
                         </div>
                         <div
-                            class="flex flex-row gap-3 justify-center flex-wrap md:justify-center justify-start overflow-x-auto pb-2">
+                            class="flex flex-row gap-3 justify-center flex-wrap overflow-x-auto pb-2">
                             <div class="product-thumbnail min-w-[70px] md:w-20 w-[70px] h-[70px] md:h-20 border-[3px] border-[#FA582C] rounded-md p-2 cursor-pointer transition-all duration-300 bg-white flex items-center justify-center flex-shrink-0"
                                 data-image="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp">
                                 <img src="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp"
@@ -401,14 +418,22 @@
 
                 <!-- Product Info -->
                 <div class="py-4 mt-14 md:mt-0">
-                    <h1 class="text-xl md:text-xl lg:text-3xl font-semibold text-black mb-4 leading-tight">সিগনেচার হানি
-                        কম্বো | Signature Honey Combo</h1>
+                    <h1 id="product-name" class="text-xl md:text-xl lg:text-3xl font-semibold text-black mb-4 leading-tight">
+                        {{ $productName ?: 'সিগনেচার হানি কম্বো | Signature Honey Combo' }}
+                    </h1>
 
                     <div class="flex items-center gap-3 mb-6">
-                        <span class="text-lg font-semibold text-[#666666] line-through">৳2,150</span>
-                        <span class="text-xl md:text-2xl font-semibold text-[#FA582C]">৳1,800</span>
-                        <span class="inline-block px-2 py-1 bg-[#DD3737] text-white rounded-2xl text-sm font-semibold">15%
-                            OFF</span>
+                        @if($product && getProductPriceByType(product: $product, type: 'discount', result: 'value') > 0)
+                            <span class="text-lg font-semibold text-[#666666] line-through">{{ webCurrencyConverter(amount: $product->unit_price) }}</span>
+                        @endif
+                        <span id="product-price" class="text-xl md:text-2xl font-semibold text-[#FA582C]">
+                            {{ $productPrice ?: '৳1,800' }}
+                        </span>
+                        @if($product && getProductPriceByType(product: $product, type: 'discount', result: 'value') > 0)
+                            <span class="inline-block px-2 py-1 bg-[#DD3737] text-white rounded-2xl text-sm font-semibold">
+                                {{ getProductPriceByType(product: $product, type: 'discount', result: 'value') }}% OFF
+                            </span>
+                        @endif
                     </div>
 
                     <!-- Weight/Variant Selection -->
@@ -448,8 +473,10 @@
 
                     <div class="flex flex-col md:flex-row gap-4 mb-6">
                         <button
-                            class="text-black py-3 px-6 border-2 border-black rounded-md flex items-center gap-2 w-full justify-center cursor-pointer hover:bg-black hover:text-white transition-all duration-300"
-                            id="btn-add-to-cart">
+                            class="text-black py-3 px-6 border-2 border-black rounded-md flex items-center gap-2 w-full justify-center cursor-pointer hover:bg-black hover:text-white transition-all duration-300 add-to-cart-btn"
+                            id="btn-add-to-cart"
+                            data-product-id="{{ $product->id ?? '' }}"
+                            data-product-slug="{{ $product->slug ?? '' }}">
                             <i class="fas fa-shopping-cart"></i>
                             <span>কার্টে যোগ করুন</span>
                         </button>
@@ -580,7 +607,7 @@
         </section>
 
         <!-- Related Products Section -->
-        <section class="py-12 bg-white">
+        {{-- <section class="py-12 bg-white">
             <div class="max-w-[1400px] mx-auto px-4">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-2xl font-bold text-black">Related Products</h2>
@@ -611,7 +638,7 @@
                     @include('web-views.partials.product-card')
                 </div>
             </div>
-        </section>
+        </section> --}}
 
         <!-- Recently Viewed Section -->
         <section class="py-12 bg-[#F9F9F9]">
@@ -629,11 +656,9 @@
                         </button>
                     </div>
                 </div>
-                <div class="recently-viewed-slider">
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
+                <div class="recently-viewed-slider" id="recently-viewed-container">
+                    <!-- Products will be loaded dynamically from cookies via JavaScript -->
+                    <div class="text-center py-8 text-gray-500">Loading recently viewed products...</div>
                 </div>
             </div>
         </section>
@@ -642,6 +667,22 @@
 
 @push('script')
     <script>
+        // Track product view
+        $(document).ready(function() {
+            const productData = $('#product-details-page');
+            if (productData.length) {
+                const productId = productData.data('product-id');
+                const productSlug = productData.data('product-slug');
+                const productName = productData.data('product-name');
+                const productImage = productData.data('product-image');
+                const productPrice = productData.data('product-price');
+                
+                if (productId && typeof addToRecentlyViewed !== 'undefined') {
+                    addToRecentlyViewed(productId, productSlug, productName, productImage, productPrice);
+                }
+            }
+        });
+
         // Quantity Selector
         let quantity = 1;
         const quantityDisplay = document.getElementById('quantity-display');
@@ -682,6 +723,7 @@
 
         // Variant Selection
         const variantButtons = document.querySelectorAll('[data-variant]');
+        let selectedVariant = null;
 
         variantButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -694,41 +736,55 @@
                 button.classList.remove('border-[#E0E0E0]');
                 button.classList.add('border-[#96C43C]', 'border-2');
 
-                const variant = button.getAttribute('data-variant');
-                console.log('Selected variant:', variant);
+                selectedVariant = button.getAttribute('data-variant');
+                console.log('Selected variant:', selectedVariant);
                 // You can update price based on variant here
             });
+        });
+
+        // Add to Cart Button Handler
+        $('#btn-add-to-cart').on('click', function() {
+            const productId = $(this).data('product-id');
+            const quantity = parseInt($('#quantity-display').text());
+            const variant = selectedVariant;
+            
+            if (productId && typeof addToCartGreenmarket !== 'undefined') {
+                addToCartGreenmarket(productId, quantity, variant);
+            } else {
+                // Fallback to form submission if function not available
+                console.error('addToCartGreenmarket function not found');
+            }
         });
 
         // Initialize Sliders
         $(document).ready(function() {
             // Initialize Related Products Slider
-            $('.related-products-slider').slick({
-                slidesToShow: 4,
-                slidesToScroll: 1,
-                infinite: true,
-                arrows: false,
-                dots: false,
-                responsive: [{
-                        breakpoint: 992,
-                        settings: {
-                            slidesToShow: 3
-                        }
-                    },
-                    {
-                        breakpoint: 768,
-                        settings: {
-                            slidesToShow: 2
-                        }
-                    },
-                    {
-                        breakpoint: 576,
-                        settings: {
-                            slidesToShow: 1
-                        }
-                    }
-                ]
-            });
+            // $('.related-products-slider').slick({
+            //     slidesToShow: 4,
+            //     slidesToScroll: 1,
+            //     infinite: true,
+            //     arrows: false,
+            //     dots: false,
+            //     responsive: [{
+            //             breakpoint: 992,
+            //             settings: {
+            //                 slidesToShow: 3
+            //             }
+            //         },
+            //         {
+            //             breakpoint: 768,
+            //             settings: {
+            //                 slidesToShow: 2
+            //             }
+            //         },
+            //         {
+            //             breakpoint: 576,
+            //             settings: {
+            //                 slidesToShow: 1
+            //             }
+            //         }
+            //     ]
+            // });
 
             $('.related-prev').click(function() {
                 $('.related-products-slider').slick('slickPrev');

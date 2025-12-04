@@ -434,7 +434,29 @@ class ProductDetailsController extends Controller
 
     public function getGreenmarketTheme(string $slug): View|RedirectResponse
     {
-        // For now, return static view. Later can be updated with dynamic product data
-        return view(VIEW_FILE_NAMES['products_details']);
+        $product = $this->productRepo->getWebFirstWhereActive(
+            params: ['slug' => $slug, 'customer_id' => Auth::guard('customer')->user()->id ?? 0],
+            relations: ['seoInfo', 'digitalVariation', 'reviews', 'seller.shop', 'clearanceSale' => function ($query) {
+                return $query->active();
+            }]
+        );
+
+        if (!$product) {
+            Toastr::error(translate('not_found'));
+            return back();
+        }
+
+        $decimalPointSettings = getWebConfig('decimal_point_settings') ?? 0;
+        $relatedProducts = $this->productRepo->getWebListWithScope(
+            scope: 'active',
+            filters: ['category_id' => $product['category_id'], 'customer_id' => Auth::guard('customer')->user()->id ?? 0],
+            whereNotIn: ['id' => [$product['id']]],
+            relations: ['reviews', 'clearanceSale' => function ($query) {
+                return $query->active();
+            }],
+            dataLimit: 10,
+        );
+
+        return view(VIEW_FILE_NAMES['products_details'], compact('product', 'decimalPointSettings', 'relatedProducts'));
     }
 }
