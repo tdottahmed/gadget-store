@@ -3537,4 +3537,9 @@ return [
 	"available" => "Available",
 	"product_description" => "Product description",
 	"related_products" => "Related products",
+	"items_in_cart" => "Items in cart",
+	"quantity_updated" => "Quantity updated",
+	"are_you_sure_remove" => "Are you sure remove",
+	"item_removed" => "Item removed",
+	"failed_to_load_cart" => "Failed to load cart",
 ];

@@ -90,8 +90,29 @@ function updateCartCountGreenmarket() {
             _token: $('meta[name="_token"]').attr('content')
         },
         success: function(response) {
-            // Cart count will be updated when page reloads
-            // For now, we'll reload the page to get fresh cart data
+            if (response && response.data) {
+                // Parse the cart partial HTML to get cart count
+                const $cartHtml = $(response.data);
+                const cartCount = $cartHtml.find('.cart-count-badge').text() || '0';
+                const $headerBadge = $('.cart-count-badge');
+                
+                // Update or create cart count badge in header
+                if (parseInt(cartCount) > 0) {
+                    if ($headerBadge.length) {
+                        $headerBadge.text(cartCount);
+                        $headerBadge.attr('title', cartCount + ' {{ translate("items_in_cart") ?? "items in cart" }}');
+                    } else {
+                        // Add badge if it doesn't exist
+                        $('a[href*="shop-cart"]').append('<span class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4" title="' + cartCount + ' {{ translate("items_in_cart") ?? "items in cart" }}">' + cartCount + '</span>');
+                    }
+                } else {
+                    // Remove badge if cart is empty
+                    $headerBadge.remove();
+                }
+            }
+        },
+        error: function() {
+            console.error('Failed to update cart count');
         }
     });
 }
