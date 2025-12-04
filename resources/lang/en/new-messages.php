@@ -3525,4 +3525,11 @@ return [
 	"search_in" => "Search in",
 	"providing_high_quality_organic_and_natural_products" => "Providing high quality organic and natural products",
 	"Welcome_to" => "Welcome to",
+	"your_cart" => "Your cart",
+	"your_cart_is_empty" => "Your cart is empty",
+	"add_items_to_cart" => "Add items to cart",
+	"failed_to_update_quantity" => "Failed to update quantity",
+	"item_removed_from_cart" => "Item removed from cart",
+	"failed_to_remove_item" => "Failed to remove item",
+	"order_now" => "Order now",
 ];

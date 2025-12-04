@@ -387,6 +387,7 @@ class HomeController extends Controller
         $userId = Auth::guard('customer')->user() ? Auth::guard('customer')->id() : 0;
         $flashDeal = ProductManager::getPriorityWiseFlashDealsProductsQuery(userId: $userId);
         $bannerTypeMainSectionBanner = $this->cacheBannerTable(bannerType: 'Main Section Banner');
+        $decimal_point_settings = getWebConfig(name: 'decimal_point_settings') ?? 0;
 
         $featuredProductsList = ProductManager::getPriorityWiseFeaturedProductsQuery(
             query: $this->product->active()->with(['clearanceSale' => function ($query) {
@@ -394,6 +395,27 @@ class HomeController extends Controller
             }]),
             dataLimit: 6
         );
+        
+        $bestSellProduct = $this->cacheBestSellProductList();
+        $latestProductsList = $this->cacheHomePageLatestProductList()->take(10);
+        $topRatedProducts = $this->cacheTopRatedProductList()->take(10);
+        
+        // Get products by category for Honey and Wellness sections
+        $honeyCategory = \App\Models\Category::where('name', 'like', '%honey%')->orWhere('name', 'like', '%মধু%')->first();
+        $wellnessCategory = \App\Models\Category::where('name', 'like', '%wellness%')->orWhere('name', 'like', '%স্বাস্থ্য%')->first();
+        
+        $honeyProducts = $honeyCategory 
+            ? $this->product->active()->where('category_id', $honeyCategory->id)->with(['clearanceSale' => function ($query) {
+                return $query->active();
+            }])->take(10)->get()
+            : collect([]);
+            
+        $wellnessProducts = $wellnessCategory 
+            ? $this->product->active()->where('category_id', $wellnessCategory->id)->with(['clearanceSale' => function ($query) {
+                return $query->active();
+            }])->take(10)->get()
+            : collect([]);
+        
         return view(
             VIEW_FILE_NAMES['home'],
             compact(
@@ -401,7 +423,13 @@ class HomeController extends Controller
                 'featuredProductsList',
                 'categories',
                 'homeCategories',
-                'bannerTypeMainSectionBanner'
+                'bannerTypeMainSectionBanner',
+                'bestSellProduct',
+                'latestProductsList',
+                'topRatedProducts',
+                'honeyProducts',
+                'wellnessProducts',
+                'decimal_point_settings'
             )
         );
     }

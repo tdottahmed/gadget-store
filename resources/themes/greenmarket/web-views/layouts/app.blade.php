@@ -66,6 +66,9 @@
 
     @include('web-views.layouts.partials._footer')
 
+    <!-- Cart Sidebar -->
+    @include('web-views.layouts.partials._cart-sidebar')
+
     <!-- Modals -->
     @include('web-views.layouts.partials.modal._quick-view')
     @include('web-views.layouts.partials.modal._buy-now')
@@ -101,6 +104,12 @@
     @endif
     @if (file_exists(public_path('themes/greenmarket/assets/js/main.js')))
         <script src="{{ asset('themes/greenmarket/assets/js/main.js') }}"></script>
+    @endif
+    @if (file_exists(public_path('themes/greenmarket/assets/js/cart-functions.js')))
+        <script src="{{ asset('themes/greenmarket/assets/js/cart-functions.js') }}"></script>
+    @endif
+    @if (file_exists(public_path('themes/greenmarket/assets/js/recently-viewed.js')))
+        <script src="{{ asset('themes/greenmarket/assets/js/recently-viewed.js') }}"></script>
     @endif
     <script src="{{ dynamicAsset(path: 'public/assets/backend/libs/intl-tel-input/js/intlTelInput.js') }}"></script>
     <script src="{{ dynamicAsset(path: 'public/assets/backend/libs/intl-tel-input/js/utils.js') }}"></script>
