@@ -3532,4 +3532,9 @@ return [
 	"item_removed_from_cart" => "Item removed from cart",
 	"failed_to_remove_item" => "Failed to remove item",
 	"order_now" => "Order now",
+	"select_variant" => "Select variant",
+	"call_order" => "Call order",
+	"available" => "Available",
+	"product_description" => "Product description",
+	"related_products" => "Related products",
 ];

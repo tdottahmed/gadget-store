@@ -1,10 +1,12 @@
 @php
+
+    // dd($product);
     // Accept product data dynamically
     $product = $product ?? null;
     $productId = $product->id ?? null;
-    $productSlug = $product->slug ?? 'signature-honey-combo';
-    $productName = $product->name ?? 'স্প্রে ড্রাইড বিটরুট পাউডার | Spray Dried Beetroot Powder';
-    $productImage = $product ? getStorageImages(path: $product->thumbnail_full_url ?? '', type: 'product') : 'https://prd.place/400';
+    $productSlug = $product->slug ?? '';
+    $productName = $product->name ?? '';
+    $productImage = $product ? getStorageImages(path: $product->thumbnail_full_url ?? '', type: 'product') : 'https://placehold.co/400';
     
     // Get product prices using Laravel helper functions
     if ($product) {
@@ -13,8 +15,8 @@
             ? webCurrencyConverter(amount: $product->unit_price) 
             : null;
     } else {
-        $productPrice = '৳1,050';
-        $productDiscountPrice = '৳1,550';
+        $productPrice = '0';
+        $productDiscountPrice = '0';
     }
     
     $decimalPointSettings = $decimal_point_settings ?? getWebConfig(name: 'decimal_point_settings') ?? 0;
@@ -33,7 +35,7 @@
                 >
             <i class="fa-regular fa-eye"></i>
         </a>
-        <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn"
+        <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer greenmarket-add-to-cart-btn"
                 data-product-id="{{ $productId }}"
                 data-product-slug="{{ $productSlug }}">
             <i class="fas fa-shopping-cart text-lg md:text-xl"></i>

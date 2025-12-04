@@ -133,12 +133,12 @@ function renderRecentlyViewedFromCookie(recentlyViewed) {
     itemsToShow.forEach(function(item) {
         const productSlug = item.slug || '';
         const productName = item.name || 'Product';
-        const productImage = item.image || 'https://prd.place/400';
+        const productImage = item.image || 'https://placehold.co/400';
         const productPrice = item.price || '৳0';
         const productId = item.id || '';
         
         html += `
-            <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
+            <div class="bg-transparent rounded-lg shadow-md border-1 ml-2 mr-2 border-gray-50 overflow-hidden group">
                 <div class="relativ p-8">
                     <a href="/product/${productSlug}">
                         <img src="${productImage}" alt="${productName}" class="w-full h-64 object-contain">
@@ -216,7 +216,7 @@ function generateProductCardHTML(product) {
 
 // Helper function to get product image URL
 function getProductImageUrl(path) {
-    if (!path) return 'https://prd.place/400';
+    if (!path) return 'https://placehold.co/400';
     if (path.startsWith('http')) return path;
     return '/storage/app/public/product/thumbnail/' + path;
 }

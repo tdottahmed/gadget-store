@@ -478,22 +478,6 @@
                     });
                 }
             });
-
-            // Quick View
-            $('.quick-view-btn').on('click', function() {
-                var productId = $(this).data('product-id');
-                if (productId && typeof quickView !== 'undefined') {
-                    quickView(productId);
-                }
-            });
-
-            // Add to Cart
-            $('.add-to-cart-btn').on('click', function() {
-                var productId = $(this).data('product-id');
-                if (productId && typeof addToCart !== 'undefined') {
-                    addToCart(productId);
-                }
-            });
         });
     </script>
 @endpush
