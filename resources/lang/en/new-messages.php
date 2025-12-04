@@ -3542,4 +3542,5 @@ return [
 	"are_you_sure_remove" => "Are you sure remove",
 	"item_removed" => "Item removed",
 	"failed_to_load_cart" => "Failed to load cart",
+	"max_quantity_reached" => "Max quantity reached",
 ];
