@@ -1,5 +1,5 @@
 <!-- Header -->
-<header>
+<header class="relative z-[1000]">
   <!-- Top Bar - Hidden on tablet and mobile -->
   <div class="hidden top-bar-bg py-2 text-white lg:block">
     <div class="mx-auto flex max-w-[1240px] items-center justify-between px-4 py-1 text-sm">
@@ -57,16 +57,17 @@
 
       <!-- Cart -->
       <div class="flex flex-shrink-0 items-center gap-3 sm:gap-5 md:gap-6 lg:pr-4">
-        <a href="{{ route('shop-cart') }}" class="relative flex items-center gap-1 text-white md:gap-2">
+        <a href="{{ route('shop-cart') }}" class="relative flex items-center gap-1 text-white md:gap-2 cart-button" title="{{ translate('cart') ?? 'Cart' }}">
           <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
           @php
-            $cartCount = auth('customer')->check()
-                ? \App\Models\Cart::where('customer_id', auth('customer')->id())->count()
-                : 0;
+            use App\Utils\CartManager;
+            $cart = CartManager::getCartListQuery();
+            $cartCount = $cart->count();
           @endphp
           @if ($cartCount > 0)
             <span
-                  class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4">{{ $cartCount }}</span>
+                  class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4" 
+                  title="{{ translate('items_in_cart') ?? $cartCount . ' items in cart' }}">{{ $cartCount }}</span>
           @endif
           <span class="hidden text-sm md:inline">{{ translate('cart') }}</span>
         </a>

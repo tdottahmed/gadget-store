@@ -6,10 +6,10 @@
 @endphp
 
 <!-- Cart Sidebar Overlay -->
-<div id="cart-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity duration-300"></div>
+<div id="cart-sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-[9998] hidden transition-opacity duration-300"></div>
 
 <!-- Cart Sidebar -->
-<div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-[420px] lg:w-[450px] bg-white z-50 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+<div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full md:w-[420px] lg:w-[450px] bg-white z-[9999] transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
     <!-- Cart Header -->
     <div class="flex items-center justify-between px-4 py-4 border-b border-gray-200 bg-white">
         <div class="flex items-center gap-3">
@@ -33,11 +33,23 @@
                 @foreach($cart as $cartItem)
                     @php
                         $product = Product::find($cartItem['product_id'] ?? $cartItem->product_id ?? null);
-                        $productImage = $product ? getStorageImages(path: $product->thumbnail_full_url ?? '', type: 'product') : asset('themes/greenmarket/assets/images/placeholder.png');
+                        if ($product && $product->thumbnail_full_url) {
+                            $thumbnailResult = $product->thumbnail_full_url;
+                            if (is_array($thumbnailResult) && isset($thumbnailResult['path'])) {
+                                $productImage = $thumbnailResult['path'];
+                            } elseif (is_string($thumbnailResult)) {
+                                $productImage = $thumbnailResult;
+                            } else {
+                                $productImage = getStorageImages(path: $product->thumbnail ?? '', type: 'product');
+                            }
+                        } else {
+                            $productImage = asset('themes/greenmarket/assets/images/placeholder.png');
+                        }
                         $productName = $product ? $product->name : 'Product';
                         $price = $cartItem['price'] ?? $cartItem->price ?? 0;
+                        $discount = $cartItem['discount'] ?? $cartItem->discount ?? 0;
                         $quantity = $cartItem['quantity'] ?? $cartItem->quantity ?? 1;
-                        $subtotal = $price * $quantity;
+                        $subtotal = ($price - $discount) * $quantity;
                         $cartId = $cartItem['id'] ?? $cartItem->id ?? '';
                     @endphp
                     <div class="flex items-start gap-3 pb-4 border-b border-gray-100 cart-item" data-cart-id="{{ $cartId }}">
@@ -129,14 +141,6 @@
             $('body').removeClass('overflow-hidden');
         }
 
-        // Open cart when cart button is clicked - prevent default navigation
-        $(document).on('click', 'a[href*="shop-cart"], a[href="{{ route("shop-cart") }}"]', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            openCartSidebar();
-            return false;
-        });
 
         // Close cart sidebar
         $('#cart-sidebar-overlay').on('click', function() {
@@ -180,22 +184,26 @@
                 method: 'POST',
                 data: {
                     _token: $('meta[name="_token"]').attr('content'),
-                    id: cartId,
+                    key: cartId,
                     quantity: quantity
                 },
                 success: function(response) {
-                    if (response.status === 1) {
-                        // Update the quantity input
-                        $('.quantity-input[data-cart-id="' + cartId + '"]').val(quantity);
-                        // Reload page to refresh cart sidebar content
-                        setTimeout(function() {
-                            window.location.reload();
-                        }, 300);
+                    if (response && response.status !== 0) {
+                        // Reload cart sidebar content
+                        loadCartSidebar();
+                        updateCartCount();
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success('{{ translate("quantity_updated") ?? "Quantity updated" }}');
+                        }
+                    } else {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response?.message || '{{ translate("failed_to_update_quantity") ?? "Failed to update quantity" }}');
+                        }
                     }
                 },
-                error: function() {
+                error: function(xhr) {
                     if (typeof toastr !== 'undefined') {
-                        toastr.error('Failed to update quantity');
+                        toastr.error(xhr.responseJSON?.message || '{{ translate("failed_to_update_quantity") ?? "Failed to update quantity" }}');
                     }
                 }
             });
@@ -203,43 +211,56 @@
 
         // Remove cart item function
         function removeCartItem(cartId) {
-            if (confirm('Are you sure you want to remove this item?')) {
+            if (confirm('{{ translate("are_you_sure_remove") ?? "Are you sure you want to remove this item?" }}')) {
                 const removeUrl = $('#route-data').data('route-cart-remove') || '{{ route("cart.remove") }}';
                 $.ajax({
                     url: removeUrl,
                     method: 'POST',
                     data: {
                         _token: $('meta[name="_token"]').attr('content'),
-                        id: cartId
+                        key: cartId
                     },
                     success: function(response) {
-                        if (response.status === 1) {
-                            // Remove the cart item from DOM
-                            $('.cart-item[data-cart-id="' + cartId + '"]').fadeOut(300, function() {
-                                $(this).remove();
-                                // Reload page to refresh cart sidebar
-                                setTimeout(function() {
-                                    window.location.reload();
-                                }, 300);
-                            });
+                        if (response && response.message) {
+                            // Reload cart sidebar content
+                            loadCartSidebar();
+                            updateCartCount();
                             if (typeof toastr !== 'undefined') {
-                                toastr.success('Item removed from cart');
+                                toastr.success(response.message || '{{ translate("item_removed") ?? "Item removed from cart" }}');
                             }
                         }
                     },
-                    error: function() {
+                    error: function(xhr) {
                         if (typeof toastr !== 'undefined') {
-                            toastr.error('Failed to remove item');
+                            toastr.error(xhr.responseJSON?.message || '{{ translate("failed_to_remove_item") ?? "Failed to remove item" }}');
                         }
                     }
                 });
             }
         }
 
-        // Load cart data - refresh sidebar content via AJAX without page reload
-        function loadCartData() {
-            // Just refresh the cart count, don't reload the page
-            updateCartCount();
+        // Load cart sidebar content dynamically
+        function loadCartSidebar() {
+            const navCartUrl = $('#route-data').data('route-cart-nav') || '{{ route("cart.nav-cart") }}';
+            $.ajax({
+                url: navCartUrl,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="_token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response && response.data) {
+                        // Reload the entire page to refresh cart sidebar
+                        // This ensures all cart data is up to date
+                        window.location.reload();
+                    }
+                },
+                error: function() {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ translate("failed_to_load_cart") ?? "Failed to load cart data" }}');
+                    }
+                }
+            });
         }
 
         // Update cart count in header
@@ -252,10 +273,38 @@
                     _token: $('meta[name="_token"]').attr('content')
                 },
                 success: function(response) {
-                    // Cart count will be updated when page reloads
+                    if (response && response.data) {
+                        const $newContent = $(response.data);
+                        const cartCount = $newContent.find('.cart-count-badge').text() || '0';
+                        const $headerBadge = $('.cart-count-badge');
+                        
+                        if (parseInt(cartCount) > 0) {
+                            if ($headerBadge.length) {
+                                $headerBadge.text(cartCount);
+                            } else {
+                                // Add badge if it doesn't exist
+                                $('a[href*="shop-cart"]').append('<span class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4">' + cartCount + '</span>');
+                            }
+                        } else {
+                            $headerBadge.remove();
+                        }
+                    }
+                },
+                error: function() {
+                    console.error('Failed to update cart count');
                 }
             });
         }
+        
+        // Load cart sidebar when opened
+        $(document).on('click', 'a[href*="shop-cart"], a[href="{{ route("shop-cart") }}"]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            openCartSidebar();
+            loadCartSidebar();
+            return false;
+        });
     });
 </script>
 @endpush
