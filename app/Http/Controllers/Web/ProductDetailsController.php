@@ -436,7 +436,7 @@ class ProductDetailsController extends Controller
     {
         $product = $this->productRepo->getWebFirstWhereActive(
             params: ['slug' => $slug, 'customer_id' => Auth::guard('customer')->user()->id ?? 0],
-            relations: ['seoInfo', 'digitalVariation', 'reviews', 'seller.shop', 'clearanceSale' => function ($query) {
+            relations: ['seoInfo', 'digitalVariation', 'reviews', 'seller.shop', 'category', 'clearanceSale' => function ($query) {
                 return $query->active();
             }]
         );

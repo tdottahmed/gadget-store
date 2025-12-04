@@ -1,6 +1,65 @@
 @extends('web-views.layouts.app')
 
-@section('title', 'সিগনেচার হানি কম্বো | Signature Honey Combo - ' . $web_config['company_name'])
+@section('title', ($product->name ?? 'Product Details') . ' - ' . $web_config['company_name'])
+
+@php
+    // Parse product data
+    // Get product images (using model accessor) - storageLink returns array with 'path' key
+    $productImagesRaw = $product->images_full_url ?? [];
+    $productImages = [];
+    
+    // Extract path from each image (storageLink returns array with 'path' key)
+    foreach ($productImagesRaw as $img) {
+        if (is_array($img) && isset($img['path'])) {
+            $productImages[] = $img['path'];
+        } elseif (is_string($img)) {
+            $productImages[] = $img;
+        }
+    }
+    
+    // If no images, use thumbnail
+    if (empty($productImages) && $product->thumbnail_full_url) {
+        $thumbnailResult = $product->thumbnail_full_url;
+        if (is_array($thumbnailResult) && isset($thumbnailResult['path'])) {
+            $productImages[] = $thumbnailResult['path'];
+        } elseif (is_string($thumbnailResult)) {
+            $productImages[] = $thumbnailResult;
+        }
+    }
+    
+    // Parse variations and colors
+    $productVariations = json_decode($product->variation ?? '[]', true);
+    $productColors = json_decode($product->colors ?? '[]', true);
+    $productCategory = $product->category ?? null;
+    
+    // Get main image - ensure it's always a string
+    $mainImage = !empty($productImages) ? (string)$productImages[0] : '';
+    
+    if (!$mainImage && $product->thumbnail_full_url) {
+        $thumbnailResult = $product->thumbnail_full_url;
+        if (is_array($thumbnailResult) && isset($thumbnailResult['path'])) {
+            $mainImage = (string)$thumbnailResult['path'];
+        } elseif (is_string($thumbnailResult)) {
+            $mainImage = $thumbnailResult;
+        }
+    }
+    
+    if (!$mainImage) {
+        $thumbnailResult = getStorageImages(path: $product->thumbnail ?? '', type: 'product');
+        if (is_array($thumbnailResult) && isset($thumbnailResult['path'])) {
+            $mainImage = (string)$thumbnailResult['path'];
+        } elseif (is_string($thumbnailResult)) {
+            $mainImage = $thumbnailResult;
+        }
+    }
+    
+    $mainImage = $mainImage ?: 'https://placehold.co/400';
+    
+    // Get pricing
+    $discountValue = getProductPriceByType(product: $product, type: 'discount', result: 'value');
+    $discountedPrice = getProductPriceByType(product: $product, type: 'discounted_unit_price', result: 'string');
+    $originalPrice = webCurrencyConverter(amount: $product->unit_price ?? 0);
+@endphp
 
 @push('css_or_js')
     <style>
@@ -365,19 +424,12 @@
 
 @section('content')
     <!-- Product Data for Tracking (Hidden) -->
-    @php
-        $productId = $product->id ?? null;
-        $productSlug = $product->slug ?? '';
-        $productName = $product->name ?? '';
-        $productImage = $product ? getStorageImages(path: $product->thumbnail_full_url ?? '', type: 'product') : '';
-        $productPrice = $product ? getProductPriceByType(product: $product, type: 'discounted_unit_price', result: 'string') : '';
-    @endphp
     <div id="product-details-page" 
-         data-product-id="{{ $productId }}"
-         data-product-slug="{{ $productSlug }}"
-         data-product-name="{{ $productName }}"
-         data-product-image="{{ $productImage }}"
-         data-product-price="{{ $productPrice }}"
+         data-product-id="{{ $product->id ?? '' }}"
+         data-product-slug="{{ $product->slug ?? '' }}"
+         data-product-name="{{ $product->name ?? '' }}"
+         data-product-image="{{ $mainImage }}"
+         data-product-price="{{ is_string($discountedPrice) ? $discountedPrice : '' }}"
          style="display: none;">
     </div>
 
@@ -392,72 +444,105 @@
                         <div
                             class="w-full aspect-square bg-white border border-[#F0F0F0] rounded-lg p-8 flex items-center justify-center">
                             <img id="main-product-image"
-                                src="{{ $productImage ?: 'https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp' }}"
-                                alt="{{ $productName ?: 'সিগনেচার হানি কম্বো' }}" class="w-full h-full object-contain">
+                                src="{{ $mainImage }}"
+                                alt="{{ $product->name ?? 'Product' }}" class="w-full h-full object-contain">
                         </div>
-                        <div
-                            class="flex flex-row gap-3 justify-center flex-wrap overflow-x-auto pb-2">
-                            <div class="product-thumbnail min-w-[70px] md:w-20 w-[70px] h-[70px] md:h-20 border-[3px] border-[#FA582C] rounded-md p-2 cursor-pointer transition-all duration-300 bg-white flex items-center justify-center flex-shrink-0"
-                                data-image="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp">
-                                <img src="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/01_KMG5dpqlvj.webp"
-                                    alt="Thumbnail 1" class="w-full h-full object-contain">
+                        @if(count($productImages) > 1)
+                            <div class="flex flex-row gap-3 justify-center flex-wrap overflow-x-auto pb-2">
+                                @foreach($productImages as $index => $image)
+                                    @php
+                                        // Ensure image URL is always a string (already processed above)
+                                        $imageUrl = (string)$image;
+                                    @endphp
+                                    @if($imageUrl)
+                                        <div class="product-thumbnail min-w-[70px] md:w-20 w-[70px] h-[70px] md:h-20 {{ $index === 0 ? 'border-[3px] border-[#FA582C]' : 'border-2 border-[#E0E0E0]' }} rounded-md p-2 cursor-pointer transition-all duration-300 bg-white flex items-center justify-center flex-shrink-0 hover:border-[#FA582C]"
+                                            data-image="{{ $imageUrl }}">
+                                            <img src="{{ $imageUrl }}"
+                                                alt="Thumbnail {{ $index + 1 }}" class="w-full h-full object-contain">
+                                        </div>
+                                    @endif
+                                @endforeach
                             </div>
-                            <div class="product-thumbnail min-w-[70px] md:w-20 w-[70px] h-[70px] md:h-20 border-2 border-[#E0E0E0] rounded-md p-2 cursor-pointer transition-all duration-300 bg-white flex items-center justify-center flex-shrink-0 hover:border-[#FA582C]"
-                                data-image="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/02_KMGme6vvb.webp">
-                                <img src="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/02_KMGme6vvb.webp"
-                                    alt="Thumbnail 2" class="w-full h-full object-contain">
-                            </div>
-                            <div class="product-thumbnail min-w-[70px] md:w-20 w-[70px] h-[70px] md:h-20 border-2 border-[#E0E0E0] rounded-md p-2 cursor-pointer transition-all duration-300 bg-white flex items-center justify-center flex-shrink-0 hover:border-[#FA582C]"
-                                data-image="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/03_KMG2b3nx.webp">
-                                <img src="https://pub-b80211003304448e8a7f0edc480f0608.r2.dev/product-page/03_KMG2b3nx.webp"
-                                    alt="Thumbnail 3" class="w-full h-full object-contain">
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
                 <!-- Product Info -->
                 <div class="py-4 mt-14 md:mt-0">
                     <h1 id="product-name" class="text-xl md:text-xl lg:text-3xl font-semibold text-black mb-4 leading-tight">
-                        {{ $productName ?: 'সিগনেচার হানি কম্বো | Signature Honey Combo' }}
+                        {{ $product->name ?? 'Product' }}
                     </h1>
 
                     <div class="flex items-center gap-3 mb-6">
-                        @if($product && getProductPriceByType(product: $product, type: 'discount', result: 'value') > 0)
-                            <span class="text-lg font-semibold text-[#666666] line-through">{{ webCurrencyConverter(amount: $product->unit_price) }}</span>
+                        @if($discountValue > 0)
+                            <span class="text-lg font-semibold text-[#666666] line-through">{{ $originalPrice }}</span>
                         @endif
                         <span id="product-price" class="text-xl md:text-2xl font-semibold text-[#FA582C]">
-                            {{ $productPrice ?: '৳1,800' }}
+                            {{ $discountedPrice }}
                         </span>
-                        @if($product && getProductPriceByType(product: $product, type: 'discount', result: 'value') > 0)
+                        @if($discountValue > 0)
                             <span class="inline-block px-2 py-1 bg-[#DD3737] text-white rounded-2xl text-sm font-semibold">
-                                {{ getProductPriceByType(product: $product, type: 'discount', result: 'value') }}% OFF
+                                @if($product->discount_type === 'percent')
+                                    {{ $discountValue }}% OFF
+                                @else
+                                    {{ translate('save') }} {{ webCurrencyConverter(amount: $discountValue) }}
+                                @endif
                             </span>
                         @endif
                     </div>
 
-                    <!-- Weight/Variant Selection -->
-                    <div class="mb-6">
-                        <label class="block font-semibold text-[#333333] mb-3">বাছাই করুন:</label>
-                        <div class="flex gap-4 flex-wrap md:flex-row flex-col">
-                            <button
-                                class="relative px-4 py-2 border-2 border-[#96C43C] rounded-md text-[#333333] text-sm font-semibold cursor-pointer flex items-center gap-2 md:w-auto w-full justify-between"
-                                data-variant="600g">
-                                <span class="text-base font-semibold">৬০০ গ্রাম</span>
-                                <span
-                                    class="bg-gray-100 text-[#DD3737] px-2 rounded-3xl text-[10px] font-bold  top-[-22px] -right-[0px]">32%
-                                    OFF</span>
-                            </button>
-                            <button
-                                class="relative px-4 py-2 rounded-md bg-white text-[#333333] text-sm font-semibold cursor-pointer flex items-center gap-2 md:w-auto w-full justify-between border-2 border-[#E0E0E0]"
-                                data-variant="250g">
-                                <span class="text-base font-semibold">২৫০ গ্রাম</span>
-                                <span
-                                    class="bg-gray-100 text-[#DD3737] px-2 rounded-3xl text-[10px] font-bold  top-[-22px] -right-[0px]">17%
-                                    OFF</span>
-                            </button>
+                    <!-- Color Selection (if available) -->
+                    @if(count($productColors) > 0)
+                        <div class="mb-6">
+                            <label class="block font-semibold text-[#333333] mb-3">{{ translate('color') ?? 'Color' }}:</label>
+                            <div class="flex gap-3 flex-wrap">
+                                @foreach($productColors as $index => $color)
+                                    <button
+                                        class="w-10 h-10 rounded-full border-2 {{ $index === 0 ? 'border-[#96C43C]' : 'border-gray-300' }} cursor-pointer transition-all duration-300 product-color-btn"
+                                        style="background-color: {{ $color }};"
+                                        data-color="{{ $color }}"
+                                        title="{{ $color }}">
+                                    </button>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
+                    <!-- Variant Selection (if available) -->
+                    @if(count($productVariations) > 0)
+                        <div class="mb-6">
+                            <label class="block font-semibold text-[#333333] mb-3">{{ translate('select_variant') ?? 'Select Variant' }}:</label>
+                            <div class="flex gap-4 flex-wrap md:flex-row flex-col">
+                                @foreach($productVariations as $index => $variation)
+                                    @php
+                                        $variantPrice = $variation['price'] ?? $product->unit_price;
+                                        $variantDiscount = getProductPriceByType(product: $product, type: 'discounted_amount', result: 'value', price: $variantPrice);
+                                        $variantDiscountedPrice = webCurrencyConverter(amount: $variantPrice - $variantDiscount);
+                                        $variantOriginalPrice = webCurrencyConverter(amount: $variantPrice);
+                                        $variantDiscountPercent = $variantPrice > 0 ? round(($variantDiscount / $variantPrice) * 100) : 0;
+                                        $isInStock = ($variation['qty'] ?? 0) > 0;
+                                    @endphp
+                                    <button
+                                        class="relative px-4 py-2 {{ $index === 0 ? 'border-2 border-[#96C43C]' : 'border-2 border-[#E0E0E0]' }} rounded-md text-[#333333] text-sm font-semibold cursor-pointer flex items-center gap-2 md:w-auto w-full justify-between product-variant-btn {{ !$isInStock ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                        data-variant="{{ $variation['type'] ?? '' }}"
+                                        data-variant-price="{{ $variantPrice }}"
+                                        data-variant-discounted-price="{{ $variantDiscountedPrice }}"
+                                        data-variant-original-price="{{ $variantOriginalPrice }}"
+                                        {{ !$isInStock ? 'disabled' : '' }}>
+                                        <span class="text-base font-semibold">{{ $variation['type'] ?? 'Default' }}</span>
+                                        @if($variantDiscountPercent > 0)
+                                            <span class="bg-gray-100 text-[#DD3737] px-2 rounded-3xl text-[10px] font-bold">
+                                                {{ $variantDiscountPercent }}% OFF
+                                            </span>
+                                        @endif
+                                        @if(!$isInStock)
+                                            <span class="text-xs text-red-500">{{ translate('out_of_stock') ?? 'Out of Stock' }}</span>
+                                        @endif
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="flex items-center gap-2 mb-6 py-4">
                         <button
@@ -480,168 +565,99 @@
                             <i class="fas fa-shopping-cart"></i>
                             <span>কার্টে যোগ করুন</span>
                         </button>
-                        <button
-                            class="w-full px-6 py-3 bg-[#FA582C] text-white border-none rounded-md text-base font-bold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 hover:bg-[#FF5520] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(255,107,53,0.3)]">
+                        <a href="{{ route('checkout-details') }}"
+                            class="w-full px-6 py-3 bg-[#FA582C] text-white border-none rounded-md text-base font-bold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 hover:bg-[#FF5520] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(255,107,53,0.3)] buy-now-btn"
+                            data-product-id="{{ $product->id ?? '' }}"
+                            data-product-slug="{{ $product->slug ?? '' }}">
                             <i class="fas fa-shopping-bag"></i>
-                            <span>অর্ডার করুন</span>
-                        </button>
+                            <span>{{ translate('order_now') ?? 'অর্ডার করুন' }}</span>
+                        </a>
                     </div>
 
-                    <a href="tel:09639812525"
-                        class="text-black py-3 px-6 border-black border-2 rounded-md flex items-center gap-2 w-full justify-center cursor-pointer mt-3 "><span
-                            class="text-[14px] font-semibold">কল অর্ডার: 09639812525</span></a>
+                    @php($phone = getWebConfig('phone') ?? '09639812525')
+                    @if($phone)
+                        <a href="tel:{{ $phone }}"
+                            class="text-black py-3 px-6 border-black border-2 rounded-md flex items-center gap-2 w-full justify-center cursor-pointer mt-3">
+                            <span class="text-[14px] font-semibold">{{ translate('call_order') ?? 'Call Order' }}: {{ $phone }}</span>
+                        </a>
+                    @endif
 
-                    <div class="inline-flex items-center gap-2 text-sm text-[#666666] mt-10 py-2">
-                        <span class="font-semibold text-black">ক্যাটাগরি:</span>
-                        <a href="#" class="text-[#2D5F3F] no-underline hover:underline">Combo</a>
-                    </div>
+                    @if($productCategory)
+                        <div class="inline-flex items-center gap-2 text-sm text-[#666666] mt-10 py-2">
+                            <span class="font-semibold text-black">{{ translate('category') ?? 'Category' }}:</span>
+                            <a href="{{ route('products', ['data_from' => 'category', 'id' => $productCategory->id]) }}" class="text-[#2D5F3F] no-underline hover:underline">
+                                {{ $productCategory->name ?? 'N/A' }}
+                            </a>
+                        </div>
+                    @endif
+
+                    @if($product->current_stock > 0)
+                        <div class="mt-4 text-sm text-[#666666]">
+                            <span class="font-semibold text-black">{{ translate('stock') ?? 'Stock' }}:</span>
+                            <span class="text-green-600 font-semibold">{{ $product->current_stock }} {{ translate('available') ?? 'available' }}</span>
+                        </div>
+                    @else
+                        <div class="mt-4 text-sm">
+                            <span class="text-red-600 font-semibold">{{ translate('out_of_stock') ?? 'Out of Stock' }}</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>
 
         <!-- Product Description Section -->
-        <section class="bg-[#F9F9F9] py-12 mt-12">
-            <div class="max-w-[1400px] mx-auto px-4">
-                <h2 class="text-3xl font-bold text-black mb-8 flex items-center gap-2">
-                    <span>🍯</span>
-                    <span>সিগনেচার হানি কম্বো</span>
-                </h2>
-                <div class="bg-white p-8 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-                    <p class="text-[0.95rem] leading-[1.8] text-[#333333] mb-4">
-                        <strong>৪ ধরনের ফুল, ৪টি স্বাম, ৪টি গুণ—এক সাথে এক কম্বোতে!</strong>
-                    </p>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2">কম্বোতে যা থাকবে:</h3>
-                    <ul class="list-none p-0 m-0 flex flex-col gap-4">
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>কালোজিরা ফুলের মধু- ৫০০ গ্রাম</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>সুন্দরবনের খলিশা ফুলের মধু- ৫০০ গ্রাম</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>সরিষা ফুলের মধু- ৫০০ গ্রাম</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>ধনিয়া-মিশ্র ফুলের মধু- ৫০০ গ্রাম</span>
-                        </li>
-                    </ul>
-
-                    <p class="text-[0.95rem] leading-[1.8] text-[#333333] mb-4">
-                        <strong>প্রাকৃতিকভাবে সংগ্রহকৃত বিশুদ্ধ যাঁচি মধু</strong><br>
-                        আমাদের এই মধু সম্পূর্ণ প্রাকৃতিকভাবে সংগ্রহ করা হয়েছে। কোনো রাসায়নিক, প্রিজারভেটিভ বা কৃত্রিম
-                        উপাদান নেই।
-                        প্রতিটি বোতল ল্যাব টেস্ট করা হয়েছে এবং ১০০% বিশুদ্ধতা নিশ্চিত করা হয়েছে।
-                    </p>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2">মধুর উপকারিতা:</h3>
-                    <ul class="list-none p-0 m-0 flex flex-col gap-4">
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>রোগ প্রতিরোধ ক্ষমতা বৃদ্ধি</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>হজমে সহায়তা</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>গলা ব্যথা ও কাশিতে উপকারী</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>শক্তি ও প্রাণশক্তি বৃদ্ধি</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>পাকৃতিক অ্যান্টি-অক্সিডেন্টে ভরপুর</span>
-                        </li>
-                    </ul>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2">কেন এই কম্বো?</h3>
-                    <ul class="list-none p-0 m-0 flex flex-col gap-4">
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>একসাথে ৪ ধরনের ফুলের ভিন্ন স্বাদের মধু</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>প্রাকৃতিকভাবে উৎপাদিত ও ল্যাব টেস্টেও</span>
-                        </li>
-                        <li class="text-[0.95rem] leading-[1.6] text-[#333333] flex items-start gap-3 py-2">
-                            <i class="fas fa-check-circle text-xl mt-0.5 flex-shrink-0 text-[#00A651]"></i>
-                            <span>নিজে খাওয়ার জন্য বা উপহার দেওয়ার জন্য উপযুক্ত</span>
-                        </li>
-                    </ul>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2"># শতভাগ প্রাকৃতিক:</h3>
-                    <p class="text-[0.95rem] leading-[1.8] text-[#333333] mb-4">
-                        আমাদের মধুতে কোনো রাসায়নিক, প্রিজারভেটিভ বা কৃত্রিম উপাদান নেই। সম্পূর্ণ প্রাকৃতিক এবং বিশুদ্ধ।
-                    </p>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2"># নির্ভরযোগ্য
-                        প্রক্রিয়াজাতকরণ:</h3>
-                    <p class="text-[0.95rem] leading-[1.8] text-[#333333] mb-4">
-                        প্রতিটি বোতল ল্যাব টেস্ট করা হয়েছে এবং বিশুদ্ধতা নিশ্চিত করা হয়েছে। নিরাপদ এবং স্বাস্থ্যসম্মত
-                        প্রক্রিয়াজাতকরণ।
-                    </p>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2"># প্রাকৃতিক পণ্যে
-                        অঙ্গীকারবদ্ধ:</h3>
-                    <p class="text-[0.95rem] leading-[1.8] text-[#333333] mb-4">
-                        NATURO "BACK TO NATURE" অঙ্গীকারের সাথে সম্পূর্ণ প্রাকৃতিক পণ্য সরবরাহ করে। আমরা প্রকৃতির
-                        শক্তিতে বিশ্বাস করি।
-                    </p>
-
-                    <h3 class="text-lg font-bold text-black mt-6 mb-4 flex items-center gap-2"># গ্রাহক সন্তুষ্টি:</h3>
-                    <p class="text-[0.95rem] leading-[1.8] text-[#333333] mb-4">
-                        আমাদের হাজার হাজার সন্তুষ্ট গ্রাহক আমাদের পণ্যের গুণমান এবং সেবার সাক্ষী। আপনার সন্তুষ্টিই
-                        আমাদের সাফল্য।
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Related Products Section -->
-        {{-- <section class="py-12 bg-white">
-            <div class="max-w-[1400px] mx-auto px-4">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold text-black">Related Products</h2>
-                    <div class="flex items-center gap-4">
-                        <a href="#"
-                            class="text-sm text-[#2D5F3F] no-underline flex items-center gap-1 font-medium hover:underline">
-                            <span>Combo</span>
-                            <i class="fas fa-chevron-right text-xs"></i>
-                        </a>
-                        <div class="flex gap-2">
-                            <button
-                                class="w-9 h-9 border border-[#E0E0E0] rounded-full bg-white cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-[#FA582C] hover:border-[#FA582C] hover:text-white related-prev">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button
-                                class="w-9 h-9 border border-[#E0E0E0] rounded-full bg-white cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-[#FA582C] hover:border-[#FA582C] hover:text-white related-next">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
+        @if($product->details)
+            <section class="py-12 mt-12">
+                <div class="max-w-[1400px] mx-auto px-4">
+                    <h2 class="text-3xl font-bold text-black mb-8">
+                        {{ translate('product_description') ?? 'Product Description' }}
+                    </h2>
+                    <div class="bg-white p-8 rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                        <div class="text-[0.95rem] leading-[1.8] text-[#333333] product-description">
+                            {!! $product->details !!}
                         </div>
                     </div>
                 </div>
-                <div class="related-products-slider">
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
-                    @include('web-views.partials.product-card')
+            </section>
+        @endif
+
+        <!-- Related Products Section -->
+        @if(isset($relatedProducts) && $relatedProducts->count() > 0)
+            <section class="py-12 bg-white">
+                <div class="max-w-[1400px] mx-auto px-4">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold text-black">{{ translate('related_products') ?? 'Related Products' }}</h2>
+                        @if($productCategory)
+                            <div class="flex items-center gap-4">
+                                <a href="{{ route('products', ['data_from' => 'category', 'id' => $productCategory->id]) }}"
+                                    class="text-sm text-[#2D5F3F] no-underline flex items-center gap-1 font-medium hover:underline">
+                                    <span>{{ $productCategory->name ?? '' }}</span>
+                                    <i class="fas fa-chevron-right text-xs"></i>
+                                </a>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="w-9 h-9 border border-[#E0E0E0] rounded-full bg-white cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-[#FA582C] hover:border-[#FA582C] hover:text-white related-prev">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <button
+                                        class="w-9 h-9 border border-[#E0E0E0] rounded-full bg-white cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-[#FA582C] hover:border-[#FA582C] hover:text-white related-next">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    <div class="related-products-slider product-slider">
+                        @foreach($relatedProducts->take(10) as $relatedProduct)
+                            @include('web-views.partials.product-card', ['product' => $relatedProduct, 'decimal_point_settings' => $decimalPointSettings ?? 0])
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-        </section> --}}
+            </section>
+        @endif
 
         <!-- Recently Viewed Section -->
-        <section class="py-12 bg-[#F9F9F9]">
+        <section class="py-12">
             <div class="max-w-[1400px] mx-auto px-4">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-2xl font-bold text-black">Recently Viewed</h2>
@@ -722,23 +738,51 @@
         });
 
         // Variant Selection
-        const variantButtons = document.querySelectorAll('[data-variant]');
+        const variantButtons = document.querySelectorAll('.product-variant-btn');
         let selectedVariant = null;
+        let selectedVariantPrice = null;
 
         variantButtons.forEach(button => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', function() {
+                if ($(this).hasClass('opacity-50')) return; // Skip if out of stock
+                
                 // Remove active state from all buttons
                 variantButtons.forEach(btn => {
-                    btn.classList.remove('border-[#96C43C]', 'border-2');
-                    btn.classList.add('border-[#E0E0E0]', 'border-2');
+                    btn.classList.remove('border-[#96C43C]');
+                    btn.classList.add('border-[#E0E0E0]');
                 });
                 // Add active state to clicked button
-                button.classList.remove('border-[#E0E0E0]');
-                button.classList.add('border-[#96C43C]', 'border-2');
+                $(this).removeClass('border-[#E0E0E0]');
+                $(this).addClass('border-[#96C43C]');
 
-                selectedVariant = button.getAttribute('data-variant');
-                console.log('Selected variant:', selectedVariant);
-                // You can update price based on variant here
+                selectedVariant = $(this).data('variant');
+                selectedVariantPrice = $(this).data('variant-discounted-price');
+                const originalPrice = $(this).data('variant-original-price');
+                
+                // Update displayed price
+                $('#product-price').text(selectedVariantPrice);
+                $('.text-lg.font-semibold.text-\\[\\#666666\\].line-through').text(originalPrice);
+                
+                console.log('Selected variant:', selectedVariant, 'Price:', selectedVariantPrice);
+            });
+        });
+
+        // Color Selection
+        const colorButtons = document.querySelectorAll('.product-color-btn');
+        colorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active state from all color buttons
+                colorButtons.forEach(btn => {
+                    btn.classList.remove('border-[#96C43C]');
+                    btn.classList.add('border-gray-300');
+                });
+                // Add active state to clicked button
+                $(this).removeClass('border-gray-300');
+                $(this).addClass('border-[#96C43C]');
+                
+                const selectedColor = $(this).data('color');
+                console.log('Selected color:', selectedColor);
+                // You can update product image based on color here if color_image is available
             });
         });
 
@@ -756,43 +800,61 @@
             }
         });
 
+        // Buy Now Button Handler
+        $('.buy-now-btn').on('click', function(e) {
+            const productId = $(this).data('product-id');
+            const quantity = parseInt($('#quantity-display').text());
+            const variant = selectedVariant;
+            
+            if (productId && typeof addToCartGreenmarket !== 'undefined') {
+                e.preventDefault();
+                // Add to cart and redirect to checkout
+                addToCartGreenmarket(productId, quantity, variant);
+                setTimeout(function() {
+                    window.location.href = '{{ route("checkout-details") }}';
+                }, 1000);
+            }
+        });
+
         // Initialize Sliders
         $(document).ready(function() {
             // Initialize Related Products Slider
-            // $('.related-products-slider').slick({
-            //     slidesToShow: 4,
-            //     slidesToScroll: 1,
-            //     infinite: true,
-            //     arrows: false,
-            //     dots: false,
-            //     responsive: [{
-            //             breakpoint: 992,
-            //             settings: {
-            //                 slidesToShow: 3
-            //             }
-            //         },
-            //         {
-            //             breakpoint: 768,
-            //             settings: {
-            //                 slidesToShow: 2
-            //             }
-            //         },
-            //         {
-            //             breakpoint: 576,
-            //             settings: {
-            //                 slidesToShow: 1
-            //             }
-            //         }
-            //     ]
-            // });
+            if ($('.related-products-slider').length && $('.related-products-slider').children().length > 0) {
+                $('.related-products-slider').slick({
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
+                    infinite: true,
+                    arrows: false,
+                    dots: false,
+                    responsive: [{
+                            breakpoint: 992,
+                            settings: {
+                                slidesToShow: 3
+                            }
+                        },
+                        {
+                            breakpoint: 768,
+                            settings: {
+                                slidesToShow: 2
+                            }
+                        },
+                        {
+                            breakpoint: 576,
+                            settings: {
+                                slidesToShow: 1
+                            }
+                        }
+                    ]
+                });
 
-            $('.related-prev').click(function() {
-                $('.related-products-slider').slick('slickPrev');
-            });
+                $('.related-prev').click(function() {
+                    $('.related-products-slider').slick('slickPrev');
+                });
 
-            $('.related-next').click(function() {
-                $('.related-products-slider').slick('slickNext');
-            });
+                $('.related-next').click(function() {
+                    $('.related-products-slider').slick('slickNext');
+                });
+            }
 
             // Initialize Recently Viewed Slider
             $('.recently-viewed-slider').slick({
