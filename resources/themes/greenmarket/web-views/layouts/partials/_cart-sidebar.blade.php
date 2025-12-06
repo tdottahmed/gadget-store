@@ -137,9 +137,9 @@
             </div>
 
             <!-- Order Button -->
-            <a href="{{ route('shop-cart') }}" class="block w-full py-3 px-6 bg-[#003315] text-white rounded-lg font-bold text-center hover:bg-[#004d1f] transition-colors">
+            <button onclick="openCheckoutModal()" class="block w-full py-3 px-6 bg-[#003315] text-white rounded-lg font-bold text-center hover:bg-[#004d1f] transition-colors">
                 {{ 'অর্ডার করুন' }}
-            </a>
+            </button>
         </div>
     @endif
 </div>
