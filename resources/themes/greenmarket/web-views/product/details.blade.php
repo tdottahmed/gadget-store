@@ -565,13 +565,13 @@
                             <i class="fas fa-shopping-cart"></i>
                             <span>কার্টে যোগ করুন</span>
                         </button>
-                        <a href="{{ route('checkout-details') }}"
+                        <button
                             class="w-full px-6 py-3 bg-[#FA582C] text-white border-none rounded-md text-base font-bold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 hover:bg-[#FF5520] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(255,107,53,0.3)] buy-now-btn"
                             data-product-id="{{ $product->id ?? '' }}"
                             data-product-slug="{{ $product->slug ?? '' }}">
                             <i class="fas fa-shopping-bag"></i>
                             <span>{{ translate('order_now') ?? 'অর্ডার করুন' }}</span>
-                        </a>
+                        </button>
                     </div>
 
                     @php($phone = getWebConfig('phone') ?? '09639812525')
@@ -800,19 +800,63 @@
             }
         });
 
-        // Buy Now Button Handler
+        // Buy Now Button Handler - Add to cart and open checkout modal
         $('.buy-now-btn').on('click', function(e) {
+            e.preventDefault();
             const productId = $(this).data('product-id');
-            const quantity = parseInt($('#quantity-display').text());
+            const quantity = parseInt($('#quantity-display').text()) || 1;
             const variant = selectedVariant;
             
             if (productId && typeof addToCartGreenmarket !== 'undefined') {
-                e.preventDefault();
-                // Add to cart and redirect to checkout
-                addToCartGreenmarket(productId, quantity, variant);
-                setTimeout(function() {
+                // Add to cart first, then open checkout modal
+                const $btn = $(this);
+                $btn.prop('disabled', true);
+                
+                // Add to cart
+                $.ajax({
+                    url: $('#route-data').data('route-cart-add') || '/cart/add',
+                    method: 'POST',
+                    data: {
+                        _token: $('meta[name="_token"]').attr('content'),
+                        id: productId,
+                        quantity: quantity,
+                        variant: variant || null
+                    },
+                    success: function(response) {
+                        $btn.prop('disabled', false);
+                        if (response.status === 1) {
+                            // Update cart count
+                            if (typeof updateCartCountGreenmarket !== 'undefined') {
+                                updateCartCountGreenmarket();
+                            }
+                            
+                            // Open checkout modal
+                            if (typeof openCheckoutModal !== 'undefined') {
+                                openCheckoutModal();
+                            } else {
+                                // Fallback to redirect if modal function not available
+                                window.location.href = '{{ route("checkout-details") }}';
+                            }
+                        } else {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(response.message || 'Failed to add product to cart');
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        $btn.prop('disabled', false);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(xhr.responseJSON?.message || 'Failed to add product to cart');
+                        }
+                    }
+                });
+            } else {
+                // Fallback: just open checkout modal or redirect
+                if (typeof openCheckoutModal !== 'undefined') {
+                    openCheckoutModal();
+                } else {
                     window.location.href = '{{ route("checkout-details") }}';
-                }, 1000);
+                }
             }
         });
 

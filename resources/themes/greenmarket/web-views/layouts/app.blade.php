@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- Tailwind CSS -->
@@ -72,6 +72,7 @@
     <!-- Modals -->
     @include('web-views.layouts.partials.modal._quick-view')
     @include('web-views.layouts.partials.modal._buy-now')
+    @include('web-views.layouts.partials.modal._checkout')
 
     <!-- WhatsApp Floating Button -->
     @php($whatsapp = getWebConfig(name: 'whatsapp'))
@@ -107,6 +108,8 @@
     @endif
     @if (file_exists(public_path('themes/greenmarket/assets/js/cart-functions.js')))
         <script src="{{ asset('themes/greenmarket/assets/js/cart-functions.js') }}"></script>
+    @else
+        <script src="{{ theme_asset('assets/js/cart-functions.js') }}"></script>
     @endif
     @if (file_exists(public_path('themes/greenmarket/assets/js/recently-viewed.js')))
         <script src="{{ asset('themes/greenmarket/assets/js/recently-viewed.js') }}"></script>
