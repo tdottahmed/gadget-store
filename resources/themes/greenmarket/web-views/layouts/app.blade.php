@@ -96,6 +96,11 @@
 
     <!-- Scripts -->
     <script src="{{ dynamicAsset(path: 'public/assets/front-end/vendor/jquery/dist/jquery-2.2.4.min.js') }}"></script>
+    
+    {{-- Include route data and translations BEFORE cart functions --}}
+    @include('web-views.layouts.partials._translate-text-for-js')
+    @include('web-views.layouts.partials._route-for-js')
+    
     <!-- Slick Carousel JS -->
     @if (file_exists(public_path('themes/greenmarket/assets/js/slick.min.js')))
         <script type="text/javascript" src="{{ asset('themes/greenmarket/assets/js/slick.min.js') }}"></script>
@@ -106,11 +111,9 @@
     @if (file_exists(public_path('themes/greenmarket/assets/js/main.js')))
         <script src="{{ asset('themes/greenmarket/assets/js/main.js') }}"></script>
     @endif
-    @if (file_exists(public_path('themes/greenmarket/assets/js/cart-functions.js')))
-        <script src="{{ asset('themes/greenmarket/assets/js/cart-functions.js') }}"></script>
-    @else
-        <script src="{{ theme_asset('assets/js/cart-functions.js') }}"></script>
-    @endif
+    
+    {{-- Include cart functions script inline to ensure it always loads - must be after jQuery and route-data --}}
+    @include('web-views.layouts.partials._cart-functions-script')
     @if (file_exists(public_path('themes/greenmarket/assets/js/recently-viewed.js')))
         <script src="{{ asset('themes/greenmarket/assets/js/recently-viewed.js') }}"></script>
     @endif
@@ -119,8 +122,6 @@
     <script src="{{ dynamicAsset(path: 'public/assets/backend/libs/intl-tel-input/js/intlTelInout-validation.js') }}">
     </script>
 
-    @include('web-views.layouts.partials._translate-text-for-js')
-    @include('web-views.layouts.partials._route-for-js')
     @include('web-views.layouts._firebase-script')
 
     {!! Toastr::message() !!}
