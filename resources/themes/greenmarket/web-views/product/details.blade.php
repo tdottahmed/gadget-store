@@ -437,7 +437,7 @@
     <main class="container-ds">
         <!-- Product Section -->
         <section class=" mx-auto px-4 py-8">
-            <div class="grid grid-cols-1 bg-white p-10 md:grid-cols-2 gap-12 py-8">
+            <div class="grid grid-cols-1 bg-white md:grid-cols-2 gap-12">
                 <!-- Product Gallery -->
                 <div class="relative top-20 md:top-20">
                     <div class="flex flex-col gap-4">
