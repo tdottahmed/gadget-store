@@ -166,8 +166,6 @@
         }
 
         $(document).ready(function() {
-            console.log('Cart sidebar script loaded');
-
             // Open cart sidebar
             function openCartSidebar() {
                 $('#cart-sidebar-overlay').removeClass('hidden');
@@ -246,13 +244,11 @@
 
                 // Attach to document (for dynamically loaded content)
                 $(document).on('click', '.greenmarket-remove-cart-item', function(e) {
-                    console.log('Remove cart item clicked - event fired (document handler)');
                     handleRemoveClick(e, $(this));
                 });
 
                 // Also attach directly to cart sidebar (for immediate binding)
                 $('#cart-sidebar').on('click', '.greenmarket-remove-cart-item', function(e) {
-                    console.log('Remove cart item clicked - event fired (sidebar handler)');
                     handleRemoveClick(e, $(this));
                 });
             }
@@ -264,10 +260,6 @@
                 e.stopImmediatePropagation();
 
                 const cartId = $btn.data('cart-id');
-
-                console.log('Remove cart item clicked, cart ID:', cartId);
-                console.log('Button element:', $btn);
-                console.log('Button HTML:', $btn[0]?.outerHTML);
 
                 if (!cartId) {
                     console.error('Cart ID not found on remove button');
@@ -297,11 +289,6 @@
             // Also test if buttons exist in DOM
             setTimeout(function() {
                 const $removeButtons = $('.greenmarket-remove-cart-item');
-                console.log('Found remove buttons in DOM:', $removeButtons.length);
-                if ($removeButtons.length > 0) {
-                    console.log('First remove button:', $removeButtons.first()[0]);
-                    console.log('First remove button cart ID:', $removeButtons.first().data('cart-id'));
-                }
             }, 1000);
 
             // Update quantity function
@@ -410,8 +397,6 @@
 
             // Remove cart item function - Make it globally available
             window.removeCartItem = function(cartId) {
-                console.log('removeCartItem function called with cart ID:', cartId);
-
                 if (!cartId) {
                     console.error('Cart ID is required');
                     if (typeof toastr !== 'undefined') {
@@ -427,13 +412,6 @@
                     const $routeData = $('#route-data');
                     const removeUrl = $routeData.length ? $routeData.data('route-cart-remove') :
                         '{{ route('cart.remove') }}';
-
-                    console.log('Removing cart item:', {
-                        cartId: cartId,
-                        removeUrl: removeUrl,
-                        cartItemFound: $cartItem.length > 0,
-                        routeDataExists: $routeData.length > 0
-                    });
 
                     if (!$cartItem.length) {
                         console.error('Cart item not found in DOM for cart ID:', cartId);
@@ -466,8 +444,6 @@
                         return;
                     }
 
-                    console.log('Sending AJAX request to:', removeUrl);
-
                     $.ajax({
                         url: removeUrl,
                         method: 'POST',
@@ -476,8 +452,6 @@
                             key: cartId
                         },
                         success: function(response) {
-                            console.log('Remove cart item response:', response);
-
                             // Response should have 'data' and 'message' properties
                             if (response && (response.message || response.data)) {
                                 // Remove item from DOM with animation

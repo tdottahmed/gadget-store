@@ -800,7 +800,77 @@
             }
         });
 
-        // Buy Now Button Handler - Add to cart and open checkout modal
+        // Check if product exists in cart
+        function checkProductInCart(productId, variant, callback) {
+            // First check the current cart sidebar DOM
+            let productExists = false;
+            const $cartItems = $('#cart-sidebar .cart-item');
+            
+            if ($cartItems.length > 0) {
+                $cartItems.each(function() {
+                    const $item = $(this);
+                    const itemProductId = $item.data('product-id');
+                    
+                    // Check if product ID matches
+                    if (itemProductId == productId) {
+                        // If variant is specified, we should check it too
+                        // For now, if product ID matches, consider it exists
+                        // (The add to cart will handle variant updates if needed)
+                        productExists = true;
+                        return false; // Break loop
+                    }
+                });
+            }
+            
+            // If found in DOM, return immediately
+            if (productExists) {
+                if (typeof callback === 'function') {
+                    callback(true);
+                }
+                return;
+            }
+            
+            // If not found in DOM, check via AJAX to get fresh cart data
+            const navCartUrl = $('#route-data').data('route-cart-nav') || '{{ route("cart.nav-cart") }}';
+            
+            $.ajax({
+                url: navCartUrl,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="_token"]').attr('content')
+                },
+                success: function(response) {
+                    let foundInCart = false;
+                    
+                    if (response && response.data) {
+                        // Parse the cart HTML to check if product exists
+                        const $cartHtml = $(response.data);
+                        $cartHtml.find('.cart-item').each(function() {
+                            const $item = $(this);
+                            const itemProductId = $item.data('product-id');
+                            
+                            // Check if product ID matches
+                            if (itemProductId == productId) {
+                                foundInCart = true;
+                                return false; // Break loop
+                            }
+                        });
+                    }
+                    
+                    if (typeof callback === 'function') {
+                        callback(foundInCart);
+                    }
+                },
+                error: function() {
+                    // On error, assume product doesn't exist and proceed
+                    if (typeof callback === 'function') {
+                        callback(false);
+                    }
+                }
+            });
+        }
+
+        // Buy Now Button Handler - Check cart, add if needed, then open checkout modal
         $(document).on('click', '.buy-now-btn', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -821,61 +891,82 @@
             // Disable button during request
             $btn.prop('disabled', true);
             
-            // Add to cart first, then open checkout modal
-            const cartAddUrl = $('#route-data').data('route-cart-add') || '{{ route("cart.add") }}';
-            
-            $.ajax({
-                url: cartAddUrl,
-                method: 'POST',
-                data: {
-                    _token: $('meta[name="_token"]').attr('content'),
-                    id: productId,
-                    quantity: quantity,
-                    variant: variant || null
-                },
-                success: function(response) {
+            // First, check if product already exists in cart
+            checkProductInCart(productId, variant, function(productExists) {
+                if (productExists) {
+                    // Product already in cart, just open checkout modal
                     $btn.prop('disabled', false);
                     
-                    // Response can be object with status or just HTML string
-                    let isSuccess = false;
-                    if (typeof response === 'object' && response.status === 1) {
-                        isSuccess = true;
-                    } else if (typeof response === 'string') {
-                        // HTML response means success
-                        isSuccess = true;
+                    // Update cart count
+                    if (typeof updateCartCountGreenmarket === 'function') {
+                        updateCartCountGreenmarket();
                     }
                     
-                    if (isSuccess) {
-                        // Update cart count
-                        if (typeof updateCartCountGreenmarket === 'function') {
-                            updateCartCountGreenmarket();
-                        }
-                        
-                        // Wait a bit for cart to update, then open checkout modal
-                        setTimeout(function() {
-                            // Open checkout modal
-                            if (typeof openCheckoutModal === 'function') {
-                                openCheckoutModal();
-                            } else {
-                                // Fallback to redirect if modal function not available
-                                window.location.href = '{{ route("checkout-details") }}';
-                            }
-                        }, 500);
+                    // Open checkout modal
+                    if (typeof openCheckoutModal === 'function') {
+                        openCheckoutModal();
                     } else {
-                        const errorMsg = (typeof response === 'object' && response.message) 
-                            ? response.message 
-                            : 'Failed to add product to cart';
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error(errorMsg);
+                        // Fallback to redirect if modal function not available
+                        window.location.href = '{{ route("checkout-details") }}';
+                    }
+                } else {
+                    // Product not in cart, add it first
+                    const cartAddUrl = $('#route-data').data('route-cart-add') || '{{ route("cart.add") }}';
+                    
+                    $.ajax({
+                        url: cartAddUrl,
+                        method: 'POST',
+                        data: {
+                            _token: $('meta[name="_token"]').attr('content'),
+                            id: productId,
+                            quantity: quantity,
+                            variant: variant || null
+                        },
+                        success: function(response) {
+                            $btn.prop('disabled', false);
+                            
+                            // Response can be object with status or just HTML string
+                            let isSuccess = false;
+                            if (typeof response === 'object' && response.status === 1) {
+                                isSuccess = true;
+                            } else if (typeof response === 'string') {
+                                // HTML response means success
+                                isSuccess = true;
+                            }
+                            
+                            if (isSuccess) {
+                                // Update cart count
+                                if (typeof updateCartCountGreenmarket === 'function') {
+                                    updateCartCountGreenmarket();
+                                }
+                                
+                                // Wait a bit for cart to update, then open checkout modal
+                                setTimeout(function() {
+                                    // Open checkout modal
+                                    if (typeof openCheckoutModal === 'function') {
+                                        openCheckoutModal();
+                                    } else {
+                                        // Fallback to redirect if modal function not available
+                                        window.location.href = '{{ route("checkout-details") }}';
+                                    }
+                                }, 500);
+                            } else {
+                                const errorMsg = (typeof response === 'object' && response.message) 
+                                    ? response.message 
+                                    : 'Failed to add product to cart';
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error(errorMsg);
+                                }
+                            }
+                        },
+                        error: function(xhr) {
+                            $btn.prop('disabled', false);
+                            const errorMsg = xhr.responseJSON?.message || 'Failed to add product to cart';
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(errorMsg);
+                            }
                         }
-                    }
-                },
-                error: function(xhr) {
-                    $btn.prop('disabled', false);
-                    const errorMsg = xhr.responseJSON?.message || 'Failed to add product to cart';
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error(errorMsg);
-                    }
+                    });
                 }
             });
             
