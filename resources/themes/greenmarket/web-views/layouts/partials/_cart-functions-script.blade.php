@@ -164,15 +164,37 @@ $(document).ready(function() {
     $(document).on('click', '.add-to-cart-btn, .greenmarket-add-to-cart-btn', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        const productId = $(this).data('product-id');
-        if (productId) {
-            addToCartGreenmarket(productId, 1);
-        } else {
-            console.error('Product ID not found on add to cart button');
+        e.stopImmediatePropagation();
+        
+        const $btn = $(this);
+        const productId = $btn.data('product-id');
+        
+        if (!productId) {
+            console.error('Product ID not found on add to cart button', $btn);
             if (typeof toastr !== 'undefined') {
                 toastr.error('Product ID not found');
             }
+            return false;
         }
+        
+        // Disable button during request
+        $btn.prop('disabled', true);
+        
+        // Call add to cart function
+        if (typeof addToCartGreenmarket === 'function') {
+            addToCartGreenmarket(productId, 1, null);
+        } else {
+            console.error('addToCartGreenmarket function not found');
+            if (typeof toastr !== 'undefined') {
+                toastr.error('Cart function not available');
+            }
+        }
+        
+        // Re-enable button after a short delay
+        setTimeout(function() {
+            $btn.prop('disabled', false);
+        }, 1000);
+        
         return false;
     });
 
