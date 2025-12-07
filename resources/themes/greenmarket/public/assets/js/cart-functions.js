@@ -50,16 +50,8 @@ function addToCartGreenmarket(productId, quantity = 1, variant = null) {
                 // Update cart count
                 updateCartCountGreenmarket();
                 
-                // Load cart sidebar content dynamically instead of reloading page
-                if ($('#cart-sidebar').length) {
-                    // Open cart sidebar
-                    $('#cart-sidebar-overlay').removeClass('hidden');
-                    $('#cart-sidebar').removeClass('translate-x-full');
-                    $('body').addClass('overflow-hidden');
-                    
-                    // Load fresh cart data
-                    loadCartSidebarContent();
-                }
+                // Reload the page
+                window.location.reload();
             } else {
                 if (typeof toastr !== 'undefined') {
                     toastr.error(response.message || 'Failed to add product to cart');

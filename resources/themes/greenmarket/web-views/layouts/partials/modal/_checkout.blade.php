@@ -246,8 +246,8 @@
     let deliveryCharge = 0;
     let cartSubtotal = extractNumericValue('{{ webCurrencyConverter(amount: $cartTotal) }}');
 
-    // Open checkout modal
-    function openCheckoutModal() {
+    // Open checkout modal - make it globally available
+    window.openCheckoutModal = function() {
         $('#checkout-modal-overlay').removeClass('hidden');
         $('#checkout-modal').removeClass('hidden');
         $('body').addClass('overflow-hidden');
@@ -257,6 +257,11 @@
         
         // Load fresh cart data
         loadCheckoutCartData();
+    };
+    
+    // Also assign to global scope for compatibility
+    if (typeof openCheckoutModal === 'undefined') {
+        window.openCheckoutModal = window.openCheckoutModal;
     }
 
     // Close checkout modal
