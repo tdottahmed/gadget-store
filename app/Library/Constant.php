@@ -522,6 +522,19 @@ const THEME_RATIO = [
         'Seller Image'=>'Ratio 1:1 (500 x 500 px)',
         'Meta Thumbnail' => '(Ratio 2:1)'
     ],
+    'greenmarket' => [
+        'Main Banner'=>'Ratio 3:1',
+        'Footer Banner'=>'Ratio 2:1',
+        'Popup Banner'=>'Ratio 1:1 (1200 x 1200 px)',
+        'Main Section Banner'=>'Ratio 4:1 (2000 x 500 px)',
+        'Store cover Image'=>'Ratio 4:1 (2000 x 500 px)',
+        'Main website Logo'=>'(1000 x 308 px)',
+        'Product Image'=>'Ratio 1:1 (500 x 500 px)',
+        'Category Image'=>'Ratio 1:1 (500 x 500 px)',
+        'Brand Image'=>'Ratio 1:1 (500 x 500 px)',
+        'Seller Image'=>'Ratio 1:1 (500 x 500 px)',
+        'Meta Thumbnail' => '(Ratio 2:1)'
+    ],
 
 ];
 
