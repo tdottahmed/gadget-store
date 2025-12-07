@@ -1,8 +1,16 @@
 @php
     use App\Utils\CartManager;
     use App\Models\Product;
+    use App\Models\ShippingMethod;
+    
     $cart = CartManager::getCartListQuery();
     $cartTotal = CartManager::getCartListTotalAppliedDiscount($cart);
+    
+    // Get active admin shipping methods
+    $shippingMethods = ShippingMethod::where('creator_type', 'admin')
+        ->where('status', 1)
+        ->orderBy('id', 'asc')
+        ->get();
 @endphp
 
 <!-- Checkout Modal Overlay -->
@@ -81,21 +89,7 @@
                                     </h3>
                                     <p class="text-sm font-bold text-black">{{ webCurrencyConverter(amount: $price - $discount) }}</p>
                                     
-                                    <!-- Quantity Controls -->
-                                    <div class="flex items-center gap-3 mt-2">
-                                        <button class="w-8 h-8 border border-gray-200 rounded bg-white text-black text-lg cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 checkout-decrease-qty" 
-                                                data-cart-id="{{ $cartId }}"
-                                                {{ $quantity <= 1 ? 'disabled' : '' }}>
-                                            <i class="fas fa-minus text-xs"></i>
-                                        </button>
-                                        <span class="text-base font-semibold text-black min-w-[20px] text-center checkout-quantity" data-cart-id="{{ $cartId }}">{{ $quantity }}</span>
-                                        <button class="w-8 h-8 border border-gray-200 rounded bg-white text-black text-lg cursor-pointer flex items-center justify-center transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 checkout-increase-qty" 
-                                                data-cart-id="{{ $cartId }}"
-                                                data-max="{{ $maxQuantity }}"
-                                                {{ $quantity >= $maxQuantity ? 'disabled' : '' }}>
-                                            <i class="fas fa-plus text-xs"></i>
-                                        </button>
-                                    </div>
+                                  
                                 </div>
                             </div>
                         @endforeach
@@ -173,48 +167,54 @@
 
                 <!-- Delivery Options -->
                 <div class="mb-8">
-                    <h3 class="text-sm font-bold text-black mb-4" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">ডেলিভারি</h3>
+                    <h3 class="text-sm font-bold text-black mb-4" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">{{ translate('delivery') ?? 'ডেলিভারি' }}</h3>
                     
-                    <div class="space-y-3">
-                        <!-- Inside Dhaka City -->
-                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white cursor-pointer transition-all duration-300 hover:border-green-500 hover:bg-green-50 delivery-option" 
-                             data-delivery="inside_dhaka" 
-                             data-price="50">
-                            <div class="flex items-center gap-3 flex-1">
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-200 relative flex-shrink-0 delivery-radio" data-delivery="inside_dhaka">
-                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-green-500 hidden"></div>
+                    @if($shippingMethods->count() > 0)
+                        <div class="space-y-3" id="shipping-methods-container">
+                            @foreach($shippingMethods as $index => $shippingMethod)
+                                @php
+                                    $shippingId = $shippingMethod->id;
+                                    $shippingTitle = $shippingMethod->title ?? translate('delivery') ?? 'ডেলিভারি';
+                                    $shippingCost = $shippingMethod->cost ?? 0;
+                                    $shippingDuration = $shippingMethod->duration ?? '';
+                                    $isFirst = $index === 0;
+                                @endphp
+                                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white cursor-pointer transition-all duration-300 hover:border-green-500 hover:bg-green-50 delivery-option {{ $isFirst ? 'selected' : '' }}" 
+                                     data-delivery="{{ $shippingId }}" 
+                                     data-shipping-id="{{ $shippingId }}"
+                                     data-price="{{ $shippingCost }}">
+                                    <div class="flex items-center gap-3 flex-1">
+                                        <div class="w-5 h-5 rounded-full border-2 {{ $isFirst ? 'border-green-500' : 'border-gray-200' }} relative flex-shrink-0 delivery-radio" data-delivery="{{ $shippingId }}">
+                                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-green-500 {{ $isFirst ? '' : 'hidden' }}"></div>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-medium text-black" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">{{ $shippingTitle }}</span>
+                                            @if($shippingDuration)
+                                                <span class="text-xs text-gray-500" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">{{ $shippingDuration }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-bold text-black">{{ webCurrencyConverter($shippingCost) }}</span>
                                 </div>
-                                <span class="text-sm font-medium text-black" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">ঢাকা সিটির ভেতরে</span>
-                            </div>
-                            <span class="text-sm font-bold text-black">50 TK</span>
+                            @endforeach
                         </div>
-
-                        <!-- Outside Dhaka City -->
-                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white cursor-pointer transition-all duration-300 hover:border-green-500 hover:bg-green-50 delivery-option" 
-                             data-delivery="outside_dhaka" 
-                             data-price="80">
-                            <div class="flex items-center gap-3 flex-1">
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-200 relative flex-shrink-0 delivery-radio" data-delivery="outside_dhaka">
-                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-green-500 hidden"></div>
+                    @else
+                        {{-- Fallback if no shipping methods configured --}}
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white cursor-pointer transition-all duration-300 hover:border-green-500 hover:bg-green-50 delivery-option selected" 
+                                 data-delivery="default" 
+                                 data-shipping-id="0"
+                                 data-price="0">
+                                <div class="flex items-center gap-3 flex-1">
+                                    <div class="w-5 h-5 rounded-full border-2 border-green-500 relative flex-shrink-0 delivery-radio" data-delivery="default">
+                                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-black" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">{{ translate('standard_delivery') ?? 'স্ট্যান্ডার্ড ডেলিভারি' }}</span>
                                 </div>
-                                <span class="text-sm font-medium text-black" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">ঢাকা সিটির বাহিরে</span>
+                                <span class="text-sm font-bold text-black">{{ webCurrencyConverter(0) }}</span>
                             </div>
-                            <span class="text-sm font-bold text-black">80 TK</span>
                         </div>
-
-                        <!-- Outside Dhaka District -->
-                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white cursor-pointer transition-all duration-300 hover:border-green-500 hover:bg-green-50 delivery-option" 
-                             data-delivery="outside_district" 
-                             data-price="100">
-                            <div class="flex items-center gap-3 flex-1">
-                                <div class="w-5 h-5 rounded-full border-2 border-gray-200 relative flex-shrink-0 delivery-radio" data-delivery="outside_district">
-                                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-green-500 hidden"></div>
-                                </div>
-                                <span class="text-sm font-medium text-black" style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">ঢাকা জেলার বাহিরে</span>
-                            </div>
-                            <span class="text-sm font-bold text-black">100 TK</span>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
 
@@ -243,8 +243,20 @@
 @push('script')
 <script>
     let selectedDeliveryOption = null;
+    let selectedShippingMethodId = null;
     let deliveryCharge = 0;
     let cartSubtotal = extractNumericValue('{{ webCurrencyConverter(amount: $cartTotal) }}');
+    
+    // Initialize first shipping method as selected
+    $(document).ready(function() {
+        const $firstOption = $('.delivery-option').first();
+        if ($firstOption.length) {
+            selectedShippingMethodId = $firstOption.data('shipping-id');
+            selectedDeliveryOption = $firstOption.data('delivery');
+            deliveryCharge = parseFloat($firstOption.data('price')) || 0;
+            updateCheckoutTotals();
+        }
+    });
 
     // Open checkout modal - make it globally available
     window.openCheckoutModal = function() {
@@ -254,6 +266,15 @@
         
         // Reset form
         resetCheckoutForm();
+        
+        // Initialize first shipping method if available
+        const $firstOption = $('.delivery-option').first();
+        if ($firstOption.length && !selectedShippingMethodId) {
+            selectedShippingMethodId = $firstOption.data('shipping-id');
+            selectedDeliveryOption = $firstOption.data('delivery');
+            deliveryCharge = parseFloat($firstOption.data('price')) || 0;
+            updateCheckoutTotals();
+        }
         
         // Load fresh cart data
         loadCheckoutCartData();
@@ -354,36 +375,23 @@
     $(document).on('click', '.delivery-option', function() {
         const $option = $(this);
         const delivery = $option.data('delivery');
-        const price = parseFloat($option.data('price'));
+        const shippingId = $option.data('shipping-id');
+        const price = parseFloat($option.data('price')) || 0;
         
         // Remove selection from all options
-        $('.delivery-option').removeClass('border-green-500 bg-green-50 border-2');
+        $('.delivery-option').removeClass('border-green-500 bg-green-50 border-2 selected');
         $('.delivery-radio').find('div').addClass('hidden');
-        $('.delivery-radio').removeClass('border-green-500');
+        $('.delivery-radio').removeClass('border-green-500').addClass('border-gray-200');
         
         // Select this option
-        $option.addClass('border-green-500 bg-green-50 border-2');
-        $option.find('.delivery-radio').addClass('border-green-500').find('div').removeClass('hidden');
+        $option.addClass('border-green-500 bg-green-50 border-2 selected');
+        $option.find('.delivery-radio').removeClass('border-gray-200').addClass('border-green-500').find('div').removeClass('hidden');
         
         selectedDeliveryOption = delivery;
+        selectedShippingMethodId = shippingId;
         deliveryCharge = price;
         
         updateCheckoutTotals();
-    });
-
-    // Quantity controls in checkout
-    $(document).on('click', '.checkout-increase-qty', function(e) {
-        e.preventDefault();
-        if ($(this).prop('disabled')) return;
-        
-        const cartId = $(this).data('cart-id');
-        const maxQty = parseInt($(this).data('max')) || 999;
-        const $qtyDisplay = $('.checkout-quantity[data-cart-id="' + cartId + '"]');
-        const currentQty = parseInt($qtyDisplay.text()) || 1;
-        
-        if (currentQty < maxQty) {
-            updateCheckoutQuantity(cartId, currentQty + 1);
-        }
     });
 
     $(document).on('click', '.checkout-decrease-qty', function(e) {
@@ -520,7 +528,7 @@
         const orderNote = $('#checkout-note').val().trim();
         const orderNoteUrl = '{{ route("order_note") }}';
         
-        // Store order note
+        // Store order note and shipping method
         $.ajax({
             url: orderNoteUrl,
             method: 'POST',
@@ -529,23 +537,28 @@
                 order_note: orderNote
             },
             success: function() {
-                // Store additional checkout data in session via a custom route or redirect with data
-                // For now, we'll store in localStorage and redirect
-                // The checkout page can read from localStorage or we can create a session storage route
-                
-                const checkoutData = {
-                    name: $('#checkout-name').val().trim(),
-                    mobile: $('#checkout-mobile').val().trim(),
-                    address: $('#checkout-address').val().trim(),
-                    delivery_option: selectedDeliveryOption,
-                    delivery_charge: deliveryCharge
-                };
-                
-                // Store in sessionStorage temporarily (can be moved to server-side session)
-                sessionStorage.setItem('checkout_form_data', JSON.stringify(checkoutData));
-                
-                // Redirect to checkout page
-                window.location.href = '{{ route("checkout-details") }}';
+                // Store shipping method if selected
+                if (selectedShippingMethodId && selectedShippingMethodId !== '0' && selectedShippingMethodId !== 'default') {
+                    // Route is GET, so we'll append query parameters
+                    const setShippingUrl = '{{ url("/customer/set-shipping-method") }}?id=' + selectedShippingMethodId + '&cart_group_id=all_cart_group';
+                    
+                    // Use GET request to set shipping method
+                    $.ajax({
+                        url: setShippingUrl,
+                        method: 'GET',
+                        success: function() {
+                            // Redirect to checkout page after shipping method is set
+                            window.location.href = '{{ route("checkout-details") }}';
+                        },
+                        error: function() {
+                            // Even if shipping method fails, proceed to checkout
+                            window.location.href = '{{ route("checkout-details") }}';
+                        }
+                    });
+                } else {
+                    // No shipping method selected or default, just redirect
+                    window.location.href = '{{ route("checkout-details") }}';
+                }
             },
             error: function(xhr) {
                 $btn.prop('disabled', false);

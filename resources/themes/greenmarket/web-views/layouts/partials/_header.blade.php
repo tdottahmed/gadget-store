@@ -8,14 +8,14 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
         </svg>
-        <span class="hidden lg:inline">{{ getWebConfig('phone') ?? '09639812525' }}</span>
+        <span class="hidden lg:inline">{{ getWebConfig('phone') ?? '' }}</span>
       </div>
       <div class="hidden items-center gap-2 lg:flex">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
         <span
-              class="font-medium text-[#d8f7e5]">{{ getWebConfig('announcement')['text'] ?? translate('discover_the_power_of_nature') }}</span>
+              class="font-medium text-[#d8f7e5]">{{ getWebConfig('announcement')['text'] ?? translate('') }}</span>
       </div>
       <div class="hidden items-center gap-2 lg:flex">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@
       </div>
 
       <!-- Cart -->
-      <div class="flex flex-shrink-0 items-center gap-3 sm:gap-5 md:gap-6 lg:pr-4">
+      <div class="flex flex-shrink-0 py-3 md:py-0 items-center gap-3 sm:gap-5 md:gap-6 lg:pr-4">
         <a href="{{ route('shop-cart') }}" class="relative flex items-center gap-1 text-white md:gap-2 cart-button" title="{{ translate('cart') ?? 'Cart' }}">
           <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
           @php
@@ -72,7 +72,7 @@
           <span class="hidden text-sm md:inline">{{ translate('cart') }}</span>
         </a>
         <!-- Mobile Search Icon - Visible only on mobile -->
-        <button class="text-xl text-white md:hidden" id="mobile-search-button-open">
+        <button class="ml-2 md:ml-0 text-xl text-white md:hidden" id="mobile-search-button-open">
           <i class="fas fa-search"></i>
         </button>
       </div>
