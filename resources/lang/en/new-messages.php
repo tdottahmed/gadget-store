@@ -3599,4 +3599,5 @@ return [
 	"smtp_is_configured_for_mail_please_test_to_ensure_you_are_receiving_mail_correctly" => "Smtp is configured for mail please test to ensure you are receiving mail correctly",
 	"type_mail_address" => "Type mail address",
 	"delivered_Orders" => "Delivered Orders",
+	"failed_to_create_address" => "Failed to create address",
 ];
