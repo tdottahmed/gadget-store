@@ -47,17 +47,10 @@
                         @foreach ($cart as $cartItem)
                             @php
                                 $product = Product::find($cartItem['product_id'] ?? ($cartItem->product_id ?? null));
-                                if ($product && $product->thumbnail_full_url) {
-                                    $thumbnailResult = $product->thumbnail_full_url;
-                                    if (is_array($thumbnailResult) && isset($thumbnailResult['path'])) {
-                                        $productImage = $thumbnailResult['path'];
-                                    } elseif (is_string($thumbnailResult)) {
-                                        $productImage = $thumbnailResult;
-                                    } else {
-                                        $productImage = getStorageImages(
-                                            path: $product->thumbnail ?? '',
-                                            type: 'product',
-                                        );
+                                if ($product) {
+                                    $productImage = getStorageImages(path: $product->thumbnail_full_url ?? $product->thumbnail ?? '', type: 'product');
+                                    if (empty($productImage) || $productImage == asset('')) {
+                                        $productImage = asset('themes/greenmarket/assets/images/placeholder.png');
                                     }
                                 } else {
                                     $productImage = asset('themes/greenmarket/assets/images/placeholder.png');
