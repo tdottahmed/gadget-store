@@ -5,13 +5,44 @@ let getNoWord = $('#message-no-word').data('text');
 let messageAreYouSureDeleteThis = $('#message-are-you-sure-delete-this').data('text');
 let messageYouWillNotAbleRevertThis = $('#message-you-will-not-be-able-to-revert-this').data('text');
 
-$('#banner_type_select').on('change', function () {
-    let inputValue = $(this).val().toString();
+function handleBannerTypeChange() {
+    let inputValue = $('#banner_type_select').val() ? $('#banner_type_select').val().toString() : '';
+    
     if (inputValue === "Main Banner") {
         $('.input-field-for-main-banner').removeClass('d-none');
     } else {
         $('.input-field-for-main-banner').addClass('d-none');
     }
+    
+    // Handle Hero Slider multiple image upload
+    if (inputValue === "Hero Slider") {
+        $('.single-image-upload').addClass('d-none');
+        $('.multiple-image-upload').removeClass('d-none');
+        $('.single_file_input').removeAttr('required').val('').removeAttr('name');
+        $('.multiple_file_input').attr('required', 'required').attr('name', 'images[]');
+        $('.hero-slider-url-note').removeClass('d-none');
+    } else {
+        $('.single-image-upload').removeClass('d-none');
+        $('.multiple-image-upload').addClass('d-none');
+        $('.multiple_file_input').removeAttr('required').val('').removeAttr('name');
+        $('.single_file_input').attr('required', 'required').attr('name', 'image');
+        $('.hero-slider-url-note').addClass('d-none');
+        $('#multiple-images-preview').empty();
+    }
+}
+
+$('#banner_type_select').on('change', handleBannerTypeChange);
+
+// Initialize on page load
+$(document).ready(function() {
+    handleBannerTypeChange();
+    
+    // Handle form reset
+    $('.banner_form').on('reset', function() {
+        setTimeout(function() {
+            handleBannerTypeChange();
+        }, 100);
+    });
 });
 
 $(".js-example-theme-single").select2({theme: "classic"});
@@ -67,6 +98,28 @@ $('#banner').on('change', function(){
             img.src = imageData;
         }
         reader.readAsDataURL(input.files[0]);
+    }
+});
+
+// Handle multiple file upload preview for Hero Slider
+$('#banner-multiple').on('change', function(){
+    var input = this;
+    var previewContainer = $('#multiple-images-preview');
+    previewContainer.empty();
+    
+    if (input.files && input.files.length > 0) {
+        Array.from(input.files).forEach(function(file, index) {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                let imageData = e.target.result;
+                let previewItem = $('<div class="position-relative" style="width: 120px; height: 80px; margin: 5px;">' +
+                    '<img src="' + imageData + '" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">' +
+                    '<span class="badge bg-primary position-absolute top-0 end-0 m-1">' + (index + 1) + '</span>' +
+                    '</div>');
+                previewContainer.append(previewItem);
+            };
+            reader.readAsDataURL(file);
+        });
     }
 });
 

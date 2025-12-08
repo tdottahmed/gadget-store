@@ -60,9 +60,63 @@ class BannerController extends BaseController
 
     public function add(BannerAddRequest $request): RedirectResponse
     {
-        $data = $this->bannerService->getProcessedData(request: $request);
-        $this->bannerRepo->add(data: $data);
-        ToastMagic::success(translate('banner_added_successfully'));
+        // Handle multiple images for Hero Slider
+        if ($request['banner_type'] === 'Hero Slider' && $request->hasFile('images')) {
+            $images = $request->file('images');
+            $count = 0;
+            $errors = [];
+            
+            foreach ($images as $key => $image) {
+                try {
+                    // Validate the file is valid
+                    if (!$image->isValid()) {
+                        $errors[] = translate('image') . ' ' . ($key + 1) . ' ' . translate('is_invalid');
+                        continue;
+                    }
+                    
+                    // Create data array manually for each image
+                    $imageName = $this->upload(dir: 'banner/', format: 'webp', image: $image);
+                    
+                    if (empty($imageName)) {
+                        $errors[] = translate('image') . ' ' . ($key + 1) . ' ' . translate('failed_to_upload');
+                        continue;
+                    }
+                    
+                    $data = [
+                        'banner_type' => $request['banner_type'],
+                        'resource_type' => $request['resource_type'] ?? null,
+                        'resource_id' => $request[$request->resource_type . '_id'] ?? null,
+                        'theme' => theme_root_path(),
+                        'title' => $request['title'] ?? null,
+                        'sub_title' => $request['sub_title'] ?? null,
+                        'button_text' => $request['button_text'] ?? null,
+                        'background_color' => $request['background_color'] ?? null,
+                        'url' => $request['url'],
+                        'photo' => $imageName,
+                    ];
+                    
+                    $this->bannerRepo->add(data: $data);
+                    $count++;
+                } catch (\Exception $e) {
+                    $errors[] = translate('image') . ' ' . ($key + 1) . ': ' . $e->getMessage();
+                }
+            }
+            
+            if ($count > 0) {
+                $message = translate('banner_added_successfully') . ' (' . $count . ' ' . translate('images') . ')';
+                if (!empty($errors)) {
+                    $message .= '. ' . translate('some_images_failed') . ': ' . implode(', ', $errors);
+                }
+                ToastMagic::success($message);
+            } else {
+                ToastMagic::error(translate('failed_to_upload_images') . ': ' . implode(', ', $errors));
+            }
+        } else {
+            $data = $this->bannerService->getProcessedData(request: $request);
+            $this->bannerRepo->add(data: $data);
+            ToastMagic::success(translate('banner_added_successfully'));
+        }
+        
         return redirect()->route('admin.banner.list');
     }
 

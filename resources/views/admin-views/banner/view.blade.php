@@ -69,6 +69,9 @@
                       <label for="name" class="form-label">{{ translate('banner_URL') }}</label>
                       <input type="url" name="url" class="form-control" id="url" required
                              placeholder="{{ translate('Enter_url') }}">
+                      <small class="form-text text-muted hero-slider-url-note d-none">
+                        {{ translate('this_url_will_be_applied_to_all_hero_slider_images') }}
+                      </small>
                     </div>
 
                     <div class="form-group">
@@ -172,7 +175,8 @@
                         <h4 class="mb-0"><span class="text-info-dark" id="theme_ratio"> ( {{ translate('ratio') }}
                             4:1 )</span></h4>
                       </div>
-                      <div class="upload-file">
+                      <!-- Single Image Upload (for non-Hero Slider types) -->
+                      <div class="upload-file single-image-upload">
                         <input type="file" name="image" class="upload-file__input single_file_input"
                                id="banner" accept=".jpg, .png, .jpeg, .gif, .bmp, .webp |image/*" value="">
                         <div class="upload-file__wrapper ratio-4-1">
@@ -201,6 +205,26 @@
                             </button>
                           </div>
                         </div>
+                      </div>
+                      <!-- Multiple Image Upload (for Hero Slider type) -->
+                      <div class="upload-file multiple-image-upload d-none">
+                        <input type="file" class="upload-file__input multiple_file_input"
+                               id="banner-multiple" accept=".jpg, .png, .jpeg, .gif, .bmp, .webp |image/*" multiple>
+                        <div class="upload-file__wrapper ratio-4-1">
+                          <div class="upload-file-textbox text-center">
+                            <img width="34" height="34" class="svg"
+                                 src="{{ dynamicAsset(path: 'public/assets/new/back-end/img/svg/image-upload.svg') }}"
+                                 alt="image upload">
+                            <h6 class="fw-medium lh-base mt-1 text-center">
+                              <span class="text-info">
+                                {{ translate('Click to upload multiple images') }}
+                              </span>
+                              <br>
+                              {{ translate('or_drag_and_drop') }}
+                            </h6>
+                          </div>
+                        </div>
+                        <div id="multiple-images-preview" class="mt-3 d-flex flex-wrap gap-2"></div>
                       </div>
                       <p class="fs-12 max-w-360 m-auto text-center">
                         {{ translate('banner_Image_ratio_is_not_same_for_all_sections_in_website.') }}

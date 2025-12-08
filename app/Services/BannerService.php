@@ -62,6 +62,11 @@ class BannerService
                 "Promo Banner Right" => translate('promo_banner_right'),
                 "Promo Banner Bottom" => translate('promo_banner_bottom'),
             ];
+        } elseif (theme_root_path() == 'greenmarket') {
+            $bannerTypes = [
+                "Hero Slider" => translate('hero_Slider'),
+                "Main Section Banner" => translate('main_Section_Banner'),
+            ];
         }
 
         return $bannerTypes;
