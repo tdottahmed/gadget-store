@@ -84,9 +84,22 @@
                         data-cart-id="{{ $cartId }}" {{ $quantity <= 1 ? 'disabled' : '' }}>
                   <i class="fas fa-minus text-xs"></i>
                 </button>
-                <input type="number" value="{{ $quantity }}" min="1" max="{{ $maxQuantity }}" readonly
-                       class="quantity-input h-8 w-10 rounded border border-gray-300 text-center text-sm font-medium text-gray-700"
-                       data-cart-id="{{ $cartId }}" data-max="{{ $maxQuantity }}">
+                <div class="relative">
+                  <input type="number" value="{{ $quantity }}" min="1" max="{{ $maxQuantity }}" readonly
+                         class="quantity-input h-8 w-10 rounded border border-gray-300 text-center text-sm font-medium text-gray-700"
+                         data-cart-id="{{ $cartId }}" data-max="{{ $maxQuantity }}">
+                  <div class="quantity-loader absolute inset-0 hidden items-center justify-center rounded border border-gray-300 bg-white bg-opacity-90"
+                       data-cart-id="{{ $cartId }}">
+                    <svg class="h-4 w-4 animate-spin text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                              stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                      </path>
+                    </svg>
+                  </div>
+                </div>
                 <button class="increase-quantity {{ $quantity >= $maxQuantity ? 'opacity-50 cursor-not-allowed' : '' }} flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-600 transition-colors hover:bg-gray-50"
                         data-cart-id="{{ $cartId }}" data-max="{{ $maxQuantity }}"
                         {{ $quantity >= $maxQuantity ? 'disabled' : '' }}>
@@ -295,7 +308,7 @@
         const $removeButtons = $('.greenmarket-remove-cart-item');
       }, 1000);
 
-      // Update quantity function
+      // Update quantity function - Optimized with DOM updates and loading indicator
       function updateQuantity(cartId, quantity) {
         if (!cartId) {
           console.error('Cart ID is required');
@@ -312,13 +325,29 @@
         }
 
         const $quantityInput = $cartItem.find('.quantity-input');
+        const $quantityLoader = $cartItem.find('.quantity-loader');
         const $increaseBtn = $cartItem.find('.increase-quantity');
         const $decreaseBtn = $cartItem.find('.decrease-quantity');
+        const $subtotalElement = $cartItem.find('.cart-item-subtotal');
         const maxQty = parseInt($cartItem.data('max-quantity')) || 999;
+        const unitPrice = parseFloat($subtotalElement.data('unit-price')) || 0;
+        const oldQuantity = parseInt($quantityInput.val()) || 1;
+
+        // Show loading indicator
+        $quantityLoader.removeClass('hidden');
+        $quantityInput.addClass('opacity-50');
 
         // Disable buttons during update
-        $increaseBtn.prop('disabled', true);
-        $decreaseBtn.prop('disabled', true);
+        $increaseBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+        $decreaseBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+
+        // Optimistically update quantity in UI
+        $quantityInput.val(quantity);
+
+        // Calculate new subtotal optimistically
+        const newSubtotal = unitPrice * quantity;
+        const formattedSubtotal = formatCurrency(newSubtotal);
+        $subtotalElement.text(formattedSubtotal);
 
         $.ajax({
           url: updateUrl,
@@ -329,85 +358,119 @@
             quantity: quantity
           },
           success: function(response) {
+            // Hide loading indicator
+            $quantityLoader.addClass('hidden');
+            $quantityInput.removeClass('opacity-50');
+
             // Response can be HTML string (success) or JSON object (error)
             let isSuccess = false;
             let errorMessage = '';
 
             if (typeof response === 'string') {
-              // HTML response means success
+              // HTML response means success - extract cart totals from response if possible
               isSuccess = true;
+              try {
+                const $responseHtml = $(response);
+                const serverTotal = $responseHtml.find('#cart-total-price').text();
+                if (serverTotal) {
+                  $('#cart-total-price').text(serverTotal);
+                }
+              } catch (e) {
+                // If parsing fails, will update via updateAllCartUI below
+              }
+              // Always update cart count and mobile app bar (debounced, so safe to call)
+              updateAllCartUI();
             } else if (response && typeof response === 'object') {
               // JSON response - check status
               if (response.status === 0 || response.status === false) {
                 isSuccess = false;
                 errorMessage = response.message ||
                   '{{ translate('failed_to_update_quantity') ?? 'Failed to update quantity' }}';
+                // Revert optimistic update
+                $quantityInput.val(oldQuantity);
+                const oldSubtotal = unitPrice * oldQuantity;
+                $subtotalElement.text(formatCurrency(oldSubtotal));
               } else {
                 isSuccess = true;
+                // Update totals if provided in response
+                if (response.total) {
+                  $('#cart-total-price').text(formatCurrency(response.total));
+                }
+                // Always update cart count and mobile app bar (debounced)
+                updateAllCartUI();
               }
             } else {
               // Assume success if we can't determine
               isSuccess = true;
+              updateAllCartUI();
             }
 
             if (isSuccess) {
-              // Update quantity input
-              $quantityInput.val(quantity);
-
               // Update button states
               if (quantity >= maxQty) {
-                $increaseBtn.prop('disabled', true).addClass(
-                  'opacity-50 cursor-not-allowed');
+                $increaseBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
               } else {
-                $increaseBtn.prop('disabled', false).removeClass(
-                  'opacity-50 cursor-not-allowed');
+                $increaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
               }
 
               if (quantity <= 1) {
-                $decreaseBtn.prop('disabled', true).addClass(
-                  'opacity-50 cursor-not-allowed');
+                $decreaseBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
               } else {
-                $decreaseBtn.prop('disabled', false).removeClass(
-                  'opacity-50 cursor-not-allowed');
+                $decreaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
               }
 
-              // Recalculate cart totals
-              recalculateCartTotals();
-              updateCartCount();
-
-              if (typeof toastr !== 'undefined') {
-                toastr.success(
-                  '{{ translate('quantity_updated') ?? 'Quantity updated' }}');
-              }
+              // Show success message (optional, can be removed for smoother UX)
+              // if (typeof toastr !== 'undefined') {
+              //   toastr.success('{{ translate('quantity_updated') ?? 'Quantity updated' }}', {
+              //     timeOut: 1000,
+              //     progressBar: true
+              //   });
+              // }
             } else {
-              // Revert quantity on error
-              const currentQty = parseInt($quantityInput.val()) || 1;
-              $quantityInput.val(currentQty);
+              // Re-enable buttons on error
+              $increaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+              $decreaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
 
               if (typeof toastr !== 'undefined') {
-                toastr.error(errorMessage);
+                toastr.error(errorMessage, {
+                  CloseButton: true,
+                  ProgressBar: true
+                });
               }
             }
-
-            // Re-enable buttons
-            $increaseBtn.prop('disabled', false);
-            $decreaseBtn.prop('disabled', false);
           },
           error: function(xhr) {
-            // Re-enable buttons
-            $increaseBtn.prop('disabled', false);
-            $decreaseBtn.prop('disabled', false);
+            // Hide loading indicator
+            $quantityLoader.addClass('hidden');
+            $quantityInput.removeClass('opacity-50');
 
-            const currentQty = parseInt($quantityInput.val()) || 1;
-            $quantityInput.val(currentQty);
+            // Revert optimistic update
+            $quantityInput.val(oldQuantity);
+            const oldSubtotal = unitPrice * oldQuantity;
+            $subtotalElement.text(formatCurrency(oldSubtotal));
+
+            // Re-enable buttons
+            $increaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+            $decreaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
 
             if (typeof toastr !== 'undefined') {
               toastr.error(xhr.responseJSON?.message ||
-                '{{ translate('failed_to_update_quantity') ?? 'Failed to update quantity' }}'
-              );
+                '{{ translate('failed_to_update_quantity') ?? 'Failed to update quantity' }}', {
+                  CloseButton: true,
+                  ProgressBar: true
+                });
             }
           }
         });
+      }
+
+      // Format currency helper function
+      function formatCurrency(amount) {
+        const currencySymbol = '{{ getCurrencySymbol() }}';
+        const symbolPosition = '{{ getWebConfig('currency_symbol_position') ?? 'right' }}';
+        const decimalPoints = {{ getWebConfig('decimal_point_settings') ?? 2 }};
+        const formatted = parseFloat(amount).toFixed(decimalPoints).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return symbolPosition === 'left' ? currencySymbol + formatted : formatted + ' ' + currencySymbol;
       }
 
       // Remove cart item function - Make it globally available
@@ -483,6 +546,11 @@
                     updateCartCount();
                   }
 
+                  // Update mobile app bar before reload
+                  if (typeof updateMobileAppBar === 'function') {
+                    updateMobileAppBar();
+                  }
+
                   if (typeof toastr !== 'undefined') {
                     toastr.success(response.message ||
                       '{{ translate('item_removed') ?? 'Item removed from cart' }}'
@@ -502,6 +570,11 @@
                   }
                   if (typeof updateCartCount === 'function') {
                     updateCartCount();
+                  }
+
+                  // Update mobile app bar
+                  if (typeof updateMobileAppBar === 'function') {
+                    updateMobileAppBar();
                   }
 
                   if (typeof toastr !== 'undefined') {
@@ -540,77 +613,26 @@
         }
       };
 
-      // Recalculate cart totals from server
+      // Recalculate cart totals from server - Optimized to calculate client-side first
       function recalculateCartTotals() {
-        // Reload cart totals from server for accurate calculation
-        const navCartUrl = $('#route-data').data('route-cart-nav') || '{{ route('cart.nav-cart') }}';
-        $.ajax({
-          url: navCartUrl,
-          method: 'POST',
-          data: {
-            _token: $('meta[name="_token"]').attr('content')
-          },
-          success: function(response) {
-            if (response && response.data) {
-              // Get updated total from server response
-              const $newContent = $(response.data);
-              const serverTotal = $newContent.find('#cart-total-price').text();
-              if (serverTotal) {
-                $('#cart-total-price').text(serverTotal);
-              }
-
-              // Update individual item subtotals and quantities
-              $newContent.find('.cart-item').each(function() {
-                const cartId = $(this).data('cart-id');
-                if (cartId) {
-                  const newSubtotal = $(this).find('.cart-item-subtotal')
-                    .text();
-                  const newQuantity = $(this).find('.quantity-input').val();
-
-                  if (newSubtotal) {
-                    $('.cart-item-subtotal[data-cart-id="' + cartId + '"]')
-                      .text(newSubtotal);
-                  }
-
-                  if (newQuantity) {
-                    $('.quantity-input[data-cart-id="' + cartId + '"]').val(
-                      newQuantity);
-
-                    // Update button states
-                    const maxQty = parseInt($('.cart-item[data-cart-id="' +
-                      cartId + '"]').data('max-quantity')) || 999;
-                    const $cartItem = $('.cart-item[data-cart-id="' +
-                      cartId + '"]');
-                    const $increaseBtn = $cartItem.find(
-                      '.increase-quantity');
-                    const $decreaseBtn = $cartItem.find(
-                      '.decrease-quantity');
-
-                    if (parseInt(newQuantity) >= maxQty) {
-                      $increaseBtn.prop('disabled', true).addClass(
-                        'opacity-50 cursor-not-allowed');
-                    } else {
-                      $increaseBtn.prop('disabled', false).removeClass(
-                        'opacity-50 cursor-not-allowed');
-                    }
-
-                    if (parseInt(newQuantity) <= 1) {
-                      $decreaseBtn.prop('disabled', true).addClass(
-                        'opacity-50 cursor-not-allowed');
-                    } else {
-                      $decreaseBtn.prop('disabled', false).removeClass(
-                        'opacity-50 cursor-not-allowed');
-                    }
-                  }
-                }
-              });
-            }
-          }
+        // First, calculate total client-side for instant feedback
+        let calculatedTotal = 0;
+        $('#cart-sidebar .cart-item').each(function() {
+          const $item = $(this);
+          const unitPrice = parseFloat($item.find('.cart-item-subtotal').data('unit-price')) || 0;
+          const quantity = parseInt($item.find('.quantity-input').val()) || 1;
+          calculatedTotal += unitPrice * quantity;
         });
+
+        // Update total immediately for instant feedback
+        $('#cart-total-price').text(formatCurrency(calculatedTotal));
+
+        // Then verify with server for accuracy (discounts, taxes, etc.) - uses unified function
+        updateAllCartUI();
       }
 
-      // Load cart sidebar content dynamically
-      function loadCartSidebar() {
+      // Load cart sidebar content dynamically - Make it globally available
+      window.loadCartSidebar = function() {
         const navCartUrl = $('#route-data').data('route-cart-nav') || '{{ route('cart.nav-cart') }}';
         $.ajax({
           url: navCartUrl,
@@ -644,6 +666,12 @@
                 $currentFooter.remove();
               }
 
+              // Update cart total
+              const serverTotal = $newContent.find('#cart-total-price').text();
+              if (serverTotal) {
+                $('#cart-total-price').text(serverTotal);
+              }
+
               // Update cart count badge
               const cartCount = $newContent.find('.cart-count-badge').text() || '0';
               $('#cart-sidebar .cart-count-badge').text(cartCount);
@@ -651,6 +679,20 @@
               // Re-attach event handlers after content update
               if (typeof attachRemoveHandlers === 'function') {
                 attachRemoveHandlers();
+              }
+
+              // Update checkout modal if open
+              if (typeof loadCheckoutModalCartItems === 'function' && $('#checkout-modal').length && !$(
+                  '#checkout-modal').hasClass('hidden')) {
+                loadCheckoutModalCartItems();
+              }
+
+              // Update mobile app bar
+              if (response.mobile_nav) {
+                const $mobileAppBar = $('#mobile_app_bar');
+                if ($mobileAppBar.length) {
+                  $mobileAppBar.html(response.mobile_nav);
+                }
               }
             }
           },
@@ -664,39 +706,86 @@
         });
       }
 
-      // Update cart count in header
-      function updateCartCount() {
-        const navCartUrl = $('#route-data').data('route-cart-nav') || '{{ route('cart.nav-cart') }}';
-        $.ajax({
-          url: navCartUrl,
-          method: 'POST',
-          data: {
-            _token: $('meta[name="_token"]').attr('content')
-          },
-          success: function(response) {
-            if (response && response.data) {
-              const $newContent = $(response.data);
-              const cartCount = $newContent.find('.cart-count-badge').text() || '0';
-              const $headerBadge = $('.cart-count-badge');
+      // Debounce timer for updateAllCartUI to prevent multiple rapid calls
+      let updateAllCartUITimer = null;
 
-              if (parseInt(cartCount) > 0) {
-                if ($headerBadge.length) {
-                  $headerBadge.text(cartCount);
-                } else {
-                  // Add badge if it doesn't exist
-                  $('a[href*="shop-cart"]').append(
-                    '<span class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4">' +
-                    cartCount + '</span>');
+      // Unified function to update all cart UI elements with a single AJAX call
+      function updateAllCartUI() {
+        // Clear any pending calls
+        if (updateAllCartUITimer) {
+          clearTimeout(updateAllCartUITimer);
+        }
+
+        // Debounce: wait 100ms before making the call to batch rapid updates
+        updateAllCartUITimer = setTimeout(function() {
+          const navCartUrl = '{{ route('cart.nav-cart') }}';
+          $.ajax({
+            url: navCartUrl,
+            method: 'POST',
+            data: {
+              _token: $('meta[name="_token"]').attr('content')
+            },
+            success: function(response) {
+              if (response) {
+                // Update cart total from server response
+                if (response.data) {
+                  const $newContent = $(response.data);
+                  const serverTotal = $newContent.find('#cart-total-price').text();
+                  if (serverTotal) {
+                    $('#cart-total-price').text(serverTotal);
+                  }
+
+                  // Update cart count badge
+                  const cartCount = $newContent.find('.cart-count-badge').text() || '0';
+                  const $headerBadge = $('.cart-count-badge');
+
+                  if (parseInt(cartCount) > 0) {
+                    if ($headerBadge.length) {
+                      $headerBadge.text(cartCount);
+                    } else {
+                      // Add badge if it doesn't exist
+                      $('a[href*="shop-cart"]').append(
+                        '<span class="cart-count-badge absolute -top-2 left-3 flex h-5 w-5 items-center justify-center rounded-full bg-[#DC3545] text-xs font-bold text-white md:-top-3 md:left-4">' +
+                        cartCount + '</span>');
+                    }
+                  } else {
+                    $headerBadge.remove();
+                  }
                 }
-              } else {
-                $headerBadge.remove();
+
+                // Update mobile app bar with fresh cart count
+                if (response.mobile_nav) {
+                  const $mobileAppBar = $('#mobile_app_bar');
+                  if ($mobileAppBar.length) {
+                    $mobileAppBar.html(response.mobile_nav);
+                  }
+                }
+
+                // Update checkout modal if it's open
+                if (typeof loadCheckoutModalCartItems === 'function' && $('#checkout-modal').length && !$(
+                    '#checkout-modal').hasClass('hidden')) {
+                  loadCheckoutModalCartItems();
+                }
               }
+            },
+            error: function() {
+              console.error('Failed to update cart UI');
+            },
+            complete: function() {
+              updateAllCartUITimer = null;
             }
-          },
-          error: function() {
-            console.error('Failed to update cart count');
-          }
-        });
+          });
+        }, 100); // 100ms debounce delay
+      }
+
+      // Update cart count in header (kept for backward compatibility, but uses updateAllCartUI internally)
+      function updateCartCount() {
+        updateAllCartUI();
+      }
+
+      // Update mobile app bar (kept for backward compatibility, but uses updateAllCartUI internally)
+      function updateMobileAppBar() {
+        updateAllCartUI();
       }
 
       // Load cart sidebar when opened

@@ -3649,4 +3649,6 @@ return [
 	"calculated_at_checkout" => "Calculated at checkout",
 	"proceed_checkout" => "Proceed checkout",
 	"view invoice" => "View invoice",
+	"theme_setup" => "Theme setup",
+	"order shipments" => "Order shipments",
 ];
