@@ -104,7 +104,12 @@
                             <!-- Price and Delete -->
                             <div class="flex items-center justify-between">
                                 <span class="text-base font-bold text-black cart-item-subtotal"
+<<<<<<< HEAD
                                     data-cart-id="{{ $cartId }}">{{ webCurrencyConverter(amount: $subtotal) }}</span>
+=======
+                                    data-cart-id="{{ $cartId }}"
+                                    data-unit-price="{{ $price - $discount }}">{{ webCurrencyConverter(amount: $subtotal) }}</span>
+>>>>>>> 88c0706
                                 <button
                                     class="text-red-500 hover:text-red-700 transition-colors greenmarket-remove-cart-item"
                                     data-cart-id="{{ $cartId }}">
@@ -161,6 +166,25 @@
             console.log('jQuery version:', jQuery.fn.jquery);
         }
 
+<<<<<<< HEAD
+=======
+        // Helper function to format currency (matches server format)
+        function formatCurrencyValue(amount) {
+            // Get currency symbol and position from server if available
+            const currencySymbol = '{{ getCurrencySymbol() }}';
+            const symbolPosition = '{{ getWebConfig('currency_symbol_position') ?? 'right' }}';
+            const decimalPoints = {{ getWebConfig('decimal_point_settings') ?? 2 }};
+
+            const formatted = parseFloat(amount).toFixed(decimalPoints).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+            if (symbolPosition === 'left') {
+                return currencySymbol + formatted;
+            } else {
+                return formatted + ' ' + currencySymbol;
+            }
+        }
+
+>>>>>>> 88c0706
         $(document).ready(function() {
             // Open cart sidebar
             function openCartSidebar() {
@@ -375,7 +399,23 @@
                                     'opacity-50 cursor-not-allowed');
                             }
 
+<<<<<<< HEAD
                             // Recalculate cart totals
+=======
+                            // Update item subtotal immediately (optimistic update)
+                            const $subtotalEl = $cartItem.find('.cart-item-subtotal');
+                            const unitPrice = parseFloat($subtotalEl.data('unit-price')) || 0;
+                            if (unitPrice > 0) {
+                                const newSubtotal = unitPrice * quantity;
+                                const formattedSubtotal = formatCurrencyValue(newSubtotal);
+                                $subtotalEl.text(formattedSubtotal);
+                            }
+
+                            // Immediately recalculate total from all item subtotals (optimistic update)
+                            updateCartTotalFromItems();
+
+                            // Recalculate cart totals from server (will update both subtotals and total)
+>>>>>>> 88c0706
                             recalculateCartTotals();
                             updateCartCount();
 
@@ -544,6 +584,32 @@
                 }
             };
 
+<<<<<<< HEAD
+=======
+            // Update cart total immediately from current item subtotals (client-side calculation)
+            function updateCartTotalFromItems() {
+                let calculatedTotal = 0;
+                $('#cart-sidebar .cart-item').each(function() {
+                    const $subtotal = $(this).find('.cart-item-subtotal');
+                    const subtotalText = $subtotal.text().trim();
+                    if (subtotalText) {
+                        // Extract numeric value from formatted currency string
+                        const subtotalValue = parseFloat(subtotalText.replace(/[^\d.]/g, '')) || 0;
+                        calculatedTotal += subtotalValue;
+                    }
+                });
+                
+                // Format and update total
+                if (calculatedTotal >= 0) {
+                    const formattedTotal = formatCurrencyValue(calculatedTotal);
+                    const $currentTotal = $('#cart-total-price');
+                    if ($currentTotal.length) {
+                        $currentTotal.text(formattedTotal);
+                    }
+                }
+            }
+
+>>>>>>> 88c0706
             // Recalculate cart totals from server
             function recalculateCartTotals() {
                 // Reload cart totals from server for accurate calculation
@@ -556,6 +622,7 @@
                     },
                     success: function(response) {
                         if (response && response.data) {
+<<<<<<< HEAD
                             // Get updated total from server response
                             const $newContent = $(response.data);
                             const serverTotal = $newContent.find('#cart-total-price').text();
@@ -604,11 +671,93 @@
                                         } else {
                                             $decreaseBtn.prop('disabled', false).removeClass(
                                                 'opacity-50 cursor-not-allowed');
+=======
+                            // Parse the cart sidebar HTML response
+                            const $newContent = $(response.data);
+                            
+                            // Update cart total price - look for #cart-total-price in the footer
+                            const $newFooter = $newContent.find('.border-t.border-gray-200.bg-white.p-4.space-y-4');
+                            let serverTotal = null;
+                            
+                            if ($newFooter.length) {
+                                serverTotal = $newFooter.find('#cart-total-price').text();
+                            }
+                            
+                            // Also try finding it directly in the response (fallback)
+                            if (!serverTotal || !serverTotal.trim()) {
+                                serverTotal = $newContent.find('#cart-total-price').text();
+                            }
+                            
+                            // Update total price if found from server
+                            if (serverTotal && serverTotal.trim()) {
+                                const $currentTotal = $('#cart-total-price');
+                                if ($currentTotal.length) {
+                                    $currentTotal.text(serverTotal.trim());
+                                }
+                            } else {
+                                // Fallback: Recalculate from current DOM items
+                                updateCartTotalFromItems();
+                            }
+
+                            // Update individual item subtotals and quantities from server response
+                            $newContent.find('.cart-item').each(function() {
+                                const cartId = $(this).data('cart-id');
+                                if (cartId) {
+                                    const newSubtotal = $(this).find('.cart-item-subtotal').text();
+                                    const newQuantity = $(this).find('.quantity-input').val();
+
+                                    if (newSubtotal && newSubtotal.trim()) {
+                                        const $subtotalEl = $('#cart-sidebar .cart-item-subtotal[data-cart-id="' + cartId + '"]');
+                                        if ($subtotalEl.length) {
+                                            $subtotalEl.text(newSubtotal.trim());
+                                        }
+                                    }
+
+                                    if (newQuantity) {
+                                        const $qtyInput = $('#cart-sidebar .quantity-input[data-cart-id="' + cartId + '"]');
+                                        if ($qtyInput.length) {
+                                            $qtyInput.val(newQuantity);
+                                        }
+
+                                        // Update button states
+                                        const $cartItem = $('#cart-sidebar .cart-item[data-cart-id="' + cartId + '"]');
+                                        if ($cartItem.length) {
+                                            const maxQty = parseInt($cartItem.data('max-quantity')) || 999;
+                                            const $increaseBtn = $cartItem.find('.increase-quantity');
+                                            const $decreaseBtn = $cartItem.find('.decrease-quantity');
+
+                                            if (parseInt(newQuantity) >= maxQty) {
+                                                $increaseBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+                                            } else {
+                                                $increaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+                                            }
+
+                                            if (parseInt(newQuantity) <= 1) {
+                                                $decreaseBtn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+                                            } else {
+                                                $decreaseBtn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+                                            }
+>>>>>>> 88c0706
                                         }
                                     }
                                 }
                             });
+<<<<<<< HEAD
                         }
+=======
+                            
+                            // Recalculate total after updating all items (in case server response didn't include total)
+                            updateCartTotalFromItems();
+                        } else {
+                            // If no response data, recalculate from current DOM
+                            updateCartTotalFromItems();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Failed to recalculate cart totals:', xhr);
+                        // On error, still update from current DOM items
+                        updateCartTotalFromItems();
+>>>>>>> 88c0706
                     }
                 });
             }

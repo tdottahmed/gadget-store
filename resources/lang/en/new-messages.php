@@ -3626,4 +3626,5 @@ return [
 	"no_products_in_this_category" => "No products in this category",
 	"view_all_products" => "View all products",
 	"product_added_to_cart" => "Product added to cart",
+	"Selected_shipping_method_not_found" => "Selected shipping method not found",
 ];
