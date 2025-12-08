@@ -44,7 +44,7 @@
       <div class="hidden max-w-5xl flex-1 md:mx-2 md:flex lg:mx-8">
         <form action="{{ route('products') }}" method="GET" class="relative w-full">
           <input type="text" name="name"
-                 placeholder="{{ translate('search_in') }} {{ $web_config['company_name'] ?? 'Store' }}..."
+                 placeholder="{{ translate('search') }}.."
                  class="w-full top-bar-bg px-10 py-2 pr-12 text-sm font-semibold text-white placeholder-[#a8d4c0] focus:outline-none md:py-3 lg:py-3">
           <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2">
             <svg class="h-5 w-5 text-[#a8d4c0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
