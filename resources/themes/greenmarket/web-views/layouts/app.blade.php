@@ -44,6 +44,168 @@
     @include(VIEW_FILE_NAMES['robots_meta_content_partials'])
     <title>@yield('title')</title>
 
+    {{-- Dynamic Theme Colors --}}
+    @php
+        $systemColors = getWebConfig('colors');
+        $primaryColor = $systemColors['primary'] ?? '#003315';
+        $secondaryColor = $systemColors['secondary'] ?? '#F58300';
+        $primaryColorLight = $systemColors['primary_light'] ?? '#2d8659';
+        $panelSidebarColor = $systemColors['panel-sidebar'] ?? '#003315';
+        
+        // Generate darker/lighter variants for hover states
+        function adjustBrightness($hex, $percent) {
+            $hex = str_replace('#', '', $hex);
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
+            
+            $r = max(0, min(255, $r + ($r * $percent)));
+            $g = max(0, min(255, $g + ($g * $percent)));
+            $b = max(0, min(255, $b + ($b * $percent)));
+            
+            return '#' . str_pad(dechex($r), 2, '0', STR_PAD_LEFT) . 
+                   str_pad(dechex($g), 2, '0', STR_PAD_LEFT) . 
+                   str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
+        }
+        
+        $primaryColorHover = adjustBrightness($primaryColor, -0.1);
+        $primaryColorLightHover = adjustBrightness($primaryColorLight, -0.1);
+    @endphp
+    <style>
+        :root {
+            --primary-color: {{ $primaryColor }};
+            --secondary-color: {{ $secondaryColor }};
+            --primary-color-light: {{ $primaryColorLight }};
+            --panel-sidebar-color: {{ $panelSidebarColor }};
+            --primary-color-hover: {{ $primaryColorHover }};
+            --primary-color-light-hover: {{ $primaryColorLightHover }};
+        }
+        
+        /* Dynamic Color Classes */
+        .top-bar-bg {
+            background-color: var(--secondary-color) !important;
+        }
+        
+        .main-header-bg,
+        .footer-bg,
+        .whatsapp-bg {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .bg-primary-dynamic {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .bg-primary-light-dynamic {
+            background-color: var(--primary-color-light) !important;
+        }
+        
+        .text-primary-dynamic {
+            color: var(--primary-color) !important;
+        }
+        
+        .text-primary-light-dynamic {
+            color: var(--primary-color-light) !important;
+        }
+        
+        .border-primary-dynamic {
+            border-color: var(--primary-color) !important;
+        }
+        
+        .border-primary-light-dynamic {
+            border-color: var(--primary-color-light) !important;
+        }
+        
+        .bg-primary-dynamic:hover {
+            background-color: var(--primary-color-hover) !important;
+        }
+        
+        .bg-primary-light-dynamic:hover {
+            background-color: var(--primary-color-light-hover) !important;
+        }
+        
+        .text-primary-dynamic:hover,
+        .hover\:text-primary-dynamic:hover {
+            color: var(--primary-color) !important;
+        }
+        
+        .border-primary-dynamic:hover,
+        .hover\:border-primary-dynamic:hover {
+            border-color: var(--primary-color) !important;
+        }
+        
+        /* Tailwind color overrides for dynamic colors */
+        .bg-green-600 {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .bg-green-500 {
+            background-color: var(--primary-color-light) !important;
+        }
+        
+        .hover\:bg-green-700:hover {
+            background-color: var(--primary-color-hover) !important;
+        }
+        
+        .text-green-600 {
+            color: var(--primary-color) !important;
+        }
+        
+        .text-green-500 {
+            color: var(--primary-color-light) !important;
+        }
+        
+        .hover\:text-green-700:hover {
+            color: var(--primary-color-hover) !important;
+        }
+        
+        .border-green-500 {
+            border-color: var(--primary-color-light) !important;
+        }
+        
+        .border-green-600 {
+            border-color: var(--primary-color) !important;
+        }
+        
+        .focus\:border-green-500:focus {
+            border-color: var(--primary-color-light) !important;
+        }
+        
+        .focus\:ring-green-100:focus {
+            --tw-ring-color: var(--primary-color-light);
+            opacity: 0.3;
+        }
+        
+        /* Secondary color support */
+        .bg-orange-500 {
+            background-color: var(--secondary-color) !important;
+        }
+        
+        .hover\:bg-orange-600:hover {
+            background-color: var(--secondary-color) !important;
+            opacity: 0.9;
+        }
+        
+        /* Green-50 equivalent for light backgrounds */
+        .bg-green-50,
+        .hover\:bg-green-50:hover {
+            background-color: color-mix(in srgb, var(--primary-color-light) 10%, white) !important;
+        }
+        
+        /* Gradient backgrounds */
+        .hero-gradient,
+        .we-care-section {
+            background: linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%) !important;
+        }
+        
+        /* Additional dynamic color utilities */
+        [style*="#2d8659"],
+        [style*="#1a5f3f"],
+        [style*="#003315"] {
+            /* These will be overridden by inline styles with CSS variables */
+        }
+    </style>
+
     {!! getSystemDynamicPartials(type: 'analytics_script') !!}
 </head>
 
@@ -88,7 +250,7 @@
     <!-- Scroll to Top Button -->
     <button id="scroll-top"
         class="fixed bottom-24 right-6 z-40 flex hidden h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-all hover:opacity-90"
-        style="background-color: #003315;">
+        style="background-color: var(--primary-color);">
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>

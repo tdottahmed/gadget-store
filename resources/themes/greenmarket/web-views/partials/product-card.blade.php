@@ -23,14 +23,14 @@
 @endphp
 
 <!-- Product Card -->
-<div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-    <div class="relativ p-8">
-        <a href="{{ route('product', ['slug' => $productSlug]) }}">
+<div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group flex flex-col h-full">
+    <div class="relative p-8 flex-shrink-0" style="height: 256px;">
+        <a href="{{ route('product', ['slug' => $productSlug]) }}" class="block h-full">
             <img src="{{ $productImage }}" alt="{{ $productName }}"
-                class="w-full h-64 object-contain">
+                class="w-full h-full object-contain">
         </a>
     </div>
-    <div class="bg-[#F2F2F2] flex">
+    <div class="bg-[#F2F2F2] flex flex-shrink-0">
         <a href="{{ route('product', ['slug' => $productSlug]) }}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200"
                 >
             <i class="fa-regular fa-eye"></i>
@@ -41,12 +41,12 @@
             <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
         </button>
     </div>
-    <div class="p-4">
-        <a href="{{ route('product', ['slug' => $productSlug]) }}">
-            <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">{{ $productName }}</h3>
+    <div class="p-4 flex-shrink-0 flex flex-col flex-grow">
+        <a href="{{ route('product', ['slug' => $productSlug]) }}" class="flex-shrink-0">
+            <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2 min-h-[2.5rem]">{{ $productName }}</h3>
         </a>
-        <div class="flex items-center gap-2">
-            <span class="text-2xl font-bold text-[#669900]">{{ $productPrice }}</span>
+        <div class="flex items-center gap-2 mt-auto">
+            <span class="text-2xl font-bold text-primary-dynamic">{{ $productPrice }}</span>
             @if($productDiscountPrice && $productDiscountPrice != $productPrice)
                 <span class="text-medium text-[#afb4be] line-through">{{ $productDiscountPrice }}</span>
             @endif
