@@ -64,7 +64,7 @@
                         $iconClass = $getCategoryIcon($categoryName);
                     @endphp
                     <div>
-                        <a href="{{ route('products', ['data_from' => 'category', 'id' => $categoryId, 'page' => 1]) }}"
+                        <a href="{{ route('category.view', ['id' => $categoryId]) }}"
                             class="flex flex-col items-center gap-2 text-[#052E16] hover:text-[#389e63] hover:scale-110 transition-transform group">
                             <div
                                 class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">

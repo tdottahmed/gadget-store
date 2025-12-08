@@ -3623,4 +3623,6 @@ return [
 	"place_order" => "Place order",
 	"please_select_a_payment_method" => "Please select a payment method",
 	"please_fill_all_fields" => "Please fill all fields",
+	"no_products_in_this_category" => "No products in this category",
+	"view_all_products" => "View all products",
 ];

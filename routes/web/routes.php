@@ -154,6 +154,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     });
 
     Route::controller(WebController::class)->group(function () {
+        Route::get('category/{id}', 'getCategoryView')->name('category.view');
         Route::get('discounted-products', 'discounted_products')->name('discounted-products');
         Route::post('/products-view-style', 'product_view_style')->name('product_view_style');
 
