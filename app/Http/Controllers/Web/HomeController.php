@@ -387,6 +387,7 @@ class HomeController extends Controller
         $userId = Auth::guard('customer')->user() ? Auth::guard('customer')->id() : 0;
         $flashDeal = ProductManager::getPriorityWiseFlashDealsProductsQuery(userId: $userId);
         $bannerTypeMainSectionBanner = $this->cacheBannerTable(bannerType: 'Main Section Banner');
+        $bannerTypeHeroSlider = $this->cacheBannerTable(bannerType: 'Hero Slider', dataLimit: 10);
         $decimal_point_settings = getWebConfig(name: 'decimal_point_settings') ?? 0;
 
         $featuredProductsList = ProductManager::getPriorityWiseFeaturedProductsQuery(
@@ -424,6 +425,7 @@ class HomeController extends Controller
                 'categories',
                 'homeCategories',
                 'bannerTypeMainSectionBanner',
+                'bannerTypeHeroSlider',
                 'bestSellProduct',
                 'latestProductsList',
                 'topRatedProducts',
