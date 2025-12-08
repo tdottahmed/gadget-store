@@ -3625,4 +3625,5 @@ return [
 	"please_fill_all_fields" => "Please fill all fields",
 	"no_products_in_this_category" => "No products in this category",
 	"view_all_products" => "View all products",
+	"product_added_to_cart" => "Product added to cart",
 ];

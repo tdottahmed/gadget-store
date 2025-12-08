@@ -787,17 +787,81 @@
         });
 
         // Add to Cart Button Handler
-        $('#btn-add-to-cart').on('click', function() {
-            const productId = $(this).data('product-id');
-            const quantity = parseInt($('#quantity-display').text());
+        $('#btn-add-to-cart').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            const $btn = $(this);
+            const productId = $btn.data('product-id');
+            const quantity = parseInt($('#quantity-display').text()) || 1;
             const variant = selectedVariant;
             
-            if (productId && typeof addToCartGreenmarket !== 'undefined') {
-                addToCartGreenmarket(productId, quantity, variant);
-            } else {
-                // Fallback to form submission if function not available
-                console.error('addToCartGreenmarket function not found');
+            if (!productId) {
+                console.error('Product ID not found');
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Product ID not found');
+                }
+                return false;
             }
+            
+            // Disable button during request
+            $btn.prop('disabled', true);
+            
+            const cartAddUrl = $('#route-data').data('route-cart-add') || '{{ route("cart.add") }}';
+            
+            $.ajax({
+                url: cartAddUrl,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="_token"]').attr('content'),
+                    id: productId,
+                    quantity: quantity,
+                    variant: variant || null
+                },
+                success: function(response) {
+                    $btn.prop('disabled', false);
+                    
+                    // Response can be object with status or just HTML string
+                    let isSuccess = false;
+                    if (typeof response === 'object' && response.status === 1) {
+                        isSuccess = true;
+                    } else if (typeof response === 'string') {
+                        // HTML response means success
+                        isSuccess = true;
+                    }
+                    
+                    if (isSuccess) {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success('{{ translate("product_added_to_cart") ?? "Product added to cart successfully" }}');
+                        }
+                        
+                        // Update cart count
+                        if (typeof updateCartCountGreenmarket === 'function') {
+                            updateCartCountGreenmarket();
+                        }
+                        
+                        // Reload page to update cart sidebar
+                        window.location.reload();
+                    } else {
+                        const errorMsg = (typeof response === 'object' && response.message) 
+                            ? response.message 
+                            : 'Failed to add product to cart';
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(errorMsg);
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    $btn.prop('disabled', false);
+                    const errorMsg = xhr.responseJSON?.message || 'Failed to add product to cart';
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMsg);
+                    }
+                }
+            });
+            
+            return false;
         });
 
         // Check if product exists in cart
