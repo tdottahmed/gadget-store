@@ -3618,4 +3618,6 @@ return [
 	"searching" => "Searching",
 	"no_products_found" => "No products found",
 	"view_all_results" => "View all results",
+	"address_saved_successfully" => "Address saved successfully",
+	"something_went_wrong" => "Something went wrong",
 ];
