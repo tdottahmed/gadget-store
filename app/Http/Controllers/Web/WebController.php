@@ -360,6 +360,48 @@ class WebController extends Controller
         ]);
     }
 
+    public function ajaxSearchProducts(Request $request): JsonResponse
+    {
+        $query = $request->input('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json(['products' => []]);
+        }
+
+        $result = ProductManager::getSearchProductsForWeb($query, 'all', 8, 1);
+        $products = $result['products'];
+        
+        if ($products == null || count($products) == 0) {
+            $result = ProductManager::getTranslatedProductSearchForWeb($query, 'all', 8, 1);
+            $products = $result['products'];
+        }
+
+        $formattedProducts = [];
+        if ($products) {
+            foreach ($products as $product) {
+                $unitPrice = $product->unit_price;
+                $discountAmount = Helpers::getProductDiscount($product, $unitPrice);
+                $discountedPrice = $unitPrice - $discountAmount;
+                
+                $formattedProducts[] = [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'image' => getStorageImages(path: $product->thumbnail_full_url ?? '', type: 'product'),
+                    'price' => Helpers::currency_converter($discountedPrice),
+                    'original_price' => $discountAmount > 0 ? Helpers::currency_converter($unitPrice) : null,
+                    'discount_type' => $product->discount_type ?? 'flat',
+                    'url' => route('product', ['slug' => $product->slug]),
+                ];
+            }
+        }
+
+        return response()->json([
+            'products' => $formattedProducts,
+            'total' => $result['total_size'] ?? 0,
+        ]);
+    }
+
     public function getSearchedProductsForCompareList(Request $request): JsonResponse
     {
         $request->validate([
