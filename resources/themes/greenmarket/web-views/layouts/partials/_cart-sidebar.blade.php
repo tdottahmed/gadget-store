@@ -100,12 +100,8 @@
 
               <!-- Price and Delete -->
               <div class="flex items-center justify-between">
-                <span class="cart-item-subtotal text-base font-bold text-black" <<<<<<< HEAD
-                      data-cart-id="{{ $cartId }}">{{ webCurrencyConverter(amount: $subtotal) }}</span>
-                =======
-                data-cart-id="{{ $cartId }}"
-                data-unit-price="{{ $price - $discount }}">{{ webCurrencyConverter(amount: $subtotal) }}</span>
-                >>>>>>> 88c0706
+                <span class="cart-item-subtotal text-base font-bold text-black" data-cart-id="{{ $cartId }}"
+                      data-unit-price="{{ $price - $discount }}">{{ webCurrencyConverter(amount: $subtotal) }}</span>
                 <button class="greenmarket-remove-cart-item text-red-500 transition-colors hover:text-red-700"
                         data-cart-id="{{ $cartId }}">
                   <i class="fas fa-trash text-sm"></i>
