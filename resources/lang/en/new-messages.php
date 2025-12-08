@@ -3615,4 +3615,7 @@ return [
 	"the_image_must_not_exceed_10mb" => "The image must not exceed 10mb",
 	"each_image_must_not_exceed_10mb" => "Each image must not exceed 10mb",
 	"images" => "Images",
+	"searching" => "Searching",
+	"no_products_found" => "No products found",
+	"view_all_results" => "View all results",
 ];

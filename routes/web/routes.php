@@ -92,6 +92,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     Route::controller(WebController::class)->group(function () {
         Route::get('quick-view', 'getQuickView')->name('quick-view');
         Route::get('searched-products', 'getSearchedProducts')->name('searched-products');
+        Route::get('ajax-search-products', 'ajaxSearchProducts')->name('ajax-search-products');
     });
 
     Route::group(['middleware' => ['customer']], function () {
