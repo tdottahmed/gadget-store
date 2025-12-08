@@ -156,8 +156,11 @@
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-semibold text-black flex items-center gap-2"
                                 style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">ইমেইল
+                                @if(!auth('customer')->check())
+                                    <span class="text-red-500">*</span>
+                                @endif
                             </label>
-                            <input type="email" id="checkout-email" required placeholder="আপনার ইমেইল"
+                            <input type="email" id="checkout-email" {{ !auth('customer')->check() ? 'required' : '' }} placeholder="আপনার ইমেইল"
                                 class="w-full py-3.5 px-4 border border-gray-200 rounded-md text-sm text-black bg-white transition-all duration-300 placeholder:text-gray-300 focus:border-green-500 focus:outline-none focus:ring-3 focus:ring-green-100"
                                 style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
                             <span class="text-xs text-red-500 hidden" id="checkout-email-error"></span>
@@ -331,17 +334,30 @@
 
         // Reset checkout form
         function resetCheckoutForm() {
+            // Clear form fields
             $('#checkout-name').val('');
             $('#checkout-mobile').val('');
+            $('#checkout-email').val('');
+            $('#checkout-city').val('');
             $('#checkout-address').val('');
-            $('#checkout-note').val('');
             selectedDeliveryOption = null;
+            selectedShippingMethodId = null;
             deliveryCharge = 0;
 
             // Reset delivery options
-            $('.delivery-option').removeClass('border-green-500 bg-green-50 border-2');
+            $('.delivery-option').removeClass('border-green-500 bg-green-50 border-2 selected');
             $('.delivery-radio').find('div').addClass('hidden');
-            $('.delivery-radio').removeClass('border-green-500');
+            $('.delivery-radio').removeClass('border-green-500').addClass('border-gray-200');
+
+            // Select first delivery option
+            const $firstOption = $('.delivery-option').first();
+            if ($firstOption.length) {
+                selectedShippingMethodId = $firstOption.data('shipping-id');
+                selectedDeliveryOption = $firstOption.data('delivery');
+                deliveryCharge = parseFloat($firstOption.data('price')) || 0;
+                $firstOption.addClass('border-green-500 bg-green-50 border-2 selected');
+                $firstOption.find('.delivery-radio').removeClass('border-gray-200').addClass('border-green-500').find('div').removeClass('hidden');
+            }
 
             // Reset price summary
             updateCheckoutTotals();
@@ -416,6 +432,15 @@
             const shippingId = $option.data('shipping-id');
             const price = parseFloat($option.data('price')) || 0;
 
+            // Skip if it's the default/fallback option
+            if (shippingId === 0 || shippingId === 'default') {
+                selectedDeliveryOption = delivery;
+                selectedShippingMethodId = shippingId;
+                deliveryCharge = price;
+                updateCheckoutTotals();
+                return;
+            }
+
             // Remove selection from all options
             $('.delivery-option').removeClass('border-green-500 bg-green-50 border-2 selected');
             $('.delivery-radio').find('div').addClass('hidden');
@@ -431,7 +456,41 @@
             deliveryCharge = price;
 
             updateCheckoutTotals();
+
+            // Set shipping method via AJAX
+            if (shippingId && shippingId !== 0 && shippingId !== 'default') {
+                setShippingMethod(shippingId);
+            }
         });
+
+        // Set shipping method
+        function setShippingMethod(shippingId) {
+            const setShippingUrl = $('#route-data').data('route-set-shipping-method');
+            
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: setShippingUrl,
+                type: 'GET',
+                data: {
+                    id: shippingId,
+                    cart_group_id: 'all_cart_group'
+                },
+                success: function(response) {
+                    if (response.status == 1) {
+                        // Shipping method set successfully
+                        console.log('Shipping method set successfully');
+                    }
+                },
+                error: function() {
+                    console.error('Failed to set shipping method');
+                }
+            });
+        }
 
         $(document).on('click', '.checkout-decrease-qty', function(e) {
             e.preventDefault();
@@ -510,24 +569,44 @@
 
             // Mobile validation
             const mobile = $('#checkout-mobile').val().trim();
-            if (!mobile || mobile.length < 10 || mobile.length > 11) {
-                showError('checkout-mobile', 'সঠিক মোবাইল নম্বর দিন');
+            const mobileNumeric = mobile.replace(/[^0-9]/g, '');
+            if (!mobile || mobileNumeric.length < 4 || mobileNumeric.length > 20) {
+                showError('checkout-mobile', 'সঠিক মোবাইল নম্বর দিন (৪-২০ ডিজিট)');
                 isValid = false;
             } else {
                 hideError('checkout-mobile');
             }
 
+            // Email validation (required for guests)
+            const email = $('#checkout-email').val().trim();
+            const isGuest = {{ auth('customer')->check() ? 'false' : 'true' }};
+            if (isGuest && (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))) {
+                showError('checkout-email', 'সঠিক ইমেইল দিন');
+                isValid = false;
+            } else {
+                hideError('checkout-email');
+            }
+
+            // City validation
+            const city = $('#checkout-city').val().trim();
+            if (city.length < 2) {
+                showError('checkout-city', 'এই ফিল্ডটি আবশ্যক');
+                isValid = false;
+            } else {
+                hideError('checkout-city');
+            }
+
             // Address validation
             const address = $('#checkout-address').val().trim();
             if (address.length < 10) {
-                showError('checkout-address', 'এই ফিল্ডটি আবশ্যক');
+                showError('checkout-address', 'এই ফিল্ডটি আবশ্যক (কমপক্ষে ১০ অক্ষর)');
                 isValid = false;
             } else {
                 hideError('checkout-address');
             }
 
             // Delivery option validation
-            if (!selectedDeliveryOption) {
+            if (!selectedDeliveryOption || !selectedShippingMethodId) {
                 if (typeof toastr !== 'undefined') {
                     toastr.warning('ডেলিভারি অপশন সিলেক্ট করুন');
                 }
@@ -550,66 +629,143 @@
         }
 
         // Submit checkout form
-        $(document).on('click', '#checkout-confirm-btn', function(e) {
+        $('#checkout-confirm-btn').on('click', function(e) {
             e.preventDefault();
 
+            // Validate form
             if (!validateCheckoutForm()) {
-                return;
+                return false;
             }
 
             // Disable button and show loading
             const $btn = $(this);
+            const $btnText = $('#checkout-btn-text');
+            const $btnLoading = $('#checkout-btn-loading');
+            
             $btn.prop('disabled', true);
-            $('#checkout-btn-text').addClass('hidden');
-            $('#checkout-btn-loading').removeClass('hidden');
+            $btnText.addClass('hidden');
+            $btnLoading.removeClass('hidden');
 
-            // Store order note in session first
-            const orderNote = $('#checkout-note').val().trim();
-            const orderNoteUrl = '{{ route('order_note') }}';
-
-            // Store order note and shipping method
-            $.ajax({
-                url: orderNoteUrl,
-                method: 'POST',
-                data: {
-                    _token: $('meta[name="_token"]').attr('content'),
-                    order_note: orderNote
-                },
-                success: function() {
-                    // Store shipping method if selected
-                    if (selectedShippingMethodId && selectedShippingMethodId !== '0' &&
-                        selectedShippingMethodId !== 'default') {
-                        // Route is GET, so we'll append query parameters
-                        const setShippingUrl = '{{ url('/customer/set-shipping-method') }}?id=' +
-                            selectedShippingMethodId + '&cart_group_id=all_cart_group';
-
-                        // Use GET request to set shipping method
-                        $.ajax({
-                            url: setShippingUrl,
-                            method: 'GET',
-                            success: function() {
-                                // Redirect to checkout page after shipping method is set
-                                window.location.href = '{{ route('checkout-details') }}';
-                            },
-                            error: function() {
-                                // Even if shipping method fails, proceed to checkout
-                                window.location.href = '{{ route('checkout-details') }}';
-                            }
-                        });
+            // Get default country
+            let defaultCountry = 'Bangladesh';
+            @if(getWebConfig('default_location'))
+                @php
+                    $defaultLocation = getWebConfig('default_location');
+                    if (is_string($defaultLocation)) {
+                        $locationData = json_decode($defaultLocation, true);
                     } else {
-                        // No shipping method selected or default, just redirect
-                        window.location.href = '{{ route('checkout-details') }}';
+                        $locationData = $defaultLocation;
+                    }
+                    $defaultCountryValue = (is_array($locationData) && isset($locationData['country'])) ? $locationData['country'] : 'Bangladesh';
+                @endphp
+                defaultCountry = '{{ $defaultCountryValue }}';
+            @endif
+
+            // Check if cart has physical products
+            let physicalProduct = 'yes';
+            @php
+                $cart = CartManager::getCartListQuery();
+                $hasPhysical = false;
+                foreach ($cart as $item) {
+                    $product = Product::find($item['product_id'] ?? ($item->product_id ?? null));
+                    if ($product && $product->product_type == 'physical') {
+                        $hasPhysical = true;
+                        break;
+                    }
+                }
+            @endphp
+            physicalProduct = '{{ $hasPhysical ? "yes" : "no" }}';
+
+            // Prepare form data
+            // For simple checkout, we always create a new address (shipping_method_id = 0)
+            const shippingData = {
+                contact_person_name: $('#checkout-name').val().trim(),
+                phone: $('#checkout-mobile').val().trim(),
+                email: $('#checkout-email').val().trim() || '',
+                city: $('#checkout-city').val().trim(),
+                address: $('#checkout-address').val().trim(),
+                address_type: 'home',
+                zip: '0000',
+                country: defaultCountry,
+                latitude: '0',
+                longitude: '0',
+                shipping_method_id: 0  // Always 0 for new address in simple checkout
+            };
+
+            const formData = {
+                shipping: $.param(shippingData),
+                billing: $.param({
+                    billing_addresss_same_shipping: 'true'
+                }),
+                physical_product: physicalProduct
+            };
+
+            // Make AJAX request
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+
+            const chooseShippingUrl = $('#route-data').data('route-choose-shipping-address');
+            const checkoutPaymentUrl = $('#route-data').data('route-checkout-payment');
+
+            $.ajax({
+                url: chooseShippingUrl,
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.errors) {
+                        // Show error message
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.errors, {
+                                CloseButton: true,
+                                ProgressBar: true
+                            });
+                        } else {
+                            alert(response.errors);
+                        }
+                        
+                        // Re-enable button
+                        $btn.prop('disabled', false);
+                        $btnText.removeClass('hidden');
+                        $btnLoading.addClass('hidden');
+                    } else {
+                        // Success - redirect to payment page
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success('{{ translate("address_saved_successfully") ?? "Address saved successfully" }}', {
+                                CloseButton: true,
+                                ProgressBar: true
+                            });
+                        }
+                        
+                        setTimeout(function() {
+                            window.location.href = checkoutPaymentUrl;
+                        }, 500);
                     }
                 },
                 error: function(xhr) {
-                    $btn.prop('disabled', false);
-                    $('#checkout-btn-text').removeClass('hidden');
-                    $('#checkout-btn-loading').addClass('hidden');
-
-                    if (typeof toastr !== 'undefined') {
-                        toastr.error(xhr.responseJSON?.message ||
-                            '{{ translate('order_failed') ?? 'Failed to place order' }}');
+                    let errorMessage = '{{ translate("something_went_wrong") ?? "Something went wrong" }}';
+                    
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        errorMessage = xhr.responseJSON.errors;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
                     }
+                    
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMessage, {
+                            CloseButton: true,
+                            ProgressBar: true
+                        });
+                    } else {
+                        alert(errorMessage);
+                    }
+                    
+                    // Re-enable button
+                    $btn.prop('disabled', false);
+                    $btnText.removeClass('hidden');
+                    $btnLoading.addClass('hidden');
                 }
             });
         });
