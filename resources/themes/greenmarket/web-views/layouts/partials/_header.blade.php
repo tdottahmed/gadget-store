@@ -96,7 +96,7 @@
     </div>
 
     <!-- Mobile Search Bar - Hidden by default -->
-    <div id="mobile-search-container" class="hidden border-t border-[#1a5f3f] bg-[#003315] px-3 py-2 md:hidden">
+    <div id="mobile-search-container" class="hidden border-t border-[var(--primary-color-light)] bg-[var(--primary-color)] px-3 py-2 md:hidden">
       <div class="relative">
         <form action="{{ route('products') }}" method="GET" class="relative">
           <input type="text" 
@@ -185,7 +185,7 @@
                                 <div class="flex-1 min-w-0">
                                 <h4 class="text-sm font-semibold text-gray-900 truncate">${product.name}</h4>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-sm font-bold text-[#2d8659]">${product.price}</span>
+                                    <span class="text-sm font-bold text-primary-light-dynamic">${product.price}</span>
                                     ${product.original_price ? `<span class="text-xs text-gray-500 line-through">${product.original_price}</span>` : ''}
                                 </div>
                             </div>
@@ -197,7 +197,7 @@
                     if (data.total > data.products.length) {
                         const viewAllLink = document.createElement('a');
                         viewAllLink.href = `{{ route('products') }}?name=${encodeURIComponent(query)}`;
-                        viewAllLink.className = 'block p-3 text-center text-sm font-semibold text-[#2d8659] hover:bg-gray-100 border-t';
+                        viewAllLink.className = 'block p-3 text-center text-sm font-semibold text-primary-light-dynamic hover:bg-gray-100 border-t';
                         viewAllLink.textContent = `{{ translate('view_all_results') }} (${data.total})`;
                         resultsContent.appendChild(viewAllLink);
                     }

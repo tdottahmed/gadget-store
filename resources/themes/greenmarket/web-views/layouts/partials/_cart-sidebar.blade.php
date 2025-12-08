@@ -126,7 +126,7 @@
                 <p class="text-sm text-gray-500 text-center mb-6">
                     {{ translate('add_items_to_cart') ?? 'Add items to your cart to continue shopping' }}</p>
                 <a href="{{ route('home') }}"
-                    class="px-6 py-2 bg-[#003315] text-white rounded-md font-semibold hover:bg-[#004d1f] transition-colors">
+                    class="px-6 py-2 bg-primary-dynamic text-white rounded-md font-semibold transition-colors">
                     {{ translate('continue_shopping') ?? 'Continue Shopping' }}
                 </a>
             </div>
@@ -145,7 +145,7 @@
 
             <!-- Order Button -->
             <button onclick="openCheckoutModal()"
-                class="block w-full py-3 px-6 bg-[#003315] text-white rounded-lg font-bold text-center hover:bg-[#004d1f] transition-colors">
+                class="block w-full py-3 px-6 bg-primary-dynamic text-white rounded-lg font-bold text-center transition-colors">
                 {{ 'অর্ডার করুন' }}
             </button>
         </div>

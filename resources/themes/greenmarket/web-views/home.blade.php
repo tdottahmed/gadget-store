@@ -25,7 +25,7 @@
             }
 
             .hero-gradient {
-                background: linear-gradient(135deg, #1b3a2c 0%, #2d5f3f 100%);
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
             }
 
             .text-shadow-sm {
@@ -159,7 +159,7 @@
 
             /* We Care Section */
             .we-care-section {
-                background: linear-gradient(135deg, #2d8659 0%, #1a5f3f 100%);
+                background: linear-gradient(135deg, var(--primary-color-light) 0%, var(--primary-color) 100%);
                 padding: 4rem 0;
             }
 
@@ -252,7 +252,7 @@
             .product-slider .slick-prev:before,
             .product-slider .slick-next:before {
                 font-size: 30px;
-                color: #2d8659;
+                color: var(--primary-color-light);
             }
 
             /* Hero slider dots */
@@ -266,7 +266,7 @@
             }
 
             .hero-slider .slick-dots li.slick-active button:before {
-                color: #2d8659;
+                color: var(--primary-color-light);
             }
 
             /* Category slider arrows */
@@ -353,15 +353,15 @@
                 }
             }
 
-            .top-bar-bg {
-                background-color: #000f06 !important;
-            }
+        .top-bar-bg {
+            background-color: var(--primary-color) !important;
+        }
 
-            .main-header-bg,
-            .footer-bg,
-            .whatsapp-bg {
-                background-color: #003315 !important;
-            }
+        .main-header-bg,
+        .footer-bg,
+        .whatsapp-bg {
+            background-color: var(--primary-color) !important;
+        }
         </style>
     @endpush
 
