@@ -143,6 +143,42 @@ class WebController extends Controller
         ]);
     }
 
+    public function getCategoryView(Request $request, $id = null)
+    {
+        $themeName = theme_root_path();
+        
+        // If greenmarket theme, use custom category view
+        if ($themeName == 'greenmarket') {
+            // Find category by ID
+            $category = Category::where('id', $id)->first();
+            
+            if (!$category) {
+                Toastr::warning(translate('category_not_found'));
+                return redirect()->route('products');
+            }
+            
+            // Get products for this category using ProductManager
+            $request->merge([
+                'data_from' => 'category',
+                'category_id' => $category->id,
+            ]);
+            
+            $productListData = ProductManager::getProductListData(request: $request);
+            $products = $productListData->paginate(20)->appends($request->all());
+            
+            return view('web-views.category.view', [
+                'category' => $category,
+                'products' => $products,
+            ]);
+        }
+        
+        // For other themes, redirect to products page with category filter
+        return redirect()->route('products', [
+            'data_from' => 'category',
+            'category_id' => $id,
+        ]);
+    }
+
     public function getAllBrandsView(Request $request): View|RedirectResponse
     {
         $robotsMetaContentData = $this->robotsMetaContentRepo->getFirstWhere(params: ['page_name' => 'brands']);
