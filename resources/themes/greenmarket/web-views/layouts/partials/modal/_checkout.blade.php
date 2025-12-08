@@ -510,8 +510,7 @@
 
             // Mobile validation
             const mobile = $('#checkout-mobile').val().trim();
-            const mobilePattern = /^01[3-9]\d{8}$/;
-            if (!mobile || mobile.length !== 11 || !mobilePattern.test(mobile)) {
+            if (!mobile || mobile.length < 10 || mobile.length > 11) {
                 showError('checkout-mobile', 'সঠিক মোবাইল নম্বর দিন');
                 isValid = false;
             } else {
