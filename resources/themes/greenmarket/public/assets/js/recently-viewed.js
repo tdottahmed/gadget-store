@@ -138,13 +138,13 @@ function renderRecentlyViewedFromCookie(recentlyViewed) {
         const productId = item.id || '';
         
         html += `
-            <div class="bg-transparent rounded-lg shadow-md border-1 ml-2 mr-2 border-gray-50 overflow-hidden group">
-                <div class="relativ p-8">
-                    <a href="/product/${productSlug}">
-                        <img src="${productImage}" alt="${productName}" class="w-full h-64 object-contain">
+            <div class="bg-transparent rounded-lg shadow-md border-1 ml-2 mr-2 border-gray-50 overflow-hidden group flex flex-col h-full">
+                <div class="relative p-8 flex-shrink-0" style="height: 256px;">
+                    <a href="/product/${productSlug}" class="block h-full">
+                        <img src="${productImage}" alt="${productName}" class="w-full h-full object-contain">
                     </a>
                 </div>
-                <div class="bg-[#F2F2F2] flex">
+                <div class="bg-[#F2F2F2] flex flex-shrink-0">
                     <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200">
                         <i class="fa-regular fa-eye"></i>
                     </a>
@@ -152,12 +152,12 @@ function renderRecentlyViewedFromCookie(recentlyViewed) {
                         <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
                     </button>
                 </div>
-                <div class="p-4">
-                    <a href="/product/${productSlug}">
-                        <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">${productName}</h3>
+                <div class="p-4 flex-shrink-0 flex flex-col flex-grow">
+                    <a href="/product/${productSlug}" class="flex-shrink-0">
+                        <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2 min-h-[2.5rem]">${productName}</h3>
                     </a>
-                    <div class="flex items-center gap-2">
-                        <span class="text-2xl font-bold text-[#669900]">${productPrice}</span>
+                    <div class="flex items-center gap-2 mt-auto">
+                        <span class="text-2xl font-bold text-primary-dynamic">${productPrice}</span>
                     </div>
                 </div>
             </div>
@@ -187,13 +187,13 @@ function generateProductCardHTML(product) {
     const productId = product.id;
     
     return `
-        <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group">
-            <div class="relativ p-8">
-                <a href="/product/${productSlug}">
-                    <img src="${productImage}" alt="${productName}" class="w-full h-64 object-contain">
+        <div class="bg-transparent rounded-lg shadow-md border-1 border-gray-50 overflow-hidden group flex flex-col h-full">
+            <div class="relative p-8 flex-shrink-0" style="height: 256px;">
+                <a href="/product/${productSlug}" class="block h-full">
+                    <img src="${productImage}" alt="${productName}" class="w-full h-full object-contain">
                 </a>
             </div>
-            <div class="bg-[#F2F2F2] flex">
+            <div class="bg-[#F2F2F2] flex flex-shrink-0">
                 <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200">
                     <i class="fa-regular fa-eye"></i>
                 </a>
@@ -201,12 +201,12 @@ function generateProductCardHTML(product) {
                     <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
                 </button>
             </div>
-            <div class="p-4">
-                <a href="/product/${productSlug}">
-                    <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2">${productName}</h3>
+            <div class="p-4 flex-shrink-0 flex flex-col flex-grow">
+                <a href="/product/${productSlug}" class="flex-shrink-0">
+                    <h3 class="text-sm font-bold text-[#222222] mb-2 line-clamp-2 min-h-[2.5rem]">${productName}</h3>
                 </a>
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl font-bold text-[#669900]">${productPrice}</span>
+                <div class="flex items-center gap-2 mt-auto">
+                    <span class="text-2xl font-bold text-primary-dynamic">${productPrice}</span>
                     ${productDiscountPrice ? `<span class="text-medium text-[#afb4be] line-through">${productDiscountPrice}</span>` : ''}
                 </div>
             </div>
@@ -283,7 +283,7 @@ $(document).ready(function() {
         if (productId) {
             const productName = productCard.find('h3').text().trim() || $(this).closest('[class*="product"]').find('h3').text().trim();
             const productImage = productCard.find('img').first().attr('src') || $(this).find('img').attr('src');
-            const productPrice = productCard.find('[class*="text-2xl"], [class*="text-[#669900]"]').first().text().trim();
+            const productPrice = productCard.find('[class*="text-2xl"], .text-primary-dynamic').first().text().trim();
             
             if (productId && productSlug) {
                 addToRecentlyViewed(productId, productSlug, productName, productImage, productPrice);
