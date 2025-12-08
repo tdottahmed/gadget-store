@@ -3620,4 +3620,7 @@ return [
 	"view_all_results" => "View all results",
 	"address_saved_successfully" => "Address saved successfully",
 	"something_went_wrong" => "Something went wrong",
+	"place_order" => "Place order",
+	"please_select_a_payment_method" => "Please select a payment method",
+	"please_fill_all_fields" => "Please fill all fields",
 ];

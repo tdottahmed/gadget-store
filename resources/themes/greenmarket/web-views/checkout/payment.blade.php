@@ -409,15 +409,10 @@
                                                 class="needs-validation" id="cash_on_delivery_form">
                                                 <label class="m-0 cursor-pointer">
                                                     <input type="hidden" name="payment_method" value="cash_on_delivery">
-                                                    <input type="hidden" class="form-control" name="bring_change_amount"
-                                                        id="bring_change_amount_value">
                                                     <div class="flex items-center gap-3">
                                                         <input type="radio" id="cash_on_delivery" name="payment_method_radio"
                                                             class="w-5 h-5 text-green-500 border-gray-300 focus:ring-green-500">
                                                         <div class="flex items-center gap-3 flex-1">
-                                                            <img width="24"
-                                                                src="{{ theme_asset(path: 'public/assets/front-end/img/icons/money.png') }}"
-                                                                alt="Cash on Delivery">
                                                             <span class="text-sm font-medium text-black"
                                                                 style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
                                                                 {{ translate('cash_on_Delivery') }}
@@ -426,32 +421,6 @@
                                                     </div>
                                                 </label>
                                             </form>
-                                        </div>
-
-                                        <!-- Bring Change Amount Section -->
-                                        <div class="bring_change_amount_section hidden mt-3">
-                                            <div class="bg-gray-50 rounded-lg p-4">
-                                                <div class="mb-3">
-                                                    <h6 class="text-sm font-bold mb-1"
-                                                        style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
-                                                        {{ translate('Bring_Change_Instruction') }}
-                                                    </h6>
-                                                    <p class="text-xs text-gray-600 mb-0">
-                                                        {{ translate('Insert_amount_if_you_need_deliveryman_to_bring') }}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <label class="text-xs font-bold mb-1 block"
-                                                        style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
-                                                        {{ translate('Change_Amount') }}
-                                                        ({{ getCurrencySymbol(type: 'web') }})
-                                                    </label>
-                                                    <input type="text"
-                                                        class="w-full px-3 py-2 border border-gray-200 rounded-md text-sm only-integer-input-field"
-                                                        id="bring_change_amount_input"
-                                                        placeholder="{{ translate('Amount') }}">
-                                                </div>
-                                            </div>
                                         </div>
                                     @endif
 
@@ -658,8 +627,8 @@
                         @endif
                     </div>
 
-                    <div class="border-t-2 border-gray-200 pt-4">
-                        <div class="flex justify-between items-center">
+                    <div class="border-t-2 border-gray-200 pt-4 mb-4">
+                        <div class="flex justify-between items-center mb-4">
                             <span class="text-lg font-bold text-black"
                                 style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
                                 {{ translate('total') }}
@@ -668,10 +637,28 @@
                                 {{ webCurrencyConverter($totalAmount) }}
                             </span>
                         </div>
+                        
+                        <!-- Place Order Button -->
+                        <button type="button" id="place-order-btn"
+                            class="w-full py-3 px-6 bg-orange-500 text-white border-none rounded-lg text-base font-bold cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                            style="font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;">
+                            <span id="place-order-btn-text">{{ translate('place_order') ?? 'Place Order' }}</span>
+                            <span id="place-order-btn-loading" class="hidden">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                {{ translate('processing') ?? 'Processing...' }}
+                            </span>
+                        </button>
                     </div>
 
                     <a href="{{ route('checkout-details') }}"
-                        class="mt-4 inline-flex items-center gap-2 text-green-600 hover:text-green-700 text-sm font-medium">
+                        class="inline-flex items-center gap-2 text-green-600 hover:text-green-700 text-sm font-medium">
                         <i class="fa fa-arrow-left"></i>
                         {{ translate('go_back') }}
                     </a>
@@ -779,13 +766,6 @@
 @push('script')
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/payment.js') }}"></script>
     <script>
-        // Handle cash on delivery radio selection
-        $(document).on('change', '#cash_on_delivery', function() {
-            if ($(this).is(':checked')) {
-                $('.bring_change_amount_section').removeClass('hidden');
-            }
-        });
-
         // Handle payment method radio changes
         $(document).on('change', 'input[name="payment_method_radio"], input[name="online_payment"]', function() {
             $('input[name="payment_method_radio"], input[name="online_payment"]').not(this).prop('checked', false);
@@ -797,6 +777,68 @@
                 $('.pay_offline_card').removeClass('hidden');
             } else {
                 $('.pay_offline_card').addClass('hidden');
+            }
+        });
+
+        // Handle Place Order button click
+        $('#place-order-btn').on('click', function(e) {
+            e.preventDefault();
+            
+            const $btn = $(this);
+            const $btnText = $('#place-order-btn-text');
+            const $btnLoading = $('#place-order-btn-loading');
+            
+            // Check if a payment method is selected
+            const selectedPaymentMethod = $('input[name="payment_method_radio"]:checked, input[name="online_payment"]:checked');
+            
+            if (selectedPaymentMethod.length === 0) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning('{{ translate("please_select_a_payment_method") ?? "Please select a payment method" }}', {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                } else {
+                    alert('{{ translate("please_select_a_payment_method") ?? "Please select a payment method" }}');
+                }
+                return false;
+            }
+            
+            // Disable button and show loading
+            $btn.prop('disabled', true);
+            $btnText.addClass('hidden');
+            $btnLoading.removeClass('hidden');
+            
+            // Submit the form based on selected payment method
+            const paymentMethodId = selectedPaymentMethod.attr('id');
+            
+            if (paymentMethodId === 'cash_on_delivery') {
+                // Submit cash on delivery form
+                $('#cash_on_delivery_form').submit();
+            } else if (selectedPaymentMethod.closest('form').length > 0) {
+                // Submit the form that contains the selected payment method
+                selectedPaymentMethod.closest('form').submit();
+            } else {
+                // For wallet or other methods that use modals
+                if (selectedPaymentMethod.closest('button').data('target')) {
+                    const modalTarget = selectedPaymentMethod.closest('button').data('target');
+                    $(modalTarget).modal('show');
+                    // Re-enable button
+                    $btn.prop('disabled', false);
+                    $btnText.removeClass('hidden');
+                    $btnLoading.addClass('hidden');
+                } else {
+                    // Re-enable button if no form found
+                    $btn.prop('disabled', false);
+                    $btnText.removeClass('hidden');
+                    $btnLoading.addClass('hidden');
+                    
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ translate("something_went_wrong") ?? "Something went wrong" }}', {
+                            CloseButton: true,
+                            ProgressBar: true
+                        });
+                    }
+                }
             }
         });
     </script>
