@@ -193,16 +193,22 @@
                 e.stopPropagation();
             });
 
-            // Quantity increase
-            $(document).on('click', '.increase-quantity', function(e) {
+            // Quantity increase - Use more specific selector and ensure it works
+            $(document).on('click', '#cart-sidebar .increase-quantity', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                if ($(this).prop('disabled')) return false;
+                e.stopImmediatePropagation();
+                
+                const $btn = $(this);
+                if ($btn.prop('disabled')) {
+                    return false;
+                }
 
-                const cartId = $(this).data('cart-id');
-                const maxQty = parseInt($(this).data('max')) || 999;
-                const quantityInput = $(this).siblings('.quantity-input');
-                const currentQty = parseInt(quantityInput.val()) || 1;
+                const cartId = $btn.data('cart-id');
+                const maxQty = parseInt($btn.data('max')) || 999;
+                const $cartItem = $btn.closest('.cart-item');
+                const $quantityInput = $cartItem.find('.quantity-input');
+                const currentQty = parseInt($quantityInput.val()) || 1;
 
                 if (currentQty < maxQty) {
                     updateQuantity(cartId, currentQty + 1);
@@ -215,15 +221,21 @@
                 return false;
             });
 
-            // Quantity decrease
-            $(document).on('click', '.decrease-quantity', function(e) {
+            // Quantity decrease - Use more specific selector and ensure it works
+            $(document).on('click', '#cart-sidebar .decrease-quantity', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                if ($(this).prop('disabled')) return false;
+                e.stopImmediatePropagation();
+                
+                const $btn = $(this);
+                if ($btn.prop('disabled')) {
+                    return false;
+                }
 
-                const cartId = $(this).data('cart-id');
-                const quantityInput = $(this).siblings('.quantity-input');
-                const currentQty = parseInt(quantityInput.val()) || 1;
+                const cartId = $btn.data('cart-id');
+                const $cartItem = $btn.closest('.cart-item');
+                const $quantityInput = $cartItem.find('.quantity-input');
+                const currentQty = parseInt($quantityInput.val()) || 1;
 
                 if (currentQty > 1) {
                     updateQuantity(cartId, currentQty - 1);
@@ -289,9 +301,20 @@
 
             // Update quantity function
             function updateQuantity(cartId, quantity) {
+                if (!cartId) {
+                    console.error('Cart ID is required');
+                    return;
+                }
+                
                 const updateUrl = $('#route-data').data('route-cart-update') ||
                     '{{ route('cart.updateQuantity') }}';
-                const $cartItem = $('.cart-item[data-cart-id="' + cartId + '"]');
+                const $cartItem = $('#cart-sidebar .cart-item[data-cart-id="' + cartId + '"]');
+                
+                if (!$cartItem.length) {
+                    console.error('Cart item not found for cart ID:', cartId);
+                    return;
+                }
+                
                 const $quantityInput = $cartItem.find('.quantity-input');
                 const $increaseBtn = $cartItem.find('.increase-quantity');
                 const $decreaseBtn = $cartItem.find('.decrease-quantity');
@@ -319,7 +342,7 @@
                             isSuccess = true;
                         } else if (response && typeof response === 'object') {
                             // JSON response - check status
-                            if (response.status === 0) {
+                            if (response.status === 0 || response.status === false) {
                                 isSuccess = false;
                                 errorMessage = response.message ||
                                     '{{ translate('failed_to_update_quantity') ?? 'Failed to update quantity' }}';
