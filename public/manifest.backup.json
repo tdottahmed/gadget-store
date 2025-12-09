@@ -114,16 +114,70 @@
             "purpose": "any"
         }
     ],
-    "categories": ["e-commerce", "shopping", "retail", "business", "multi-vendor"],
+    "shortcuts": [
+        {
+            "name": "Deposit",
+            "short_name": "Deposit",
+            "url": "/wallet/deposit",
+            "description": "Deposit Funds",
+            "icons": [
+                {
+                    "src": "/assets/icons/shortcuts/deposit.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Withdraw",
+            "short_name": "Withdraw",
+            "url": "/wallet/withdraw",
+            "description": "Withdraw Funds",
+            "icons": [
+                {
+                    "src": "/assets/icons/shortcuts/withdraw.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Chats",
+            "short_name": "Chats",
+            "url": "/chats",
+            "description": "Open Chats",
+            "icons": [
+                {
+                    "src": "/assets/icons/shortcuts/chats.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Help",
+            "short_name": "Help",
+            "url": "/helpline",
+            "description": "Contact Helpline",
+            "icons": [
+                {
+                    "src": "/assets/icons/shortcuts/help.png",
+                    "sizes": "96x96",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ],
+    "categories": ["finance", "security"],
     "screenshots": [
         {
-            "src": "/assets/pwa/screenshots/desktop.png",
+            "src": "/assets/screenshots/desktop.png",
             "sizes": "1280x800",
             "type": "image/png",
             "form_factor": "wide"
         },
         {
-            "src": "/assets/pwa/screenshots/mobile.png",
+            "src": "/assets/screenshots/mobile.png",
             "sizes": "750x1623",
             "type": "image/png",
             "form_factor": "narrow"
