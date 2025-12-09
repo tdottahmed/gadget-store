@@ -1,15 +1,17 @@
 {
     "name": "Nix Software",
     "short_name": "Nix",
-    "start_url": "/",
+    "start_url": "/?utm_source=pwa",
     "display": "standalone",
+    "display_override": ["standalone", "fullscreen"],
     "background_color": "#d8e5f0",
     "lang": "en",
     "scope": "/",
-    "id": "/dashboard",
+    "id": "/",
     "description": "Best E-commerce Software for your online business.",
     "theme_color": "#4B0082",
     "prefer_related_applications": false,
+    "orientation": "portrait-primary",
     "icons": [
         {
             "src": "/assets/pwa/android/android-launchericon-512-512.png",
@@ -114,7 +116,13 @@
             "purpose": "any"
         }
     ],
-    "categories": ["e-commerce", "shopping", "retail", "business", "multi-vendor"],
+    "categories": [
+        "e-commerce",
+        "shopping",
+        "retail",
+        "business",
+        "multi-vendor"
+    ],
     "screenshots": [
         {
             "src": "/assets/pwa/screenshots/desktop.png",
@@ -129,6 +137,5 @@
             "form_factor": "narrow"
         }
     ],
-    "display_override": ["standalone", "window-controls-overlay"],
-    "orientation": "portrait-primary"
+    "dir": "ltr"
 }
