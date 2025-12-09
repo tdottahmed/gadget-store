@@ -3,7 +3,7 @@
     "short_name": "Nix",
     "start_url": "/?utm_source=pwa",
     "display": "standalone",
-    "display_override": ["standalone", "fullscreen"],
+    "display_override": ["standalone", "fullscreen", "window-controls-overlay"],
     "background_color": "#d8e5f0",
     "lang": "en",
     "scope": "/",
