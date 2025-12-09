@@ -82,7 +82,7 @@
               <div class="mb-3 flex items-center gap-2">
                 <button class="decrease-quantity {{ $quantity <= 1 ? 'opacity-50 cursor-not-allowed' : '' }} flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-600 transition-colors hover:bg-gray-50"
                         data-cart-id="{{ $cartId }}" {{ $quantity <= 1 ? 'disabled' : '' }}>
-                  <i class="fas fa-minus text-xs"></i>
+                  <i class="fas fa-minus text-xs pointer-events-none"></i>
                 </button>
                 <div class="relative">
                   <input type="number" value="{{ $quantity }}" min="1" max="{{ $maxQuantity }}" readonly
@@ -103,7 +103,7 @@
                 <button class="increase-quantity {{ $quantity >= $maxQuantity ? 'opacity-50 cursor-not-allowed' : '' }} flex h-8 w-8 items-center justify-center rounded border border-gray-300 text-gray-600 transition-colors hover:bg-gray-50"
                         data-cart-id="{{ $cartId }}" data-max="{{ $maxQuantity }}"
                         {{ $quantity >= $maxQuantity ? 'disabled' : '' }}>
-                  <i class="fas fa-plus text-xs"></i>
+                  <i class="fas fa-plus text-xs pointer-events-none"></i>
                 </button>
               </div>
               @if ($quantity >= $maxQuantity)
@@ -203,12 +203,15 @@
       });
 
       // Quantity increase - Use more specific selector and ensure it works
-      $(document).on('click', '#cart-sidebar .increase-quantity', function(e) {
+      // Handle clicks on both button and icon elements
+      $(document).on('click', '#cart-sidebar .increase-quantity, #cart-sidebar .increase-quantity i', function(e) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        const $btn = $(this);
+        // Get the button element (in case click was on icon, get parent button)
+        const $btn = $(this).closest('.increase-quantity').length ? $(this).closest('.increase-quantity') : $(this);
+        
         if ($btn.prop('disabled')) {
           return false;
         }
@@ -231,12 +234,15 @@
       });
 
       // Quantity decrease - Use more specific selector and ensure it works
-      $(document).on('click', '#cart-sidebar .decrease-quantity', function(e) {
+      // Handle clicks on both button and icon elements
+      $(document).on('click', '#cart-sidebar .decrease-quantity, #cart-sidebar .decrease-quantity i', function(e) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        const $btn = $(this);
+        // Get the button element (in case click was on icon, get parent button)
+        const $btn = $(this).closest('.decrease-quantity').length ? $(this).closest('.decrease-quantity') : $(this);
+        
         if ($btn.prop('disabled')) {
           return false;
         }

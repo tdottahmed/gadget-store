@@ -847,6 +847,9 @@ $discountedPrice = getProductPriceByType(product: $product, type: 'discounted_un
             if (typeof loadCartSidebar === 'function') {
               loadCartSidebar();
             }
+
+            // reload the page
+            window.location.reload();
           } else {
             const errorMsg = (typeof response === 'object' && response.message) ?
               response.message :
