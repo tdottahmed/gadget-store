@@ -1,14 +1,14 @@
 {
-    "name": "PayKaa",
-    "short_name": "PayKaa",
-    "start_url": "/dashboard",
+    "name": "Nix Software",
+    "short_name": "Nix",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#d8e5f0",
     "lang": "en",
     "scope": "/",
     "id": "/dashboard",
-    "description": "Protecting your money is our responsibility",
-    "theme_color": "#4177a6",
+    "description": "Best E-commerce Software for your online business.",
+    "theme_color": "#4B0082",
     "prefer_related_applications": false,
     "icons": [
         {
