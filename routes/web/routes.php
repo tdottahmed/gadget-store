@@ -491,3 +491,5 @@ if (!$isGatewayPublished) {
         });
     });
 }
+
+require_once base_path('routes/web/pwa.php');
