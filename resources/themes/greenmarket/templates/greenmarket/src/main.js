@@ -60,22 +60,41 @@ function initAll() {
         });
 
         // Hero Slider Configuration
-        $('.hero-slider').slick({
-            dots: false,
-            infinite: true,
-            speed: 1000,
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            autoplay: true,
-            autoplaySpeed: 4000,
-            fade: true,
-            cssEase: 'linear',
-            arrows: false,
-            prevArrow: false,
-            nextArrow: false,
-            pauseOnHover: false,
-            pauseOnFocus: false
-        });
+        var $heroSlider = $('.hero-slider');
+        if ($heroSlider.length) {
+            // Function to show slider after initialization
+            function showHeroSlider() {
+                $heroSlider.removeClass('hero-slider-loading').addClass('hero-slider-ready');
+            }
+            
+            $heroSlider.slick({
+                dots: false,
+                infinite: true,
+                speed: 1000,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 4000,
+                fade: true,
+                cssEase: 'linear',
+                arrows: false,
+                prevArrow: false,
+                nextArrow: false,
+                pauseOnHover: false,
+                pauseOnFocus: false,
+                onInit: function(slick) {
+                    // Show slider after initialization to prevent flash
+                    showHeroSlider();
+                }
+            });
+            
+            // Fallback: Show slider if slick-initialized class is present
+            setTimeout(function() {
+                if ($heroSlider.hasClass('slick-initialized')) {
+                    showHeroSlider();
+                }
+            }, 100);
+        }
 
         // Category Slider Configuration
         if ($('.category-slider').length > 0 && !$('.category-slider').hasClass('slick-initialized')) {

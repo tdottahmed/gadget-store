@@ -41,7 +41,14 @@
     $(document).ready(function() {
       // Hero Slider
       if ($('.hero-slider').length) {
-        $('.hero-slider').slick({
+        var $heroSlider = $('.hero-slider');
+        
+        // Function to show slider after initialization
+        function showHeroSlider() {
+          $heroSlider.removeClass('hero-slider-loading').addClass('hero-slider-ready');
+        }
+        
+        $heroSlider.slick({
           dots: false,
           infinite: true,
           speed: 500,
@@ -49,8 +56,20 @@
           cssEase: 'linear',
           autoplay: true,
           autoplaySpeed: 3000,
-          arrows: false
+          arrows: false,
+          onInit: function(slick) {
+            // Show slider after initialization to prevent flash
+            showHeroSlider();
+          }
         });
+        
+        // Fallback: Show slider if slick-initialized class is present
+        // This handles cases where onInit might not fire
+        setTimeout(function() {
+          if ($heroSlider.hasClass('slick-initialized')) {
+            showHeroSlider();
+          }
+        }, 100);
       }
 
       // Category Slider

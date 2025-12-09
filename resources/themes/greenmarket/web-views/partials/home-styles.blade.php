@@ -162,6 +162,20 @@
     position: relative;
   }
 
+  /* Hide slider until initialized to prevent flash */
+  .hero-slider-loading {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  }
+
+  /* Show slider when Slick is initialized (fallback) */
+  .hero-slider.slick-initialized,
+  .hero-slider.hero-slider-ready {
+    opacity: 1;
+    visibility: visible;
+  }
+
   .hero-slider .slick-prev,
   .hero-slider .slick-next {
     position: absolute;

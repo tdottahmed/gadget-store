@@ -1,7 +1,7 @@
 <!-- Hero Section -->
 <section class="relative overflow-hidden">
   @if (isset($bannerTypeHeroSlider) && $bannerTypeHeroSlider && count($bannerTypeHeroSlider) > 0)
-    <div class="hero-slider">
+    <div class="hero-slider hero-slider-loading">
       @foreach ($bannerTypeHeroSlider as $banner)
         <div>
           @if ($banner->url)
