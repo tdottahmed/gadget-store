@@ -37,7 +37,7 @@
 @endphp
 
 <!-- Category Bar -->
-<section class="bg-primary-light py-3">
+<section class="py-3" style="background-color: color-mix(in srgb, var(--primary-color) 20%, white);">
     <div class="container-ds">
         <div class="category-slider">
             @if($parentCategories->count() > 0)
