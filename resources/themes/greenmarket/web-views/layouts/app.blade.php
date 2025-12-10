@@ -89,9 +89,29 @@
         }
 
         .main-header-bg,
-        .footer-bg,
-        .whatsapp-bg {
+        .footer-bg {
             background-color: var(--primary-color) !important;
+        }
+
+        .whatsapp-bg {
+            background-color: #fa582c !important;
+        }
+
+        /* Call Button Animation - Top to Bottom */
+        @keyframes callButtonBounce {
+            0% {
+                transform: translateY(-10px);
+            }
+            50% {
+                transform: translateY(10px);
+            }
+            100% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .call-button-animate {
+            animation: callButtonBounce 2s ease-in-out infinite;
         }
 
         .bg-primary-dynamic {
@@ -249,8 +269,8 @@
     @if (isset($whatsapp['status']) && $whatsapp['status'] == 1)
         <div class="fixed bottom-6 right-6 z-40">
             <a href="https://wa.me/{{ $whatsapp['phone'] }}?text=Hello%20there!" target="_blank"
-                class="whatsapp-bg block flex h-12 w-12 items-center justify-center rounded-full shadow-lg">
-                <i class="fa-brands fa-whatsapp text-xl font-semibold text-white"></i>
+                class="whatsapp-bg call-button-animate block flex h-12 w-12 items-center justify-center rounded-full shadow-lg">
+                <i class="fa-solid fa-phone text-lg font-semibold text-white"></i>
             </a>
         </div>
     @endif
