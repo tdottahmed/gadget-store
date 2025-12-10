@@ -176,12 +176,6 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item text-gray-400">/</li>
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('products') }}">
-                            {{ translate('products') ?? 'Products' }}
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item text-gray-400">/</li>
                     <li class="breadcrumb-item text-gray-900 font-semibold" aria-current="page">
                         {{ $category->name ?? translate('category') }}
                     </li>
