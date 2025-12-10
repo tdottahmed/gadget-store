@@ -482,12 +482,12 @@
                         <img src="${productImage}" alt="${productName}" class="w-full h-full object-contain">
                     </a>
                 </div>
-                <div class="bg-[#F2F2F2] flex flex-shrink-0">
-                    <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200">
-                        <i class="fa-regular fa-eye"></i>
+                <div class="flex flex-shrink-0">
+                    <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 text-white text-sm font-medium transition-colors bg-primary-dynamic hover:opacity-90">
+                        <span class="text-sm font-medium">ভিউ করুন</span>
                     </a>
-                    <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="${productId}" data-product-slug="${productSlug}">
-                        <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                    <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn text-white text-sm font-medium transition-colors hover:opacity-90" style="background-color: var(--secondary-color);" data-product-id="${productId}" data-product-slug="${productSlug}">
+                        <span class="text-sm font-medium">কার্টে যোগ করুন</span>
                     </button>
                 </div>
                 <div class="p-4 flex-shrink-0 flex flex-col flex-grow">
@@ -532,12 +532,12 @@
                     <img src="${productImage}" alt="${productName}" class="w-full h-full object-contain">
                 </a>
             </div>
-            <div class="bg-[#F2F2F2] flex flex-shrink-0">
-                <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200">
-                    <i class="fa-regular fa-eye"></i>
+            <div class="flex flex-shrink-0">
+                <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 text-white text-sm font-medium transition-colors bg-primary-dynamic hover:opacity-90">
+                    <span class="text-sm font-medium">ভিউ করুন</span>
                 </a>
-                <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn" data-product-id="${productId}" data-product-slug="${productSlug}">
-                    <i class="fas fa-shopping-cart text-lg md:text-xl"></i>
+                <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn text-white text-sm font-medium transition-colors hover:opacity-90" style="background-color: var(--secondary-color);" data-product-id="${productId}" data-product-slug="${productSlug}">
+                    <span class="text-sm font-medium">কার্টে যোগ করুন</span>
                 </button>
             </div>
             <div class="p-4 flex-shrink-0 flex flex-col flex-grow">
