@@ -3651,4 +3651,8 @@ return [
 	"view invoice" => "View invoice",
 	"theme_setup" => "Theme setup",
 	"order shipments" => "Order shipments",
+	"here_you_can_set_up_how_many_days_a_customer_has_to_send_a_refund_request_and_how_can_admin_send_the_refund_amount_,_to_change_the_customer_wallet_setting_," => "Here you can set up how many days a customer has to send a refund request and how can admin send the refund amount , to change the customer wallet setting ,",
+	"allow_the_option_to_add_refund_amount_automatically_to_customer_wallet_when_admin_or_vendor_refunded_the_request." => "Allow the option to add refund amount automatically to customer wallet when admin or vendor refunded the request.",
+	"Are_you_sure_you_want_to_turn_OFF_Wallet_option" => "Are you sure you want to turn OFF Wallet option",
+	"If_disabled,refunds_will_not_be_processed_automatically_to_the_customer’s_wallet." => "If disabled,refunds will not be processed automatically to the customer’s wallet.",
 ];

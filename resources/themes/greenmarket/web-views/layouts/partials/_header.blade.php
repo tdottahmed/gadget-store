@@ -10,19 +10,87 @@
         </svg>
         <span class="hidden lg:inline">{{ getWebConfig('company_phone') ?? '' }}</span>
       </div>
+      <div class="hidden items-center gap-2 lg:flex"></div>
       <div class="hidden items-center gap-2 lg:flex">
-        {{-- <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-        <span
-              class="font-medium text-[#d8f7e5]">{{ getWebConfig('announcement')['text'] ?? translate('') }}</span> --}}
-      </div>
-      <div class="hidden items-center gap-2 lg:flex">
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span class="font-medium text-[#d8f7e5]">Customer Help</span>
+        @php
+          // Get social media links
+          $socialMediaLinks = $web_config['social_media'] ?? collect();
+        @endphp
+        @if ($socialMediaLinks->count() > 0)
+          <div class="flex items-center gap-2">
+            @foreach ($socialMediaLinks as $social)
+              @php
+                // Get icon - convert old format to new format if needed
+                $iconClass = '';
+                $socialName = strtolower($social->name ?? '');
+
+                if (!empty($social->icon)) {
+                    // If icon exists, use it but convert old format to new
+                    $iconClass = $social->icon;
+                    // Convert old FontAwesome 4/5 format to FontAwesome 6
+                    $iconClass = str_replace('fa fa-facebook', 'fab fa-facebook-f', $iconClass);
+                    $iconClass = str_replace('fa fa-twitter', 'fab fa-twitter', $iconClass);
+                    $iconClass = str_replace('fa fa-instagram', 'fab fa-instagram', $iconClass);
+                    $iconClass = str_replace('fa fa-linkedin', 'fab fa-linkedin-in', $iconClass);
+                    $iconClass = str_replace('fa fa-pinterest', 'fab fa-pinterest', $iconClass);
+                    $iconClass = str_replace('fa fa-youtube', 'fab fa-youtube', $iconClass);
+                    $iconClass = str_replace('fa fa-google-plus', 'fab fa-google-plus-g', $iconClass);
+                    // Ensure it has fab/fas prefix if it's just 'fa'
+                    if (
+                        strpos($iconClass, 'fab ') === false &&
+                        strpos($iconClass, 'fas ') === false &&
+                        strpos($iconClass, 'far ') === false
+                    ) {
+                        $iconClass = str_replace('fa ', 'fab ', $iconClass);
+                    }
+                } else {
+                    // Fallback icons based on name
+                    if (str_contains($socialName, 'facebook')) {
+                        $iconClass = 'fab fa-facebook-f';
+                    } elseif (str_contains($socialName, 'whatsapp')) {
+                        $iconClass = 'fab fa-whatsapp';
+                    } elseif (str_contains($socialName, 'instagram')) {
+                        $iconClass = 'fab fa-instagram';
+                    } elseif (str_contains($socialName, 'twitter')) {
+                        $iconClass = 'fab fa-twitter';
+                    } elseif (str_contains($socialName, 'youtube')) {
+                        $iconClass = 'fab fa-youtube';
+                    } elseif (str_contains($socialName, 'linkedin')) {
+                        $iconClass = 'fab fa-linkedin-in';
+                    } elseif (str_contains($socialName, 'pinterest')) {
+                        $iconClass = 'fab fa-pinterest';
+                    } else {
+                        $iconClass = 'fas fa-link';
+                    }
+                }
+              @endphp
+              <a href="{{ $social->link }}" target="_blank" rel="noopener noreferrer"
+                 class="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#a8d4c0]"
+                 title="{{ ucfirst($social->name) }}">
+                <i class="{{ $iconClass }} text-xs"></i>
+              </a>
+            @endforeach
+          </div>
+        @else
+          {{-- Fallback social links if none configured --}}
+          <div class="flex items-center gap-2">
+            <a href="#"
+               class="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#a8d4c0]"
+               title="Facebook">
+              <i class="fab fa-facebook-f text-xs"></i>
+            </a>
+            <a href="#"
+               class="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#a8d4c0]"
+               title="WhatsApp">
+              <i class="fab fa-whatsapp text-xs"></i>
+            </a>
+            <a href="#"
+               class="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-[#a8d4c0]"
+               title="Instagram">
+              <i class="fab fa-instagram text-xs"></i>
+            </a>
+          </div>
+        @endif
       </div>
     </div>
   </div>
