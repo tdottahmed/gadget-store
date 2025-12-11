@@ -559,7 +559,7 @@ $discountedPrice = getProductPriceByType(product: $product, type: 'discounted_un
             <button class="buy-now-btn flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border-none bg-[#FA582C] px-6 py-3 text-base font-bold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#FF5520] hover:shadow-[0_4px_12px_rgba(255,107,53,0.3)]"
                     data-product-id="{{ $product->id ?? '' }}" data-product-slug="{{ $product->slug ?? '' }}">
               <i class="fas fa-shopping-bag"></i>
-              <span>{{ translate('order_now') ?? 'অর্ডার করুন' }}</span>
+              <span>অর্ডার করুন</span>
             </button>
           </div>
 

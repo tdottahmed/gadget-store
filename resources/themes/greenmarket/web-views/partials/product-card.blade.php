@@ -33,7 +33,7 @@
     <div class="flex flex-shrink-0">
         <a href="{{ route('product', ['slug' => $productSlug]) }}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 text-white text-sm font-medium transition-colors bg-primary-dynamic hover:opacity-90"
                 >
-            ভিউ করুন
+            এখনই দেখুন
         </a>
         <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer greenmarket-add-to-cart-btn text-white text-sm font-medium transition-colors hover:opacity-90"
                 style="background-color: var(--secondary-color);"
