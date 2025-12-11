@@ -484,7 +484,7 @@
                 </div>
                 <div class="flex flex-shrink-0">
                     <a href="/product/${productSlug}" class="flex-1 py-3 flex items-center justify-center border-r hover:cursor-pointer border-gray-200 text-white text-sm font-medium transition-colors bg-primary-dynamic hover:opacity-90">
-                        <span class="text-sm font-medium">ভিউ করুন</span>
+                        <span class="text-sm font-medium">এখনই দেখুন</span>
                     </a>
                     <button class="flex-1 py-3 flex items-center justify-center hover:cursor-pointer add-to-cart-btn text-white text-sm font-medium transition-colors hover:opacity-90" style="background-color: var(--secondary-color);" data-product-id="${productId}" data-product-slug="${productSlug}">
                         <span class="text-sm font-medium">কার্টে যোগ করুন</span>
